@@ -6,8 +6,13 @@
 /*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 20:55:42 by nanasser          #+#    #+#             */
-/*   Updated: 2025/07/30 20:55:48 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/07/30 21:19:51 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	new_envp(void)
+{
+	ft_lstnew()
+}

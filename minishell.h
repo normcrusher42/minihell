@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 20:37:55 by nanasser          #+#    #+#             */
-/*   Updated: 2025/07/30 20:38:43 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/07/30 21:08:09 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,9 @@
 
 # include <stdlib.h>
 # include <unistd.h>
+# include "libft/libft.h"
 # include <readline/readline.h>
 # include <readline/history.h>
-
-typedef struct s_shell
-{
-	char	*input;
-}	t_shell;
 
 typedef struct s_env
 {
@@ -29,6 +25,12 @@ typedef struct s_env
 	char			*value;
 	struct s_env	*next;
 }	t_env;
+
+typedef struct s_shell
+{
+	char	*input;
+	t_env	env;
+}	t_shell;
 
 int		main(int argc, char **argv, char **envp);
 void	butter_free(t_shell *shell);
