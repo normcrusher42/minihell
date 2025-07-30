@@ -1,36 +1,13 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/30 20:37:55 by nanasser          #+#    #+#             */
-/*   Updated: 2025/07/30 20:38:43 by nanasser         ###   ########.fr       */
+/*   Created: 2025/07/30 20:55:42 by nanasser          #+#    #+#             */
+/*   Updated: 2025/07/30 20:55:48 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
-
-# include <stdlib.h>
-# include <unistd.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-
-typedef struct s_shell
-{
-	char	*input;
-}	t_shell;
-
-typedef struct s_env
-{
-	char			*key;
-	char			*value;
-	struct s_env	*next;
-}	t_env;
-
-int		main(int argc, char **argv, char **envp);
-void	butter_free(t_shell *shell);
-
-#endif
+#include "minishell.h"
