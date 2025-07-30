@@ -7,7 +7,7 @@ NAME = minishell
 LIBFT = $(LIBFT_PATH)libft.a
 
 # Program sauce files
-SRC = 
+SRC = main.c
 
 # Object files
 OBJ = $(SRC:%.c=$(OBJ_PATH)%.o)
@@ -30,7 +30,7 @@ all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJ_PATH) $(OBJ)
 	@echo "$(WHITE)Compiling $(BWHITE)$(NAME)$(WHITE) program...$(RESET)"
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ) -lreadline -o $(NAME)
 	@echo "$(BWHITE)$(NAME)$(WHITE) program is $(BGREEN)ready! $(RESET)✅"
 
 $(LIBFT):
