@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 19:54:29 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/07/30 21:28:58 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/07/31 18:47:25 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	(void)envp;
 	shell = (t_shell){0};
+	init_signals();
 	while (1)
 	{
 		shell.input = readline("minishell$ ");
