@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 19:54:29 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/07/31 17:55:45 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/07/31 19:05:15 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,18 +26,52 @@ void	free_env(char ***envp)
 	int	i;
 
 	i = 0;
-	while (*envp[i])
+	while ((*envp)[i])
 	{
-		free(*envp[i]);
-		*envp[i++] = NULL;
+		free((*envp)[i]);
+		(*envp)[i++] = NULL;
 	}
 	free(*envp);
 	*envp = NULL;
 }
 
-void	init_shell(char **envp, t_shell	*shell)
+char	**dup_env(char **envp)
 {
-	
+	char	**new_envp;
+	int		count;
+
+	count = 0;
+	while (envp[count])
+		count++;
+	new_envp = malloc(sizeof(char *) * (count + 1));
+	if (!new_envp)
+		return (NULL);
+	count = -1;
+	while (envp[++count])
+		new_envp[count] = ft_strdup(envp[count]);
+	new_envp[count] = NULL;
+	return (new_envp);
+}
+
+static void	init_shell(char **envp, t_shell	*shell)
+{
+	char	cwd[1024];
+
+	if (envp && envp[0])
+		shell->envp = dup_env(envp);
+	else
+	{
+		shell->envp = malloc(sizeof(char *) * 2);
+        if (!shell->envp)
+            return ;
+		if (getcwd(cwd, sizeof(cwd)))
+		{
+			shell->envp[0] = ft_strjoin("PWD=", cwd);
+			shell->envp[1] = NULL;
+		}
+		else
+			shell->envp[0] = NULL;
+	}
 }
 
 int	main(int ac, char **av, char **envp)
@@ -57,5 +91,7 @@ int	main(int ac, char **av, char **envp)
 			add_history(shell.input);
 		butter_free(&shell);
 	}
+	if (shell.envp)
+		free_env(&shell.envp);
 	return (0);
 }
