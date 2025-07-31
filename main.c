@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 19:54:29 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/07/30 21:28:58 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/07/31 17:55:45 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,25 @@ void	butter_free(t_shell *shell)
 		free(shell->input);
 		shell->input = NULL;
 	}
-	if (shell->env.key)
-		f
+}
+
+void	free_env(char ***envp)
+{
+	int	i;
+
+	i = 0;
+	while (*envp[i])
+	{
+		free(*envp[i]);
+		*envp[i++] = NULL;
+	}
+	free(*envp);
+	*envp = NULL;
+}
+
+void	init_shell(char **envp, t_shell	*shell)
+{
+	
 }
 
 int	main(int ac, char **av, char **envp)
@@ -29,22 +46,16 @@ int	main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
-	(void)envp;
 	shell = (t_shell){0};
-	if (ac >= 2)
+	init_shell(envp, &shell);
+	while (1)
 	{
-		while (1)
-		{
-			shell.input = readline("minishell$ ");
-			if (!shell.input)
-			{
-				write(1, "exit\n", 5);
-				break ;
-			}
-			if (*shell.input)
-				add_history(shell.input);
-			butter_free(&shell);
-		}
+		shell.input = readline("minishell$ ");
+		if (!shell.input)
+			break ;
+		if (*shell.input)
+			add_history(shell.input);
+		butter_free(&shell);
 	}
 	return (0);
 }
