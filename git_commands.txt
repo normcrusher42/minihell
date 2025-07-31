@@ -2,6 +2,7 @@
 git config --global alias.cmp '!f() { git add -A && git commit -m "$@" && git push; }; f'
 						  ^^^ change this to ur preferences
 
-git checkout "branch_name" - switches branches
+# ALWAYS git pull from origin everytime we start the day
 git pull origin main - pull the main
+git checkout "branch_name" - switches branches
 git lazygit "COMMIT_MESSAGE" - shortcut for pushing commits with message
