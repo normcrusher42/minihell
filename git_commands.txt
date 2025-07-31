@@ -1,0 +1,6 @@
+// lazygit shortcut // (change alias."cmp" to whatever you want the git alias to be. so like alias.lazygit makes 'git lazygit "COMMIT_MESSAGE"')
+git config --global alias.cmp '!f() { git add -A && git commit -m "$@" && git push; }; f'
+						  ^^^ change this to ur preferences
+
+git checkout "branch_name" - switches branches
+git lazygit "COMMIT_MESSAGE" - shortcut for pushing commits with message

@@ -1,0 +1,268 @@
+✅ Adjusted Plan: Work 3–4 Days/Week
+
+    Total Work Weeks: 4 (July 29 – Aug 28)
+
+    Workdays per Week: ~3–4 (approx. 12–16 full days total)
+
+    Strategy: Each session ≈ 4–5 hrs focused coding.
+
+    Pairing Mode: Beans and Pika work mostly in parallel, sync at end of day.
+
+    Theme: Beans → Parsing & Signals, Pika → Execution & Builtins.
+
+✅ WEEKLY ROADMAP (3–4 Days/Week)
+✅ Week 1 (July 29 – Aug 4): Project Setup + Basic Loop
+
+Goal: Project skeleton, Makefile, main loop, signal handling.
+
+Workdays: 3 days
+Day 1 (Both)
+
+    Setup Git structure:
+
+    minishell/
+    ├── Makefile
+    ├── include/minishell.h
+    ├── src/
+        ├── main.c
+        ├── parser.c
+        ├── executor.c
+        ├── builtins.c
+        └── signals.c
+
+    Add Makefile rules: all, clean, fclean, re.
+
+    Initialize libft if needed.
+
+Day 2
+
+    Beans: Implement main loop
+
+        readline("minishell$ ").
+
+        Add to history with add_history().
+
+        Handle EOF (Ctrl+D) → exit shell with cleanup.
+
+    Pika: Start environment handler
+
+        Convert envp → linked list (key=value).
+
+        Implement get_env_value(), set_env_value().
+
+Day 3
+
+    Beans: Signal handling (sigaction).
+
+        Ctrl+C → new prompt.
+
+        Ctrl+D → handled in loop.
+
+        Ctrl+\ → ignore.
+
+        Use one global var for signal status.
+
+    Pika: Test env list & prepare base exec structure.
+
+✅ End of Week 1 Deliverable:
+
+    Project compiles.
+
+    Shell shows prompt, handles Ctrl+C/D/\, and has env list ready.
+
+✅ Week 2 (Aug 5 – Aug 11): Parsing & Env Expansion
+
+Goal: Tokenizer, env expansion, and command structure.
+
+Workdays: 4 days
+Day 1
+
+    Beans: Lexer (tokenize input).
+
+        Handle spaces, quotes, operators (|, <, >, <<, >>).
+
+    Pika: Add $VAR and $? expansion support.
+
+        Replace tokens containing $ with their env values.
+
+Day 2
+
+    Beans: Quote handling:
+
+        ' ' → literal text.
+
+        " " → expand $VAR inside.
+
+    Pika: Create command node structure:
+
+    typedef struct s_cmd {
+        char **argv;
+        int input_fd;
+        int output_fd;
+        t_redir *redirs;
+    } t_cmd;
+
+Day 3
+
+    Build parser:
+
+        Group tokens into commands.
+
+        Detect pipes and redirections.
+
+    Both sync and test:
+
+    echo "hello world"
+    ls -l | grep minishell
+
+Day 4
+
+    Validate edge cases:
+
+        Empty input.
+
+        Unclosed quotes.
+
+    Memory cleanup after each command.
+
+✅ End of Week 2 Deliverable:
+
+    Input → tokens → command table with argv, pipes, and redirections parsed.
+
+    Env expansions work.
+
+✅ Week 3 (Aug 12 – Aug 18): Execution Engine + Builtins
+
+Goal: Execute commands (builtins + PATH exec), basic piping.
+
+Workdays: 3–4 days
+Day 1
+
+    Pika: Implement exec logic:
+
+        fork(), execve(), waitpid().
+
+        PATH search for external commands.
+
+    Beans: Write builtins skeletons (echo, pwd, exit).
+
+Day 2
+
+    Pika: Integrate env for execve().
+
+    Beans: Implement cd, export, unset, env.
+
+Day 3
+
+    Add builtin detection before forking.
+
+    Handle exit codes properly.
+
+Day 4 (Optional if extra day available)
+
+    Full testing:
+
+    echo hi
+    cd ..
+    pwd
+    env
+    exit
+
+✅ End of Week 3 Deliverable:
+
+    All builtins work.
+
+    External commands run with execve.
+
+    Handles exit codes.
+
+✅ Week 4 (Aug 19 – Aug 24): Pipes + Redirections + Heredoc
+
+Goal: Complete all mandatory I/O features.
+
+Workdays: 3–4 days
+Day 1
+
+    Beans: Implement pipes (|) with pipe(), dup2().
+
+    Pika: Implement > and >> redirections.
+
+Day 2
+
+    Beans: Support multiple pipes.
+
+    Pika: Add < and << (heredoc).
+
+        Read until delimiter without adding to history.
+
+Day 3
+
+    Integrate pipes + redirections together.
+
+    Handle mixed cases:
+
+    cat file | grep text > out.txt
+    echo hi >> log.txt
+
+Day 4
+
+    Stress test and fix bugs:
+
+        Chain pipes + redirects.
+
+        Signals during execution.
+
+✅ End of Week 4 Deliverable:
+
+    Fully functional minishell with all mandatory features.
+
+✅ Final Phase (Aug 25 – Aug 28): Integration + Debugging
+
+Goal: Polish and defense prep.
+
+Workdays: 3 days
+Day 1
+
+    Merge final branches → master.
+
+    Remove debug prints.
+
+    Add proper error handling (perror()).
+
+Day 2
+
+    Valgrind session:
+
+        Fix memory leaks (except readline).
+
+    Test with:
+
+        Invalid syntax.
+
+        Mixed quotes.
+
+        $? expansions.
+
+Day 3
+
+    Create defense checklist:
+
+        Builtins, pipes, redirs, signals, env.
+
+    Prepare test cases for peer eval.
+
+✅ By Aug 28:
+
+    Project ready for push.
+
+    All tests passed.
+
+    Clean, Norm-compliant.
+
+✅ Role Summary
+
+    Beans → Parsing, Signals, Pipes.
+
+    Pika → Execution, Builtins, Redirections.
+
+    Both → Integration, Debugging.
