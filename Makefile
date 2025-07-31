@@ -30,7 +30,7 @@ all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJ_PATH) $(OBJ)
 	@echo "$(WHITE)Compiling $(BWHITE)$(NAME)$(WHITE) program...$(RESET)"
-	$(CC) $(CFLAGS) $(OBJ) -lreadline -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -lreadline -o $(NAME)
 	@echo "$(BWHITE)$(NAME)$(WHITE) program is $(BGREEN)ready! $(RESET)✅"
 
 $(LIBFT):

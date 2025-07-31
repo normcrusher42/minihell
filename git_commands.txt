@@ -3,4 +3,5 @@ git config --global alias.cmp '!f() { git add -A && git commit -m "$@" && git pu
 						  ^^^ change this to ur preferences
 
 git checkout "branch_name" - switches branches
+git pull origin main - pull the main
 git lazygit "COMMIT_MESSAGE" - shortcut for pushing commits with message
