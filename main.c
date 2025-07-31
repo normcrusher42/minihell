@@ -19,8 +19,6 @@ void	butter_free(t_shell *shell)
 		free(shell->input);
 		shell->input = NULL;
 	}
-	if (shell->env.key)
-		f
 }
 
 int	main(int ac, char **av, char **envp)
