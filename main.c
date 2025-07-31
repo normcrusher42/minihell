@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 19:54:29 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/07/31 19:05:15 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/07/31 21:30:51 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,28 +21,12 @@ void	butter_free(t_shell *shell)
 	}
 }
 
-void	free_env(char ***envp)
-{
-	int	i;
-
-	i = 0;
-	while ((*envp)[i])
-	{
-		free((*envp)[i]);
-		(*envp)[i++] = NULL;
-	}
-	free(*envp);
-	*envp = NULL;
-}
-
 char	**dup_env(char **envp)
 {
 	char	**new_envp;
 	int		count;
 
-	count = 0;
-	while (envp[count])
-		count++;
+	count = ft_arrlen(envp);
 	new_envp = malloc(sizeof(char *) * (count + 1));
 	if (!new_envp)
 		return (NULL);
@@ -62,8 +46,8 @@ static void	init_shell(char **envp, t_shell	*shell)
 	else
 	{
 		shell->envp = malloc(sizeof(char *) * 2);
-        if (!shell->envp)
-            return ;
+		if (!shell->envp)
+			return ;
 		if (getcwd(cwd, sizeof(cwd)))
 		{
 			shell->envp[0] = ft_strjoin("PWD=", cwd);
@@ -82,15 +66,26 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	shell = (t_shell){0};
 	init_shell(envp, &shell);
-	while (1)
-	{
-		shell.input = readline("minishell$ ");
-		if (!shell.input)
-			break ;
-		if (*shell.input)
-			add_history(shell.input);
-		butter_free(&shell);
-	}
+	ft_printf("TEST 4: Add TEST=42\n");
+	set_env_value(&shell.envp, "TEST", "42");
+	ft_printf("TEST = %s\n\n", get_env_value(shell.envp, "TEST"));
+	for (int i = 0; shell.envp[i]; i++)
+    printf("%s\n", shell.envp[i]);
+	printf("TEST 5: Unset TEST\n");
+	unset_env_value(&shell.envp, "a", &shell);
+	if (get_env_value(shell.envp, "TEST"))
+	    ft_printf("TEST still exists!\n");
+	else
+	    ft_printf("TEST removed successfully\n");
+	// while (1)
+	// {
+	// 	shell.input = readline("minishell$ ");
+	// 	if (!shell.input)
+	// 		break ;
+	// 	if (*shell.input)
+	// 		add_history(shell.input);
+	// 	butter_free(&shell);
+	// }
 	if (shell.envp)
 		free_env(&shell.envp);
 	return (0);
