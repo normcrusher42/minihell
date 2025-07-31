@@ -72,6 +72,7 @@ static void	init_shell(char **envp, t_shell	*shell)
 		else
 			shell->envp[0] = NULL;
 	}
+
 }
 
 int	main(int ac, char **av, char **envp)
