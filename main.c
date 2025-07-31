@@ -29,20 +29,17 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	(void)envp;
 	shell = (t_shell){0};
-	if (ac >= 2)
+	while (1)
 	{
-		while (1)
+		shell.input = readline("minishell$ ");
+		if (!shell.input)
 		{
-			shell.input = readline("minishell$ ");
-			if (!shell.input)
-			{
-				write(1, "exit\n", 5);
-				break ;
-			}
-			if (*shell.input)
-				add_history(shell.input);
-			butter_free(&shell);
+			write(1, "exit\n", 5);
+			break ;
 		}
+		if (*shell.input)
+			add_history(shell.input);
+		butter_free(&shell);
 	}
 	return (0);
 }
