@@ -62,7 +62,7 @@ void	set_env_value(char ***envp, const char *key, const char *value)
 	{
 		if (!ft_strncmp((*envp)[i], key, len) && (*envp)[i][len] == '=')
 		{
-			free(*envp[i]);
+			free((*envp)[i]);
 			(*envp)[i] = ft_strjoin3(key, "=", value);
 			return ;
 		}
@@ -71,7 +71,7 @@ void	set_env_value(char ***envp, const char *key, const char *value)
 	if (!new_envp)
 		return ;
 	i = -1;
-	while (envp[++i])
+	while ((*envp)[++i])
 		new_envp[i] = (*envp)[i];
 	new_envp[i++] = ft_strjoin3(key, "=", value);
 	new_envp[i] = NULL;
@@ -79,11 +79,12 @@ void	set_env_value(char ***envp, const char *key, const char *value)
 	*envp = new_envp;
 }
 
-char **unset_env_value(char **envp, const char *key, t_shell *shell)
+char	**unset_env_value(char **envp, const char *key, t_shell *shell)
 {
-	int     i;
-	int     len;
-	char    **new_envp;
+	int		i;
+	int		j;
+	int		len;
+	char	**new_envp;
 
 	len = ft_strlen(key);
 	i = ft_arrlen(envp);
@@ -91,20 +92,18 @@ char **unset_env_value(char **envp, const char *key, t_shell *shell)
 	if (!new_envp)
 		return (envp);
 	i = -1;
+	j = 0;
 	while (envp[++i])
 	{
 		if (!ft_strncmp(envp[i], key, len) && envp[i][len] == '=')
 		{
 			free(envp[i]);
 			shell->removed = true;
-			continue;
+			continue ;
 		}
-		new_envp[i] = envp[i];
+		new_envp[j++] = envp[i];
 	}
-	if (shell->removed)
-	{
-		free(new_envp);
-		return (envp);
-	}
-	return (new_envp[i] = NULL, free(envp), new_envp);
+	if (!shell->removed)
+		return (free(new_envp), envp);
+	return (new_envp[j] = NULL, free(envp), new_envp);
 }

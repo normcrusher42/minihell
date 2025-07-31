@@ -21,6 +21,10 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
+# define RED "\033[0;31m"
+# define BRED "\033[1;31m"
+# define RESET "\033[0m"
+
 typedef struct s_shell
 {
 	char	*input;
@@ -32,7 +36,7 @@ typedef struct s_shell
 int		main(int argc, char **argv, char **envp);
 char	*get_env_value(char **envp, const char *key);
 void	set_env_value(char ***envp, const char *key, const char *value);
-void	unset_env_value(char ***envp, const char *key, t_shell *shell);
+char	**unset_env_value(char **envp, const char *key, t_shell *shell);
 int		ft_arrlen(char **arr);
 void	free_env(char ***envp);
 void	butter_free(t_shell *shell);

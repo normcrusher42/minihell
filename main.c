@@ -56,7 +56,6 @@ static void	init_shell(char **envp, t_shell	*shell)
 		else
 			shell->envp[0] = NULL;
 	}
-
 }
 
 int	main(int ac, char **av, char **envp)
@@ -67,27 +66,15 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	shell = (t_shell){0};
 	init_shell(envp, &shell);
-	ft_printf("TEST 4: Add TEST=42\n");
-	set_env_value(&shell.envp, "TEST", "42");
-	ft_printf("TEST = %s\n\n", get_env_value(shell.envp, "TEST"));
-	for (int i = 0; shell.envp[i]; i++)
-    printf("%s\n", shell.envp[i]);
-	printf("TEST 5: Unset TEST\n");
-	unset_env_value(&shell.envp, "a", &shell);
-	if (get_env_value(shell.envp, "TEST"))
-	    ft_printf("TEST still exists!\n");
-	else
-	    ft_printf("TEST removed successfully\n");
-	// while (1)
-	// {
-	// 	shell.input = readline("minishell$ ");
-	// 	if (!shell.input)
-	// 		break ;
-	// 	if (*shell.input)
-	// 		add_history(shell.input);
-	// 	butter_free(&shell);
-	// }
-	if (shell.envp)
-		free_env(&shell.envp);
+	while (1)
+	{
+		shell.input = readline("minishell$ ");
+		if (!shell.input)
+			break ;
+		if (*shell.input)
+			add_history(shell.input);
+		butter_free(&shell);
+	}
+	free_env(&shell.envp);
 	return (0);
 }
