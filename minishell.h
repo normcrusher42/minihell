@@ -34,6 +34,7 @@ typedef struct s_shell
 }	t_shell;
 
 int		main(int argc, char **argv, char **envp);
+void	add_pwd_var(char **envp);
 char	*get_env_value(char **envp, const char *key);
 void	set_env_value(char ***envp, const char *key, const char *value);
 char	**unset_env_value(char **envp, const char *key, t_shell *shell);

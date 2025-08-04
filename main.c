@@ -42,7 +42,10 @@ static void	init_shell(char **envp, t_shell	*shell)
 	char	cwd[1024];
 
 	if (envp && envp[0])
+	{
 		shell->envp = dup_env(envp);
+		add_pwd_var(envp);
+	}
 	else
 	{
 		shell->envp = malloc(sizeof(char *) * 2);
@@ -66,6 +69,9 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	shell = (t_shell){0};
 	init_shell(envp, &shell);
+	int i = 0;
+	while (envp[i])
+		printf("%s\n", envp[i++]);
 	while (1)
 	{
 		shell.input = readline("minishell$ ");
