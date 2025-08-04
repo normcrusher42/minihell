@@ -18,6 +18,8 @@
 # include <stdbool.h>
 # include "libft/libft.h"
 # include "libft/ft_printf/ft_printf.h"
+# include <sys/types.h>
+# include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -27,10 +29,10 @@
 
 typedef struct s_shell
 {
-	char	*input;
-	bool	removed;
-	bool	last_exit_status;
-	char	**envp;
+	char	*input; // ptr to our key inputs for readline
+	char	**envp; // environment variable pointer array
+	bool	last_exit_status; // boolean to check what it checks
+	bool	removed; // boolean to check if the envp removed anything
 }	t_shell;
 
 int		main(int argc, char **argv, char **envp);
@@ -40,5 +42,6 @@ char	**unset_env_value(char **envp, const char *key, t_shell *shell);
 int		ft_arrlen(char **arr);
 void	free_env(char ***envp);
 void	butter_free(t_shell *shell);
+void	execute_command(char *cmd, char **env);
 
 #endif
