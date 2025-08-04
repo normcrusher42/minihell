@@ -29,10 +29,10 @@
 
 typedef struct s_shell
 {
-	char	*input;
-	bool	removed;
-	bool	last_exit_status;
-	char	**envp;
+	char	*input; // ptr to our key inputs for readline
+	char	**envp; // environment variable pointer array
+	bool	last_exit_status; // boolean to check what it checks
+	bool	removed; // boolean to check if the envp removed anything
 }	t_shell;
 
 int		main(int argc, char **argv, char **envp);
