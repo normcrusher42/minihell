@@ -69,9 +69,8 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	shell = (t_shell){0};
 	init_shell(envp, &shell);
-	int i = 0;
-	while (envp[i])
-		printf("%s\n", envp[i++]);
+	printf("Running /bin/ls using execve...\n");
+	execute_command("/bin/ls", shell.envp);
 	while (1)
 	{
 		shell.input = readline("minishell$ ");
