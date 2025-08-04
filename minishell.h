@@ -27,16 +27,29 @@
 # define BRED "\033[1;31m"
 # define RESET "\033[0m"
 
+typedef enum e_quote_type
+{
+	QUOTE_NONE,
+	QUOTE_SINGLE,
+	QUOTE_DOUBLE
+}	t_quote_type;
+
+typedef struct s_token
+{
+	char			**tokens; // stores the tokens parsed
+	t_quote_type	*quote; // stores 
+}	t_token;
+
 typedef struct s_shell
 {
 	char	*input; // ptr to our key inputs for readline
 	char	**envp; // environment variable pointer array
 	bool	last_exit_status; // boolean to check what it checks
 	bool	removed; // boolean to check if the envp removed anything
+	t_token	token;
 }	t_shell;
 
 int		main(int argc, char **argv, char **envp);
-void	add_pwd_var(char **envp);
 char	*get_env_value(char **envp, const char *key);
 void	set_env_value(char ***envp, const char *key, const char *value);
 char	**unset_env_value(char **envp, const char *key, t_shell *shell);

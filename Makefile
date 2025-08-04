@@ -7,7 +7,7 @@ NAME = minishell
 LIBFT = $(LIBFT_PATH)libft.a
 
 # Program sauce files
-SRC = ./main.c env_utils.c utils.c executor.c
+SRC = ./main.c env_utils.c utils.c executor.c expander.c \
 
 # Object files
 OBJ = $(SRC:%.c=$(OBJ_PATH)%.o)
