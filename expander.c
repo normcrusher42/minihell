@@ -1,24 +1,40 @@
 #include "minishell.h"
 
-char	*var_expander(char *token, bool last_status)
+char	*env_expander
+
+char	*var_expander(char *token, int last_status)
 {
 	int		i;
 	char	*new_token;
+	char	*status_str;
+	char	*first_str;
+	char	*third_str;
 
-	token
 	i = -1;
-	if (last_status >= 0)
-		while (token[++i])
+	status_str = ft_itoa(last_status);
+	if (!status_str)
+		return (NULL);
+	if (!new_token)
+		return (free(status_str), NULL);
+	while (token[++i])
+	{
+		if (token[i] == '$' && token[i + 1] == '?')
 		{
-			if (token[i] == '$' && )
+			first_str = ft_substr(s, 0, i);
+			third_str = ft_substr(token, i + 2, ft_strlen(token));
+			new_token = ft_strjoin3(first_str, status_str, third_str);
 		}
-	return (new_token);
+		else
+		{
+			
+		}
+	}
+	return (free(status_str), free(first_str), free(third_str), new_token);
 }
 
-char	**expand_token(t_token *token, char **envp, bool last_status)
+char	**expand_token(t_token *token, char **envp, int last_status)
 {
 	int		i;
-	int		j;
 	char	**result;
 
 	i = -1;
@@ -27,37 +43,13 @@ char	**expand_token(t_token *token, char **envp, bool last_status)
 		return (NULL);
 	while (token->tokens[++i])
 	{
-		j = -1;
-		while (token->tokens[i][++j])
-		{
-			if (token->tokens[i][j] == '$' && token->tokens[i][j + 1] == '?')
-				result[i] = var_expander(token->tokens[i], last_status);
-			else if (token->tokens[i][j] == '$' && token->tokens[i][j + 1])
-				result[i]= var_expander(token->tokens[i], last_status);
-			else
-				result[i] = token->tokens[i];
-			if (!result[i])
-					return (NULL);
-		}
+		if (ft_strchr(token->tokens[i], '$') && token->quote[i] != QTE_SINGLE)
+			result[i] = var_expander(token->tokens[i], last_status);
+		else
+			result[i] = token->tokens[i];
+		if (!result[i])
+			return (NULL);
 	}
+	free_arr(&token->tokens);
 	return (result);
 }
-
-for each token in tokens:
-        if token contains '$' and token not from single quotes:
-            result = ""
-            i = 0
-            while i < len(token):
-                if token[i] == '$':
-                    if token[i+1] == '?':
-                        result += str(last_status)
-                        i += 2
-                    else:
-                        var_name = extract letters/numbers/_
-                        val = get_env_value(env, var_name)
-                        if val: result += val
-                        i += len(var_name) + 1
-                else:
-                    result += token[i]
-                    i++
-            replace token with result

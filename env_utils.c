@@ -12,21 +12,24 @@
 
 #include "minishell.h"
 
-void	free_env(char ***envp)
+void	free_arr(char ***envp)
 {
 	int	i;
 
-	i = 0;
-	while ((*envp)[i])
+	i = -1;
+	while ((*envp)[++i])
 	{
-		free((*envp)[i]);
-		(*envp)[i++] = NULL;
+		if ((*envp)[i])
+		{
+			free((*envp)[i]);
+			(*envp)[i] = NULL;
+		}
 	}
 	free(*envp);
 	*envp = NULL;
 }
 
-static char	*ft_strjoin3(const char *key, const char *input, const char *value)
+char	*ft_strjoin3(const char *key, const char *input, const char *value)
 {
 	char	*temp;
 	char	*new_str;

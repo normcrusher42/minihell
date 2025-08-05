@@ -78,6 +78,6 @@ int	main(int ac, char **av, char **envp)
 			add_history(shell.input);
 		butter_free(&shell);
 	}
-	free_env(&shell.envp);
+	free_arr(&shell.envp);
 	return (0);
 }

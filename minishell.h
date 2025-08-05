@@ -29,22 +29,22 @@
 
 typedef enum e_quote_type
 {
-	QUOTE_NONE,
-	QUOTE_SINGLE,
-	QUOTE_DOUBLE
+	QTE_NONE,
+	QTE_SINGLE,
+	QTE_DOUBLE
 }	t_quote_type;
 
 typedef struct s_token
 {
 	char			**tokens; // stores the tokens parsed
-	t_quote_type	*quote; // stores 
+	t_quote_type	**quote; // stores 
 }	t_token;
 
 typedef struct s_shell
 {
 	char	*input; // ptr to our key inputs for readline
 	char	**envp; // environment variable pointer array
-	bool	last_exit_status; // boolean to check what it checks
+	int		last_exit_status; // stores exit status of last program
 	bool	removed; // boolean to check if the envp removed anything
 	t_token	token;
 }	t_shell;
@@ -54,8 +54,9 @@ char	*get_env_value(char **envp, const char *key);
 void	set_env_value(char ***envp, const char *key, const char *value);
 char	**unset_env_value(char **envp, const char *key, t_shell *shell);
 int		ft_arrlen(char **arr);
-void	free_env(char ***envp);
+void	free_arr(char ***envp);
 void	butter_free(t_shell *shell);
 void	execute_command(char *cmd, char **env);
+char	*ft_strjoin3(const char *key, const char *input, const char *value);
 
 #endif
