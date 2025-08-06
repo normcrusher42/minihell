@@ -7,7 +7,7 @@ NAME = minishell
 LIBFT = $(LIBFT_PATH)libft.a
 
 # Program sauce files
-SRC = ./main.c env_utils.c utils.c executor.c getcwd.c
+SRC = ./main.c env_utils.c utils.c executor.c getcwd.c signals.c
 
 # Object files
 OBJ = $(SRC:%.c=$(OBJ_PATH)%.o)
@@ -15,8 +15,7 @@ OBJ = $(SRC:%.c=$(OBJ_PATH)%.o)
 # Compiler n flags
 CC		=		cc
 CFLAGS	= -Wall -Werror -Wextra -I.
-LDFLAGS = -L/usr/local/opt/readline/lib -lreadline
-CFLAGS = -I/usr/local/opt/readline/include
+LDFLAGS = -lreadline -L/opt/vagrant/embedded/lib/ -Iopt/vagrant/embedded/include/readline
 
 # Color codes ✨
 WHITE = \033[0;37m
@@ -32,7 +31,7 @@ all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJ_PATH) $(OBJ)
 	@echo "$(WHITE)Compiling $(BWHITE)$(NAME)$(WHITE) program...$(RESET)"
-	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -lreadline -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(LDFLAGS) -o $(NAME)
 	@echo "$(BWHITE)$(NAME)$(WHITE) program is $(BGREEN)ready! $(RESET)✅"
 
 $(LIBFT):

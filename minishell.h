@@ -48,6 +48,7 @@ void	butter_free(t_shell *shell);
 void	execute_command(char *cmd, char **env);
 
 void	init_signals(void);
+void	rl_replace_line(const char *text, int clear_undo);
 void	handle_sigint(int sig);
 void	handle_sigquit(int sig);
 #endif
