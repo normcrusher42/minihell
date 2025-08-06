@@ -37,7 +37,7 @@ typedef enum e_quote_type
 typedef struct s_token
 {
 	char			**tokens; // stores the tokens parsed
-	t_quote_type	**quote; // stores 
+	t_quote_type	*quote; // stores 
 }	t_token;
 
 typedef struct s_shell
@@ -54,9 +54,10 @@ char	*get_env_value(char **envp, const char *key);
 void	set_env_value(char ***envp, const char *key, const char *value);
 char	**unset_env_value(char **envp, const char *key, t_shell *shell);
 int		ft_arrlen(char **arr);
-void	free_arr(char ***envp);
+void	free_arr(char ***arr);
 void	butter_free(t_shell *shell);
 void	execute_command(char *cmd, char **env);
 char	*ft_strjoin3(const char *key, const char *input, const char *value);
+char	*dollar_expander(char *token, int last_status, char **envp);
 
 #endif

@@ -42,10 +42,7 @@ static void	init_shell(char **envp, t_shell	*shell)
 	char	cwd[1024];
 
 	if (envp && envp[0])
-	{
 		shell->envp = dup_env(envp);
-		add_pwd_var(envp);
-	}
 	else
 	{
 		shell->envp = malloc(sizeof(char *) * 2);
@@ -69,15 +66,32 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	shell = (t_shell){0};
 	init_shell(envp, &shell);
-	while (1)
+	char *inputs[] = {
+    "$USER",
+    "Hello$USER",
+    "$USER$HOME",
+    "Path:$HOME/bin",
+    "$?status",
+    "$USER-$?-$HOME",
+    "$NOTHING",        // Nonexistent var → empty
+    "$?$$$USER",       // Multiple $ in one token
+    NULL
+	};
+	for (int j = 0; inputs[j]; j++)
 	{
-		shell.input = readline("minishell$ ");
-		if (!shell.input)
-			break ;
-		if (*shell.input)
-			add_history(shell.input);
-		butter_free(&shell);
+    	char *result = dollar_expander(ft_strdup(inputs[j]), 42, shell.envp);
+    	printf("Input: %-20s -> Expanded: %s\n", inputs[j], result);
+    	free(result);
 	}
+	// while (1)
+	// {
+	// 	shell.input = readline("minishell$ ");
+	// 	if (!shell.input)
+	// 		break ;
+	// 	if (*shell.input)
+	// 		add_history(shell.input);
+	// 	butter_free(&shell);
+	// }
 	free_arr(&shell.envp);
 	return (0);
 }
