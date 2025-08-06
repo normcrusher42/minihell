@@ -7,7 +7,7 @@ NAME = minishell
 LIBFT = $(LIBFT_PATH)libft.a
 
 # Program sauce files
-SRC = ./main.c env_utils.c utils.c executor.c
+SRC = ./main.c env_utils.c utils.c executor.c getcwd.c
 
 # Object files
 OBJ = $(SRC:%.c=$(OBJ_PATH)%.o)
@@ -15,6 +15,8 @@ OBJ = $(SRC:%.c=$(OBJ_PATH)%.o)
 # Compiler n flags
 CC		=		cc
 CFLAGS	= -Wall -Werror -Wextra -I.
+LDFLAGS = -L/usr/local/opt/readline/lib -lreadline
+CFLAGS = -I/usr/local/opt/readline/include
 
 # Color codes ✨
 WHITE = \033[0;37m

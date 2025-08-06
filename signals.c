@@ -6,7 +6,7 @@
 /*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 18:45:33 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/07/31 19:29:56 by lsahloul         ###   ########.fr       */
+/*   Updated: 2025/08/06 19:42:09 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void	handle_sigint(int sig)
 {
 	(void)sig;
 	write(1, "\n", 1);
+	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
 }
