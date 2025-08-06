@@ -1,61 +1,62 @@
 #include "minishell.h"
 
-char	*merge_strings(char *token, char *frst_str, char *thrd_str)
+char	*env_expander(char *token, char **merge, char **envp)
 {
-	
-}
+	char		*updated_token;
+	char		**env_values;
+	int			start;
+	int			i;
 
-char	*env_expander(char *token, char *frst_str, char *thrd_str, char **envp)
-{
-	char	*updated_token;
-	char	*var_name;
-	char	*value;
-	int		i;
-	int		start;
-
-	i = -1;
-	while (token[++i])
+	env_values = malloc(sizeof(char *) * 3);
+	if (!env_values)
+		return (NULL);
+	env_values[2] = ft_strdup("");
+	if (token[0] == '$' && (ft_isalnum(token[1]) || token[1] == '_'))
 	{
-		if (token[i] == '$' && (ft_isalnum(token[i + 1]) || token[i + 1] == '_'))
-		{
-			start = i + 1;
-			while (ft_isalnum(token[start]) || token[start] == '_')
-				start++;
-			frst_str = ft_substr(token, 0, i);
-			var_name = ft_substr(token, i + 1, start - (i + 1));
-			thrd_str = ft_substr(token, start, ft_strlen(token));
-			value = get_env_value(envp, var_name);
-			if (!value)
-				value = NULL;
-			updated_token = ft_strjoin3(frst_str, value, thrd_str);
-		}
+		i = 1;
+		while (token[i] && (ft_isalnum(token[i]) || token[i] == '_'))
+			i++;
+		start = i;
+		merge[0] = ft_substr(token, 0, 0);
+		env_values[0] = ft_substr(token, 1, start - 1);
+		merge[2] = ft_substr(token, start, ft_strlen(token) - start);
+		env_values[1] = get_env_value(envp, env_values[0]);
+		if (!env_values[1])
+			env_values[1] = env_values[2];
+		updated_token = ft_strjoin3(merge[0], env_values[1], merge[2]);
+		return (free_arr(&env_values), updated_token);
 	}
+	return (ft_strdup(token));
 }
+
 
 char	*var_expander(char *token, int last_status, char **envp)
 {
 	int		i;
 	char	*new_token;
-	char	*status_str;
-	char	*first_str;
-	char	*third_str;
+	char	**merge;
 
 	i = -1;
-	status_str = ft_itoa(last_status);
-	if (!status_str)
+	merge = malloc(sizeof(char *) * 4);
+	if (!merge)
 		return (NULL);
+	merge[3] = ft_strdup("");
 	while (token[++i])
 	{
 		if (token[i] == '$' && token[i + 1] == '?')
 		{
-			first_str = ft_substr(s, 0, i);
-			third_str = ft_substr(token, i + 2, ft_strlen(token));
-			new_token = ft_strjoin3(first_str, status_str, third_str);
+			merge[1] = ft_itoa(last_status);
+			if (!merge[1])
+				return (NULL);
+			merge[0] = ft_substr(token, 0, i);
+			merge[2] = ft_substr(token, i + 2, ft_strlen(token));
+			new_token = ft_strjoin3(merge[0], merge[1], merge[2]);
 		}
-		else
-			new_token = env_expander()
+		else if (token[i] == '$')
+			new_token = env_expander(token + i, merge, envp);
+		free_arr(&merge);
 	}
-	return (free(status_str), free(first_str), free(third_str), new_token);
+	return (new_token);
 }
 
 char	**expand_token(t_token *token, char **envp, int last_status)
@@ -70,11 +71,11 @@ char	**expand_token(t_token *token, char **envp, int last_status)
 	while (token->tokens[++i])
 	{
 		if (ft_strchr(token->tokens[i], '$') && token->quote[i] != QTE_SINGLE)
-			result[i] = var_expander(token->tokens[i], last_status);
+			result[i] = var_expander(token->tokens[i], last_status, envp);
 		else
 			result[i] = ft_strdup(token->tokens[i]);
 		if (!result[i])
-			return (NULL);
+			return (free_arr(&result[i]), NULL);
 	}
 	free_arr(&token->tokens);
 	return (result);

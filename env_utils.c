@@ -25,7 +25,8 @@ void	free_arr(char ***envp)
 			(*envp)[i] = NULL;
 		}
 	}
-	free(*envp);
+	if (*envp)
+		free(*envp);
 	*envp = NULL;
 }
 
