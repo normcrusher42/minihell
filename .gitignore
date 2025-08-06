@@ -1,6 +1,5 @@
 *.o
 *.a
-*.txt
 minishell
 minihell
 .DS_Store

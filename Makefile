@@ -7,15 +7,14 @@ NAME = minishell
 LIBFT = $(LIBFT_PATH)libft.a
 
 # Program sauce files
-SRC = main.c signals.c
+SRC = ./main.c env_utils.c utils.c executor.c
 
 # Object files
 OBJ = $(SRC:%.c=$(OBJ_PATH)%.o)
 
 # Compiler n flags
 CC		=		cc
-CFLAGS	= -Wall -Werror -Wextra
-LDFLAGS = -lreadline
+CFLAGS	= -Wall -Werror -Wextra -I.
 
 # Color codes ✨
 WHITE = \033[0;37m
@@ -31,7 +30,7 @@ all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJ_PATH) $(OBJ)
 	@echo "$(WHITE)Compiling $(BWHITE)$(NAME)$(WHITE) program...$(RESET)"
-	$(CC) $(CFLAGS) $(LIBFT) $(OBJ) -lreadline -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -lreadline -o $(NAME)
 	@echo "$(BWHITE)$(NAME)$(WHITE) program is $(BGREEN)ready! $(RESET)✅"
 
 $(LIBFT):

@@ -16,7 +16,7 @@
 Goal: Project skeleton, Makefile, main loop, signal handling.
 
 Workdays: 3 days
-Day 1 (Both)
+Day 1 (Both) ------------------------------ ✅
 
     Setup Git structure:
 
@@ -33,7 +33,7 @@ Day 1 (Both)
     Add Makefile rules: all, clean, fclean, re.
 
     Initialize libft if needed.
-
+------------------------------------------- ✅
 Day 2
 
     Beans: Implement main loop
@@ -49,7 +49,7 @@ Day 2
         Convert envp → linked list (key=value).
 
         Implement get_env_value(), set_env_value().
-
+------------------------------------------- ✅
 Day 3
 
     Beans: Signal handling (sigaction).
@@ -63,7 +63,7 @@ Day 3
         Use one global var for signal status.
 
     Pika: Test env list & prepare base exec structure.
-
+------------------------------------------- ✅ / ❌ -> half finished
 ✅ End of Week 1 Deliverable:
 
     Project compiles.

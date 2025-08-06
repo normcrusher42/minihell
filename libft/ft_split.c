@@ -23,7 +23,7 @@ static void	freemem(char **arr, int size)
 		i++;
 	}
 	free(arr);
-	*arr = NULL;
+	arr = NULL;
 }
 
 static int	counting_words(const char *s, char c)
