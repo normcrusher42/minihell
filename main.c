@@ -67,14 +67,14 @@ int	main(int ac, char **av, char **envp)
 	shell = (t_shell){0};
 	init_shell(envp, &shell);
 	char *inputs[] = {
-    "$USER",
+    "$USER$e",
     "Hello$USER",
     "$USER$HOME",
     "Path:$HOME/bin",
-    "$?status",
+    "status",
     "$USER-$?-$HOME",
     "$NOTHING",        // Nonexistent var → empty
-    "$?$$$USER",       // Multiple $ in one token
+    "$?$$USER",       // Multiple $ in one token
     NULL
 	};
 	for (int j = 0; inputs[j]; j++)
@@ -85,7 +85,7 @@ int	main(int ac, char **av, char **envp)
 	}
 	// while (1)
 	// {
-	// 	shell.input = readline("minishell$ ");
+	// 	shell.input = readline("miniOdy$ ");
 	// 	if (!shell.input)
 	// 		break ;
 	// 	if (*shell.input)

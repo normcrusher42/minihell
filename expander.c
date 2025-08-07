@@ -1,38 +1,37 @@
 #include "minishell.h"
 
-char	*env_expander(char *token, char **merge, char **envp, int offset)
+char	*env_expander(char *token, char **merge, char **envp, int i)
 {
 	char		*updated_token;
 	char		**env_values;
-	int			start;
+	int			strt;
 
-	env_values = malloc(sizeof(char *) * 3);
+	env_values = ft_calloc(3, sizeof(char *));
 	if (!env_values)
 		return (NULL);
-	env_values[2] = NULL;
-	if (token[offset] == '$' && (ft_isalnum(token[offset + 1])
-			|| token[offset + 1] == '_'))
+	if (token[i] == '$' && (ft_isalnum(token[i + 1]) || token[i + 1] == '_'))
 	{
-		start = offset + 1;
-		while (token[start] && (ft_isalnum(token[start])
-				|| token[start] == '_'))
-			start++;
-		merge[0] = ft_substr(token, 0, offset);
-		env_values[0] = ft_substr(token, offset + 1, start - (offset + 1));
-		merge[2] = ft_substr(token, start, ft_strlen(token) - start);
+		strt = i + 1;
+		while (token[strt] && (ft_isalnum(token[strt]) || token[strt] == '_'))
+			strt++;
+		merge[0] = ft_substr(token, 0, i);
+		env_values[0] = ft_substr(token, i + 1, strt - (i + 1));
+		merge[1] = ft_substr(token, strt, ft_strlen(token) - strt);
 		env_values[1] = get_env_value(envp, env_values[0]);
 		if (!env_values[1])
-			env_values[1] = env_values[2];
-		updated_token = ft_strjoin3(merge[0], env_values[1], merge[2]);
+			env_values[1] = ft_strdup("");
+		else
+			env_values[1] = ft_strdup(env_values[1]);
+		updated_token = ft_strjoin3(merge[0], env_values[1], merge[1]);
 		return (free_arr(&env_values), updated_token);
 	}
-	return (ft_strdup(token));
+	return (free_arr(&env_values), ft_strdup(token));
 }
 
 static char	*merge_str(char *token, int last_status, int i, char **merge)
 {
-	merge[1] = ft_itoa(last_status);
 	merge[0] = ft_substr(token, 0, i);
+	merge[1] = ft_itoa(last_status);
 	merge[2] = ft_substr(token, i + 2, ft_strlen(token));
 	return (ft_strjoin3(merge[0], merge[1], merge[2]));
 }
@@ -46,14 +45,16 @@ char	*dollar_expander(char *token, int last_status, char **envp)
 	i = -1;
 	while (token[++i])
 	{
-		merge = malloc(sizeof(char *) * 4);
+		if (!merge)
+			merge = ft_calloc(4, sizeof(char *));
 		if (!merge)
 			return (NULL);
-		merge[3] = NULL;
 		if (token[i] == '$' && token[i + 1] == '?')
 			new_token = merge_str(token, last_status, i, merge);
-		else if (token[i] == '$')
+		else if (token[i] == '$' && token[i + 1] != '$')
 			new_token = env_expander(token, merge, envp, i);
+		// else if (token[i] == '$' && token[i + 1] == '$')
+		// 	new_token = 
 		else
 			continue ;
 		free(token);
