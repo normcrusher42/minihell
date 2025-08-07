@@ -74,7 +74,7 @@ int	main(int ac, char **av, char **envp)
     "$status",
     "$USER-$?-$HOME",
     "$NOTHING",        // Nonexistent var → empty
-    "$?$$USER",       // Multiple $ in one token
+    "$?$$$$$USER",       // Multiple $ in one token
     NULL
 	};
 	for (int j = 0; inputs[j]; j++)

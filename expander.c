@@ -50,17 +50,18 @@ char	*dollar_expander(char *token, int last_status, char **envp)
 			merge = ft_calloc(4, sizeof(char *));
 		if (!merge)
 			return (NULL);
-		if (token[i] == '$' && token[i + 1] == '?')
+		if (token[i] == '$' && token[i + 1] && token[i + 1] == '?')
 			new_token = merge_str(token, last_status, i, merge);
-		else if (token[i] == '$' && token[i + 1] != '$')
+		else if (token[i] == '$' && token[i + 1] && token[i + 1] != '$')
 			new_token = env_expander(token, merge, envp, i);
-		// else if (token[i] == '$' && token[i + 1] == '$')
+		// else if (token[i] == '$' && token[i + 1] && token[i + 1] == '$')
 		// 	new_token = 
 		else
 			continue ;
 		free(token);
 		token = new_token;
 		free_arr(&merge);
+		i = -1;
 	}
 	if (merge)
 		free_arr(&merge);
