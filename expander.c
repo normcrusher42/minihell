@@ -43,6 +43,7 @@ char	*dollar_expander(char *token, int last_status, char **envp)
 	char	**merge;
 
 	i = -1;
+	merge = NULL;
 	while (token[++i])
 	{
 		if (!merge)
@@ -61,6 +62,8 @@ char	*dollar_expander(char *token, int last_status, char **envp)
 		token = new_token;
 		free_arr(&merge);
 	}
+	if (merge)
+		free_arr(&merge);
 	return (new_token);
 }
 

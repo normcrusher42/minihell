@@ -71,7 +71,7 @@ int	main(int ac, char **av, char **envp)
     "Hello$USER",
     "$USER$HOME",
     "Path:$HOME/bin",
-    "status",
+    "$status",
     "$USER-$?-$HOME",
     "$NOTHING",        // Nonexistent var → empty
     "$?$$USER",       // Multiple $ in one token
