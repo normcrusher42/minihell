@@ -12,23 +12,25 @@
 
 #include "minishell.h"
 
-void	free_arr(char ***arr)
+void	free_arr(char ***arr, bool reuse)
 {
 	int	i;
 
+	if (!arr || !*arr)
+		return;
 	i = -1;
 	while ((*arr)[++i])
 	{
-		if ((*arr)[i])
-		{
-			free((*arr)[i]);
-			(*arr)[i] = NULL;
-		}
+		free((*arr)[i]);
+		(*arr)[i] = NULL;
 	}
-	if (*arr)
+	if (!reuse)
+	{
 		free(*arr);
-	*arr = NULL;
+		*arr = NULL;
+	}
 }
+
 
 char	*ft_strjoin3(const char *key, const char *input, const char *value)
 {

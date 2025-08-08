@@ -27,6 +27,9 @@
 # define BRED "\033[1;31m"
 # define RESET "\033[0m"
 
+# define YES 1
+# define NO 0
+
 typedef enum e_quote_type
 {
 	QTE_NONE,
@@ -54,7 +57,7 @@ char	*get_env_value(char **envp, const char *key);
 void	set_env_value(char ***envp, const char *key, const char *value);
 char	**unset_env_value(char **envp, const char *key, t_shell *shell);
 int		ft_arrlen(char **arr);
-void	free_arr(char ***arr);
+void	free_arr(char ***arr, bool reuse);
 void	butter_free(t_shell *shell);
 void	execute_command(char *cmd, char **env);
 char	*ft_strjoin3(const char *key, const char *input, const char *value);

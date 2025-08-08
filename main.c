@@ -66,32 +66,15 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	shell = (t_shell){0};
 	init_shell(envp, &shell);
-	char *inputs[] = {
-    "$USER$e",
-    "Hello$USER",
-    "$USER$HOME",
-    "Path:$HOME/bin",
-    "$status",
-    "$USER-$?-$HOME",
-    "$NOTHING",        // Nonexistent var → empty
-    "$?$$$$$USER",       // Multiple $ in one token
-    NULL
-	};
-	for (int j = 0; inputs[j]; j++)
+	while (1)
 	{
-    	char *result = dollar_expander(ft_strdup(inputs[j]), 42, shell.envp);
-    	printf("Input: %-20s -> Expanded: %s\n", inputs[j], result);
-    	free(result);
+		shell.input = readline("miniOdy$ ");
+		if (!shell.input)
+			break ;
+		if (*shell.input)
+			add_history(shell.input);
+		butter_free(&shell);
 	}
-	// while (1)
-	// {
-	// 	shell.input = readline("miniOdy$ ");
-	// 	if (!shell.input)
-	// 		break ;
-	// 	if (*shell.input)
-	// 		add_history(shell.input);
-	// 	butter_free(&shell);
-	// }
-	free_arr(&shell.envp);
+	free_arr(&shell.envp, NO);
 	return (0);
 }

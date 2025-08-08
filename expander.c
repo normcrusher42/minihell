@@ -23,15 +23,18 @@ char	*env_expander(char *token, char **merge, char **envp, int i)
 		else
 			env_values[1] = ft_strdup(env_values[1]);
 		updated_token = ft_strjoin3(merge[0], env_values[1], merge[1]);
-		return (free_arr(&env_values), updated_token);
+		return (free_arr(&env_values, NO), updated_token);
 	}
-	return (free_arr(&env_values), ft_strdup(token));
+	return (free_arr(&env_values, NO), ft_strdup(token));
 }
 
 static char	*merge_str(char *token, int last_status, int i, char **merge)
 {
 	merge[0] = ft_substr(token, 0, i);
-	merge[1] = ft_itoa(last_status);
+	if (token[i + 1] == '$')
+		merge[1] = ft_substr("miniOdy", 0, 7);
+	else
+		merge[1] = ft_itoa(last_status);
 	merge[2] = ft_substr(token, i + 2, ft_strlen(token));
 	return (ft_strjoin3(merge[0], merge[1], merge[2]));
 }
@@ -43,29 +46,23 @@ char	*dollar_expander(char *token, int last_status, char **envp)
 	char	**merge;
 
 	i = -1;
-	merge = NULL;
+	merge = ft_calloc(4, sizeof(char *));
+	if (!merge)
+		return (NULL);
 	while (token[++i])
 	{
-		if (!merge)
-			merge = ft_calloc(4, sizeof(char *));
-		if (!merge)
-			return (NULL);
-		if (token[i] == '$' && token[i + 1] && token[i + 1] == '?')
+		free_arr(&merge, YES);
+		if (token[i] == '$' && (token[i + 1] == '$' || token[i + 1] == '?'))
 			new_token = merge_str(token, last_status, i, merge);
 		else if (token[i] == '$' && token[i + 1] && token[i + 1] != '$')
 			new_token = env_expander(token, merge, envp, i);
-		// else if (token[i] == '$' && token[i + 1] && token[i + 1] == '$')
-		// 	new_token = 
 		else
 			continue ;
 		free(token);
 		token = new_token;
-		free_arr(&merge);
 		i = -1;
 	}
-	if (merge)
-		free_arr(&merge);
-	return (new_token);
+	return (free_arr(&merge, NO), new_token);
 }
 
 char	**expand_token(t_token *token, char **envp, int last_status)
@@ -84,8 +81,8 @@ char	**expand_token(t_token *token, char **envp, int last_status)
 		else
 			result[i] = ft_strdup(token->tokens[i]);
 		if (!result[i])
-			return (free_arr(&result), NULL);
+			return (free_arr(&result, NO), NULL);
 	}
-	free_arr(&token->tokens);
+	free_arr(&token->tokens, NO);
 	return (result);
 }
