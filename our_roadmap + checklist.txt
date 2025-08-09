@@ -63,7 +63,7 @@ Day 3
         Use one global var for signal status.
 
     Pika: Test env list & prepare base exec structure.
-------------------------------------------- ✅ / ❌ -> half finished
+------------------------------------------- ✅
 ✅ End of Week 1 Deliverable:
 
     Project compiles.

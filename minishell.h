@@ -37,6 +37,29 @@ typedef struct s_shell
 	bool	removed; // boolean to check if the envp removed anything
 }	t_shell;
 
+typedef enum	e_token_type
+{
+	T_WORD,
+	T_PIPE,
+	T_REDIR_IN,
+	T_REDIR_OUT,
+	T_APPEND,
+	T_HEREDOC
+}	t_token_type;
+
+typedef enum e_quote_type
+{
+	QTE_NONE,
+	QTE_SINGLE,
+	QTE_DOUBLE
+}	t_quote_type;
+
+typedef struct s_token
+{
+	char			**tokens; // stores the tokens parsed
+	t_quote_type	**quote; // stores 
+}	t_token;
+
 int		main(int argc, char **argv, char **envp);
 void	add_pwd_var(char **envp);
 char	*get_env_value(char **envp, const char *key);
@@ -51,4 +74,6 @@ void	init_signals(void);
 void	rl_replace_line(const char *text, int clear_undo);
 void	handle_sigint(int sig);
 void	handle_sigquit(int sig);
+t_token	*tokenize(char *input);
+void	free_tokens(t_token *token);
 #endif
