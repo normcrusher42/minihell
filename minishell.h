@@ -30,6 +30,15 @@
 # define YES 1
 # define NO 0
 
+typedef struct s_cmd
+{
+	char	**av;
+	int 	input_fd;
+	int 	output_fd;
+	t_redir	*redirs;
+}	t_cmd;
+
+
 typedef enum e_quote_type
 {
 	QTE_NONE,

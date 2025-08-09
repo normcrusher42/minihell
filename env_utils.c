@@ -17,7 +17,7 @@ void	free_arr(char ***arr, bool reuse)
 	int	i;
 
 	if (!arr || !*arr)
-		return;
+		return ;
 	i = -1;
 	while ((*arr)[++i])
 	{
@@ -30,7 +30,6 @@ void	free_arr(char ***arr, bool reuse)
 		*arr = NULL;
 	}
 }
-
 
 char	*ft_strjoin3(const char *key, const char *input, const char *value)
 {
