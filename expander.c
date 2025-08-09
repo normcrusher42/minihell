@@ -1,4 +1,29 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expander.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/09 15:58:16 by nanasser          #+#    #+#             */
+/*   Updated: 2025/08/09 18:06:03 by nanasser         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
+
+static char	*merge_str(char *token, int last_status, int i, char **merge)
+{
+	merge[0] = ft_substr(token, 0, i);
+	if (token[i + 1] == '$')
+		merge[1] = ft_substr("miniOdy", 0, 7);
+	else if (last_status == -1)
+		merge[1] = ft_strdup("");
+	else
+		merge[1] = ft_itoa(last_status);
+	merge[2] = ft_substr(token, i + 2, ft_strlen(token));
+	return (ft_strjoin3(merge[0], merge[1], merge[2]));
+}
 
 char	*env_expander(char *token, char **merge, char **envp, int i)
 {
@@ -28,15 +53,16 @@ char	*env_expander(char *token, char **merge, char **envp, int i)
 	return (free_arr(&env_values, NO), ft_strdup(token));
 }
 
-static char	*merge_str(char *token, int last_status, int i, char **merge)
+char	*very_specific_expander(char *token, char **merge, char **envp, int i)
 {
-	merge[0] = ft_substr(token, 0, i);
-	if (token[i + 1] == '$')
-		merge[1] = ft_substr("miniOdy", 0, 7);
+	unsigned char next;
+
+	next = (unsigned char)token[i + 1];
+	if (!ft_isalnum(next) && next != '_' && !ft_isspace(next))
+		return (merge_str(token, -1, i, merge)); 
 	else
-		merge[1] = ft_itoa(last_status);
-	merge[2] = ft_substr(token, i + 2, ft_strlen(token));
-	return (ft_strjoin3(merge[0], merge[1], merge[2]));
+		return(env_expander(token, merge, envp, i));
+	return (ft_strdup(token));
 }
 
 char	*dollar_expander(char *token, int last_status, char **envp)
@@ -55,7 +81,7 @@ char	*dollar_expander(char *token, int last_status, char **envp)
 		if (token[i] == '$' && (token[i + 1] == '$' || token[i + 1] == '?'))
 			new_token = merge_str(token, last_status, i, merge);
 		else if (token[i] == '$' && token[i + 1] && token[i + 1] != '$')
-			new_token = env_expander(token, merge, envp, i);
+			new_token = very_specific_expander(token, merge, envp, i);
 		else
 			continue ;
 		free(token);

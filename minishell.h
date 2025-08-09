@@ -62,5 +62,6 @@ void	butter_free(t_shell *shell);
 void	execute_command(char *cmd, char **env);
 char	*ft_strjoin3(const char *key, const char *input, const char *value);
 char	*dollar_expander(char *token, int last_status, char **envp);
+int		ft_isspace(int c);
 
 #endif
