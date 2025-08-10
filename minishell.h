@@ -35,8 +35,8 @@
 typedef struct s_cmd
 {
 	char	**av;
-	int 	input_fd;
-	int 	output_fd;
+	int		input_fd;
+	int		output_fd;
 	// t_redir	*redirs;
 }	t_cmd;
 
