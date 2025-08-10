@@ -37,9 +37,8 @@ typedef struct s_cmd
 	char	**av;
 	int 	input_fd;
 	int 	output_fd;
-	t_redir	*redirs;
+	// t_redir	*redirs;
 }	t_cmd;
-
 
 typedef enum e_quote_type
 {
@@ -72,19 +71,6 @@ typedef enum e_token_type
 	T_APPEND,
 	T_HEREDOC
 }	t_token_type;
-
-typedef enum e_quote_type
-{
-	QTE_NONE,
-	QTE_SINGLE,
-	QTE_DOUBLE
-}	t_quote_type;
-
-typedef struct s_token
-{
-	char			**tokens; // stores the tokens parsed
-	t_quote_type	**quote; // stores 
-}	t_token;
 
 int		main(int argc, char **argv, char **envp);
 char	*get_env_value(char **envp, const char *key);
