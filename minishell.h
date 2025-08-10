@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
+/*   By: team                                           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/30 20:37:55 by nanasser          #+#    #+#             */
-/*   Updated: 2025/07/31 19:30:13 by lsahloul         ###   ########.fr       */
+/*   Created: 2025/07/30 20:37:55 by team              #+#    #+#             */
+/*   Updated: 2025/08/10 21:00:00 by team             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <unistd.h>
 # include <stdbool.h>
 # include <stdio.h>
+# include <errno.h>
 # include "libft/libft.h"
 # include "libft/ft_printf/ft_printf.h"
 # include <sys/types.h>
@@ -25,20 +26,13 @@
 # include <readline/history.h>
 # include <signal.h>
 
-# define RED "\033[0;31m"
-# define BRED "\033[1;31m"
+/* Colors (optional) */
+# define RED   "\033[0;31m"
+# define BRED  "\033[1;31m"
 # define RESET "\033[0m"
 
 # define YES 1
-# define NO 0
-
-typedef struct s_cmd
-{
-	char	**av;
-	int		input_fd;
-	int		output_fd;
-	// t_redir	*redirs;
-}	t_cmd;
+# define NO  0
 
 typedef enum e_quote_type
 {
@@ -49,16 +43,24 @@ typedef enum e_quote_type
 
 typedef struct s_token
 {
-	char			**tokens; // stores the tokens parsed
-	t_quote_type	*quote; // stores 
+	char			**tokens; /* tokens parsed */
+	t_quote_type	*quote;   /* quote type per token */
 }	t_token;
+
+typedef struct s_cmd
+{
+	char	**argv;
+	int		input_fd;
+	int		output_fd;
+	/* t_redir *redirs;  // (for Week 4) */
+}	t_cmd;
 
 typedef struct s_shell
 {
-	char	*input; // ptr to our key inputs for readline
-	char	**envp; // environment variable pointer array
-	int		last_exit_status; // stores exit status of last program
-	bool	removed; // boolean to check if the envp removed anything
+	char	*input;              /* readline buffer */
+	char	**envp;              /* environment array */
+	int		last_exit_status;    /* last pipeline exit status */
+	bool	removed;             /* env unset helper flag */
 	t_token	token;
 }	t_shell;
 
@@ -72,26 +74,37 @@ typedef enum e_token_type
 	T_HEREDOC
 }	t_token_type;
 
-int		main(int argc, char **argv, char **envp);
+/* env_utils.c */
 char	*get_env_value(char **envp, const char *key);
 void	set_env_value(char ***envp, const char *key, const char *value);
 char	**unset_env_value(char **envp, const char *key, t_shell *shell);
 int		ft_arrlen(char **arr);
 void	free_arr(char ***arr, bool reuse);
-void	butter_free(t_shell *shell);
-void	execute_command(char *cmd, char **env);
-char	*ft_strjoin3(const char *key, const char *input, const char *value);
-char	*dollar_expander(char *token, int last_status, char **envp);
+char	*ft_strjoin3(const char *a, const char *b, const char *c);
+
+/* utils.c */
 int		ft_isspace(int c);
 
+/* signals.c */
 void	init_signals(void);
 void	rl_replace_line(const char *text, int clear_undo);
 void	handle_sigint(int sig);
 void	handle_sigquit(int sig);
+
+/* tokenizer.c */
 t_token	*tokenize(char *input);
 void	free_tokens(t_token *token);
-char	*process_token(char *token, t_quote_type qt, char **envp,
-			int last_status);
-void	process_all_tokens(t_token *tok, char **envp, int last_status);
+
+/* expander.c + token_process.c */
 char	**expand_token(t_token *token, char **envp, int last_status);
+char	*dollar_expander(char *token, int last_status, char **envp);
+void	process_all_tokens(t_token *tok, char **envp, int last_status);
+
+/* executor.c (stub for now) */
+void	execute_command(char *cmd, char **env);
+
+/* main.c */
+int		main(int argc, char **argv, char **envp);
+void	butter_free(t_shell *shell);
+
 #endif

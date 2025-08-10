@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
+/*   By: team                                           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/30 19:54:29 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/07/31 21:30:51 by nanasser         ###   ########.fr       */
+/*   Created: 2025/07/30 19:54:29 by team              #+#    #+#             */
+/*   Updated: 2025/08/10 21:00:00 by team             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	butter_free(t_shell *shell)
 	}
 }
 
-char	**dup_env(char **envp)
+static char	**dup_env(char **envp)
 {
 	char	**new_envp;
 	int		count;
@@ -56,6 +56,10 @@ static void	init_shell(char **envp, t_shell	*shell)
 		else
 			shell->envp[0] = NULL;
 	}
+	shell->last_exit_status = 0;
+	shell->removed = false;
+	shell->token.tokens = NULL;
+	shell->token.quote = NULL;
 }
 
 int	main(int ac, char **av, char **envp)
@@ -74,6 +78,23 @@ int	main(int ac, char **av, char **envp)
 			break ;
 		if (*shell.input)
 			add_history(shell.input);
+
+		/* Week 2 flow (stub):
+		 * 1) tokenize -> expand -> remove quotes
+		 * 2) (later) parse into command table
+		 * 3) (later) exec
+		 */
+		/* Example: just tokenize & expand for now */
+		if (*shell.input)
+		{
+			t_token *tok = tokenize(shell.input);
+			if (tok)
+			{
+				process_all_tokens(tok, shell.envp, shell.last_exit_status);
+				/* TODO: parse & exec next weeks */
+				free_tokens(tok);
+			}
+		}
 		butter_free(&shell);
 	}
 	free_arr(&shell.envp, NO);

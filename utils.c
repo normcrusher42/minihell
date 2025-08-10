@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: team                                           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/31 21:25:21 by nanasser          #+#    #+#             */
-/*   Updated: 2025/07/31 21:26:18 by nanasser         ###   ########.fr       */
+/*   Created: 2025/07/31 21:25:21 by team              #+#    #+#             */
+/*   Updated: 2025/08/10 21:00:00 by team             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 
 int	ft_isspace(int c)
 {
-	if ((c >= 9 && c <= 13) || c == ' ')
-		return (1);
-	return (0);
+	return ((c >= 9 && c <= 13) || c == ' ');
 }
 
 int	ft_arrlen(char **arr)
 {
 	int	i;
 
+	if (!arr)
+		return (0);
 	i = 0;
 	while (arr[i])
 		i++;

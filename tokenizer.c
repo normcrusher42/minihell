@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
+/*   By: team                                           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/10 14:47:32 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/08/10 19:24:15 by lsahloul         ###   ########.fr       */
+/*   Created: 2025/08/10 14:47:32 by team              #+#    #+#             */
+/*   Updated: 2025/08/10 21:00:00 by team             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,7 @@ static void	expand_token_arrays(t_token *tok, int count)
 	new_tokens = malloc(sizeof(char *) * (count + 2));
 	new_quotes = malloc(sizeof(t_quote_type) * (count + 2));
 	if (!new_tokens || !new_quotes)
-	{
-		free(new_tokens);
-		free(new_quotes);
-		return ;
-	}
+		return (free(new_tokens), free(new_quotes), (void)0);
 	i = -1;
 	while (++i < count)
 	{
@@ -73,15 +69,18 @@ static void	store_token_struct(t_token *tok, char *value, t_quote_type qt)
 	tok->quote[count + 1] = QTE_NONE;
 }
 
+static void	consume_spaces(char *s, int *i)
+{
+	while (s[*i] == ' ' || s[*i] == '\t')
+		(*i)++;
+}
+
 static void	skip_spaces_operators(char *s, int *i, t_token *tok)
 {
 	int	len;
 
 	if (s[*i] == ' ' || s[*i] == '\t')
-	{
-		(*i)++;
-		return ;
-	}
+		return (consume_spaces(s, i));
 	if (is_operator(s[*i]))
 	{
 		len = 1;
@@ -119,6 +118,8 @@ t_token	*tokenize(char *s)
 	int				start;
 	t_quote_type	qt;
 
+	if (!s)
+		return (NULL);
 	i = 0;
 	tok = malloc(sizeof(t_token));
 	if (!tok)
@@ -141,14 +142,11 @@ void	free_tokens(t_token *tok)
 {
 	int	i;
 
-	i = 0;
 	if (!tok)
 		return ;
+	i = 0;
 	while (tok->tokens && tok->tokens[i])
-	{
-		free(tok->tokens[i]);
-		i++;
-	}
+		free(tok->tokens[i++]);
 	free(tok->tokens);
 	free(tok->quote);
 	free(tok);

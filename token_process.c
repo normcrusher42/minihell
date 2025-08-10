@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_process.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
+/*   By: team                                           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/10 18:46:13 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/08/10 19:36:47 by lsahloul         ###   ########.fr       */
+/*   Created: 2025/08/10 18:46:13 by team              #+#    #+#             */
+/*   Updated: 2025/08/10 21:00:00 by team             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,10 @@ void	process_all_tokens(t_token *tok, char **envp, int last_status)
 	int		i;
 	char	*cleaned;
 
-	i = 0;
+	if (!tok)
+		return ;
 	tok->tokens = expand_token(tok, envp, last_status);
+	i = 0;
 	while (tok->tokens && tok->tokens[i])
 	{
 		cleaned = remove_quotes(tok->tokens[i]);

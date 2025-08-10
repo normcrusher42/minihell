@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: team                                           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/31 20:07:59 by nanasser          #+#    #+#             */
-/*   Updated: 2025/07/31 21:35:27 by nanasser         ###   ########.fr       */
+/*   Created: 2025/07/31 20:07:59 by team              #+#    #+#             */
+/*   Updated: 2025/08/10 21:00:00 by team             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,15 @@ void	free_arr(char ***arr, bool reuse)
 	}
 }
 
-char	*ft_strjoin3(const char *key, const char *input, const char *value)
+char	*ft_strjoin3(const char *a, const char *b, const char *c)
 {
-	char	*temp;
-	char	*new_str;
+	char	*tmp;
+	char	*res;
 
-	temp = ft_strjoin(key, input);
-	new_str = ft_strjoin(temp, value);
-	free(temp);
-	return (new_str);
+	tmp = ft_strjoin(a, b);
+	res = ft_strjoin(tmp, c);
+	free(tmp);
+	return (res);
 }
 
 char	*get_env_value(char **envp, const char *key)
@@ -47,6 +47,8 @@ char	*get_env_value(char **envp, const char *key)
 	int	i;
 	int	len;
 
+	if (!envp || !key)
+		return (NULL);
 	i = -1;
 	len = ft_strlen(key);
 	while (envp[++i])
@@ -61,6 +63,8 @@ void	set_env_value(char ***envp, const char *key, const char *value)
 	int		len;
 	char	**new_envp;
 
+	if (!envp || !*envp || !key || !value)
+		return ;
 	i = -1;
 	len = ft_strlen(key);
 	while ((*envp)[++i])
@@ -91,6 +95,8 @@ char	**unset_env_value(char **envp, const char *key, t_shell *shell)
 	int		len;
 	char	**new_envp;
 
+	if (!envp || !key || !shell)
+		return (envp);
 	len = ft_strlen(key);
 	i = ft_arrlen(envp);
 	new_envp = malloc(sizeof(char *) * i);
@@ -110,5 +116,7 @@ char	**unset_env_value(char **envp, const char *key, t_shell *shell)
 	}
 	if (!shell->removed)
 		return (free(new_envp), envp);
-	return (new_envp[j] = NULL, free(envp), new_envp);
+	new_envp[j] = NULL;
+	free(envp);
+	return (new_envp);
 }
