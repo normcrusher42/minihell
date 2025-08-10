@@ -84,7 +84,7 @@ Day 1
     Pika: Add $VAR and $? expansion support.
 
         Replace tokens containing $ with their env values.
-
+------------------------------------------- ✅ / ❌ -> half finished
 Day 2
 
     Beans: Quote handling:

@@ -7,14 +7,14 @@ NAME = minishell
 LIBFT = $(LIBFT_PATH)libft.a
 
 # Program sauce files
-SRC = ./main.c env_utils.c utils.c executor.c getcwd.c signals.c tokenizer.c
+SRC = ./main.c env_utils.c utils.c executor.c expander.c signals.c tokenizer.c
 
 # Object files
 OBJ = $(SRC:%.c=$(OBJ_PATH)%.o)
 
 # Compiler n flags
 CC		=		cc
-CFLAGS	= -Wall -Werror -Wextra -I.
+CFLAGS	= -Wall -Werror -Wextra -g -I.
 LDFLAGS = -lreadline -L/opt/vagrant/embedded/lib/ -Iopt/vagrant/embedded/include/readline
 
 # Color codes ✨
@@ -56,4 +56,7 @@ fclean: clean
 
 re: fclean $(NAME)
 
-.PHONY: all clean fclean re
+leak:
+	valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all --track-origins=yes  --trace-children=yes --track-fds=yes ./minishell
+
+.PHONY: all clean fclean re leak

@@ -1,0 +1,3 @@
+what the hell a shell is
+what r signals
+what's a PID (process ID)

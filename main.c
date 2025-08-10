@@ -42,10 +42,7 @@ static void	init_shell(char **envp, t_shell	*shell)
 	char	cwd[1024];
 
 	if (envp && envp[0])
-	{
 		shell->envp = dup_env(envp);
-		add_pwd_var(envp);
-	}
 	else
 	{
 		shell->envp = malloc(sizeof(char *) * 2);
@@ -72,13 +69,13 @@ int	main(int ac, char **av, char **envp)
 	init_signals();
 	while (1)
 	{
-		shell.input = readline("minishell$ ");
+		shell.input = readline("miniOdy$ ");
 		if (!shell.input)
 			break ;
 		if (*shell.input)
 			add_history(shell.input);
 		butter_free(&shell);
 	}
-	free_env(&shell.envp);
+	free_arr(&shell.envp, NO);
 	return (0);
 }
