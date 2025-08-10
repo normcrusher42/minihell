@@ -1,0 +1,214 @@
+📅 Updated Roadmap (July 29 – Aug 28)
+Workdays: ~3–4 days/week (~12–16 total)
+Theme:
+
+Beans → Parsing, Signals, Pipes
+
+Pika → Execution, Builtins, Redirections
+
+Both → Testing, Integration, Debugging
+
+✅ Week 1 (Jul 29 – Aug 4) — Project Skeleton + Core Loop
+Status: Completed in your current repo
+
+Both
+
+Git repo initialized
+
+File structure set up
+
+Makefile with all, clean, fclean, re
+
+Libft integrated
+
+REPL loop with readline + history
+
+Signal handling (Ctrl-C, Ctrl-D, Ctrl-)
+
+Environment array duplication
+
+✅ Week 2 (Aug 5 – Aug 11) — Tokenizing, Quotes, Expansion
+Status: In progress — tokenizer, expander mostly working; needs parser
+
+Day 1–2 (Aug 5–6)
+Beans
+
+Tokenizer for words + operators (|, <, >, <<, >>)
+
+Quote type tracking (none, single, double)
+
+Space skipping improvements
+
+Pika
+
+$VAR, $?, $$ expansion logic
+
+Skip expansion inside single quotes
+
+Strip only outer quotes after expansion
+
+Day 3–4 (Aug 7–8)
+Beans
+
+Token classification pass → Assign T_WORD, T_PIPE, T_REDIR_IN, etc.
+
+Parser skeleton:
+
+Group tokens into t_cmd (argv + redirs list)
+
+Detect pipes and redirs
+
+Syntax validation: | not first/last, no ||, redir followed by filename
+
+Pika
+
+Finalize t_cmd struct (rename av → argv)
+
+Define t_redir struct for I/O
+
+Implement find_executable() using $PATH
+
+Prepare exec_line() signature (exec array of t_cmd)
+
+Integration checkpoint:
+
+Manual tests:
+
+echo hello → argv parsing correct
+
+ls -l | grep txt → two t_cmd in array
+
+echo > file → redir node created
+
+📅 Week 3 (Aug 12 – Aug 18) — Execution Core + Builtins
+Day 1 (Aug 12)
+Pika
+
+Implement single command exec flow:
+
+If builtin → run in-process (cd, export, unset, exit)
+
+Else PATH search → fork → execve
+
+Proper exit codes: 0 OK, 126 permission, 127 not found
+
+Builtins: echo, pwd, env (safe to run in child)
+
+Beans
+
+Adjust parser to provide envp copy to exec layer
+
+Handle last_exit_status updates from exec results
+
+Day 2 (Aug 13)
+Pika
+
+Implement parent-only builtins: cd, export, unset, exit
+
+Connect builtin detection table to exec dispatcher
+
+Beans
+
+Validate parser output for builtins with no args
+
+Day 3–4 (Aug 14–15)
+Both
+
+Integration testing:
+
+cd ..
+
+pwd
+
+env
+
+export VAR=123 → check in env
+
+$VAR expansion works in next command
+
+Add errors: command not found, permission denied
+
+Memory cleanup for t_cmd arrays
+
+📅 Week 4 (Aug 19 – Aug 24) — Pipes + Redirections + Heredoc
+Day 1 (Aug 19)
+Beans
+
+Implement pipe setup (pipe(), dup2()) for two commands
+
+Pika
+
+Implement > and >> redirections in exec phase
+
+Day 2 (Aug 20)
+Beans
+
+Support multiple pipes in parser → N t_cmd in a chain
+
+Pika
+
+Implement < (input redir) and << (heredoc)
+
+Heredoc reads until delimiter, doesn’t add to history
+
+Day 3 (Aug 21)
+Both
+
+Integrate pipes + redirections:
+
+Redirs apply before exec in each process
+
+Mixed case: cat file | grep text > out.txt works
+
+Day 4 (Aug 22)
+Both
+
+Stress test:
+
+Chain pipes + redirs
+
+Signals during execution
+
+Unclosed quotes → parser error
+
+📅 Week 5 (Aug 25 – Aug 28) — Final Integration + Defense Prep
+Day 1 (Aug 25)
+Both
+
+Merge final branches → master
+
+Remove debug prints
+
+Normalize error messages
+
+Day 2 (Aug 26)
+Both
+
+Valgrind session: fix leaks (except readline)
+
+Test invalid syntax, mixed quotes, $?, unset vars
+
+Day 3 (Aug 27)
+Both
+
+Defense checklist:
+
+Builtins, pipes, redirs, heredoc, signals, env
+
+Test cases prepared for peer eval
+
+Day 4 (Aug 28)
+Both
+
+Push final version to repo
+
+Run last compile with -Wall -Wextra -Werror
+
+Dry-run defense Q&A
+
+🚦 Key Rules
+Interface freeze: agree on parser.h and exec.h early so work stays parallel.
+
+Daily sync: Beans & Pika review parser/exec contracts before EOD.
+
+Testing habit: after each new feature, add it to a tests/ script for quick re-runs.
