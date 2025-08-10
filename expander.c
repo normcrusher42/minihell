@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: team                                           +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/09 15:58:16 by team              #+#    #+#             */
-/*   Updated: 2025/08/10 21:00:00 by team             ###   ########.fr       */
+/*   Created: 2025/08/09 15:58:16 by nanasser          #+#    #+#             */
+/*   Updated: 2025/08/10 18:54:55 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,105 +14,90 @@
 
 static char	*merge_str(char *token, int last_status, int i, char **merge)
 {
-	char	*pid_str;
-
 	merge[0] = ft_substr(token, 0, i);
 	if (token[i + 1] == '$')
-	{
-		pid_str = ft_itoa(getpid());
-		merge[1] = pid_str;
-	}
+		merge[1] = ft_substr("miniOdy", 0, 8);
 	else if (last_status == -1)
 		merge[1] = ft_strdup("");
 	else
 		merge[1] = ft_itoa(last_status);
-	merge[2] = ft_substr(token, i + 2, ft_strlen(token) - (i + 2));
+	merge[2] = ft_substr(token, i + 2, ft_strlen(token));
 	return (ft_strjoin3(merge[0], merge[1], merge[2]));
 }
 
-static char	*env_expander(char *token, char **merge, char **envp, int i)
+char	*env_expander(char *token, char **merge, char **envp, int i)
 {
-	char		*updated;
-	char		**env_vals;
-	int			end;
+	char		*updated_token;
+	char		**env_values;
+	int			strt;
 
-	env_vals = ft_calloc(3, sizeof(char *));
-	if (!env_vals)
+	env_values = ft_calloc(3, sizeof(char *));
+	if (!env_values)
 		return (NULL);
 	if (token[i] == '$' && (ft_isalnum(token[i + 1]) || token[i + 1] == '_'))
 	{
-		end = i + 1;
-		while (token[end] && (ft_isalnum(token[end]) || token[end] == '_'))
-			end++;
+		strt = i + 1;
+		while (token[strt] && (ft_isalnum(token[strt]) || token[strt] == '_'))
+			strt++;
 		merge[0] = ft_substr(token, 0, i);
-		env_vals[0] = ft_substr(token, i + 1, end - (i + 1));
-		merge[1] = ft_substr(token, end, ft_strlen(token) - end);
-		env_vals[1] = get_env_value(envp, env_vals[0]);
-		if (!env_vals[1])
-			env_vals[1] = ft_strdup("");
+		env_values[0] = ft_substr(token, i + 1, strt - (i + 1));
+		merge[1] = ft_substr(token, strt, ft_strlen(token) - strt);
+		env_values[1] = get_env_value(envp, env_values[0]);
+		if (!env_values[1])
+			env_values[1] = ft_strdup("");
 		else
-			env_vals[1] = ft_strdup(env_vals[1]);
-		updated = ft_strjoin3(merge[0], env_vals[1], merge[1]);
-		return (free_arr(&env_vals, NO), updated);
+			env_values[1] = ft_strdup(env_values[1]);
+		updated_token = ft_strjoin3(merge[0], env_values[1], merge[1]);
+		return (free_arr(&env_values, NO), updated_token);
 	}
-	return (free_arr(&env_vals, NO), ft_strdup(token));
+	return (free_arr(&env_values, NO), ft_strdup(token));
 }
 
-static char	*expand_single_dollar(char *token, char **merge, char **envp, int i)
+char	*very_specific_expander(char *token, char **merge, char **envp, int i)
 {
-	unsigned char next;
+	unsigned char	next;
 
 	next = (unsigned char)token[i + 1];
 	if (!ft_isalnum(next) && next != '_' && !ft_isspace(next))
-		return (merge_str(token, -1, i, merge)); /* $<symbol> → remove both */
+		return (merge_str(token, -1, i, merge));
 	return (env_expander(token, merge, envp, i));
 }
 
-/* Work on a local copy: no mutation of the caller's string, no double-free. */
 char	*dollar_expander(char *token, int last_status, char **envp)
 {
 	int		i;
-	char	*work;
-	char	*updated;
+	char	*new_token;
 	char	**merge;
 
-	if (!token)
-		return (NULL);
-	work = ft_strdup(token);
-	merge = ft_calloc(4, sizeof(char *));
-	if (!work || !merge)
-		return (free(work), free(merge), NULL);
 	i = -1;
-	while (work[++i])
+	merge = ft_calloc(4, sizeof(char *));
+	if (!merge)
+		return (NULL);
+	while (token[++i])
 	{
 		free_arr(&merge, YES);
-		if (work[i] == '$' && (work[i + 1] == '$' || work[i + 1] == '?'))
-			updated = merge_str(work, last_status, i, merge);
-		else if (work[i] == '$' && work[i + 1] && work[i + 1] != '$')
-			updated = expand_single_dollar(work, merge, envp, i);
+		if (token[i] == '$' && (token[i + 1] == '$' || token[i + 1] == '?'))
+			new_token = merge_str(token, last_status, i, merge);
+		else if (token[i] == '$' && token[i + 1] && token[i + 1] != '$')
+			new_token = very_specific_expander(token, merge, envp, i);
 		else
 			continue ;
-		free(work);
-		work = updated;
-		i = -1; /* restart to catch further $ after structural change */
+		free(token);
+		token = new_token;
+		i = -1;
 	}
-	free_arr(&merge, NO);
-	return (work);
+	return (free_arr(&merge, NO), token);
 }
 
 char	**expand_token(t_token *token, char **envp, int last_status)
 {
 	int		i;
-	int		n;
 	char	**result;
 
-	if (!token || !token->tokens)
-		return (NULL);
-	n = ft_arrlen(token->tokens);
-	result = malloc(sizeof(char *) * (n + 1));
+	i = -1;
+	result = malloc(sizeof(char *) * (ft_arrlen(token->tokens) + 1));
 	if (!result)
 		return (NULL);
-	i = -1;
 	while (token->tokens[++i])
 	{
 		if (ft_strchr(token->tokens[i], '$') && token->quote[i] != QTE_SINGLE)
@@ -120,9 +105,8 @@ char	**expand_token(t_token *token, char **envp, int last_status)
 		else
 			result[i] = ft_strdup(token->tokens[i]);
 		if (!result[i])
-			return (free_arr(&result, NO), NULL);
+			return (free_arr(&result, NO), free_arr(&token->tokens, NO), NULL);
 	}
 	result[i] = NULL;
-	free_arr(&token->tokens, NO);
-	return (result);
+	return (free_arr(&token->tokens, NO), result);
 }

@@ -56,10 +56,6 @@ static void	init_shell(char **envp, t_shell	*shell)
 		else
 			shell->envp[0] = NULL;
 	}
-	shell->last_exit_status = 0;
-	shell->removed = false;
-	shell->token.tokens = NULL;
-	shell->token.quote = NULL;
 }
 
 int	main(int ac, char **av, char **envp)
