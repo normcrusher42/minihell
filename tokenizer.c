@@ -6,7 +6,7 @@
 /*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 14:47:32 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/08/10 14:47:34 by lsahloul         ###   ########.fr       */
+/*   Updated: 2025/08/10 15:31:26 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ static int	skip_quotes(char *s, char quote)
 static void	expand_token_arrays(t_token *tok, int count)
 {
 	char			**new_tokens;
-	t_quote_type	**new_quotes;
+	t_quote_type	*new_quotes;
 	int				i;
 
 	new_tokens = malloc(sizeof(char *) * (count + 2));
-	new_quotes = malloc(sizeof(t_quote_type *) * (count + 2));
+	new_quotes = malloc(sizeof(t_quote_type) * (count + 2));
 	if (!new_tokens || !new_quotes)
 	{
 		free(new_tokens);
@@ -50,7 +50,7 @@ static void	expand_token_arrays(t_token *tok, int count)
 		new_quotes[i] = tok->quote[i];
 	}
 	new_tokens[count] = NULL;
-	new_quotes[count] = NULL;
+	new_quotes[count] = QTE_NONE;
 	free(tok->tokens);
 	free(tok->quote);
 	tok->tokens = new_tokens;
@@ -68,11 +68,9 @@ static void	store_token_struct(t_token *tok, char *value, t_quote_type qt)
 	if (!tok->tokens || !tok->quote)
 		return ;
 	tok->tokens[count] = value;
-	tok->quote[count] = malloc(sizeof(t_quote_type));
-	if (tok->quote[count])
-		*(tok->quote[count]) = qt;
+	tok->quote[count] = qt;
 	tok->tokens[count + 1] = NULL;
-	tok->quote[count + 1] = NULL;
+	tok->quote[count + 1] = QTE_NONE;
 }
 
 static void	skip_spaces_operators(char *s, int *i, t_token *tok)
@@ -149,7 +147,6 @@ void	free_tokens(t_token *tok)
 	while (tok->tokens && tok->tokens[i])
 	{
 		free(tok->tokens[i]);
-		free(tok->quote[i]);
 		i++;
 	}
 	free(tok->tokens);
