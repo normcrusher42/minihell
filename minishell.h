@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 20:37:55 by nanasser          #+#    #+#             */
-/*   Updated: 2025/07/31 21:31:35 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/07/31 19:30:13 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdbool.h>
+# include <stdio.h>
 # include "libft/libft.h"
 # include "libft/ft_printf/ft_printf.h"
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <signal.h>
 
 # define RED "\033[0;31m"
 # define BRED "\033[1;31m"
@@ -35,6 +37,29 @@ typedef struct s_shell
 	bool	removed; // boolean to check if the envp removed anything
 }	t_shell;
 
+typedef enum e_token_type
+{
+	T_WORD,
+	T_PIPE,
+	T_REDIR_IN,
+	T_REDIR_OUT,
+	T_APPEND,
+	T_HEREDOC
+}	t_token_type;
+
+typedef enum e_quote_type
+{
+	QTE_NONE,
+	QTE_SINGLE,
+	QTE_DOUBLE
+}	t_quote_type;
+
+typedef struct s_token
+{
+	char			**tokens; // stores the tokens parsed
+	t_quote_type	**quote; // stores 
+}	t_token;
+
 int		main(int argc, char **argv, char **envp);
 void	add_pwd_var(char **envp);
 char	*get_env_value(char **envp, const char *key);
@@ -45,4 +70,10 @@ void	free_env(char ***envp);
 void	butter_free(t_shell *shell);
 void	execute_command(char *cmd, char **env);
 
+void	init_signals(void);
+void	rl_replace_line(const char *text, int clear_undo);
+void	handle_sigint(int sig);
+void	handle_sigquit(int sig);
+t_token	*tokenize(char *input);
+void	free_tokens(t_token *token);
 #endif

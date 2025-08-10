@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 19:54:29 by lsahloul          #+#    #+#             */
 /*   Updated: 2025/07/31 21:30:51 by nanasser         ###   ########.fr       */
@@ -69,8 +69,7 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	shell = (t_shell){0};
 	init_shell(envp, &shell);
-	printf("Running /bin/ls using execve...\n");
-	execute_command("/bin/ls", shell.envp);
+	init_signals();
 	while (1)
 	{
 		shell.input = readline("minishell$ ");
