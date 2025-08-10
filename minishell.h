@@ -37,7 +37,7 @@ typedef struct s_shell
 	bool	removed; // boolean to check if the envp removed anything
 }	t_shell;
 
-typedef enum	e_token_type
+typedef enum e_token_type
 {
 	T_WORD,
 	T_PIPE,

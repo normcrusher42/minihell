@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/06 20:57:08 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/08/09 19:23:01 by lsahloul         ###   ########.fr       */
+/*   Created: 2025/08/10 14:47:32 by lsahloul          #+#    #+#             */
+/*   Updated: 2025/08/10 14:47:34 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,7 @@ static void	expand_token_arrays(t_token *tok, int count)
 	tok->quote = new_quotes;
 }
 
-static void	store_token(t_token *tok, char *src,
-	int start, int len, t_quote_type qt)
+static void	store_token_struct(t_token *tok, char *value, t_quote_type qt)
 {
 	int	count;
 
@@ -68,7 +67,7 @@ static void	store_token(t_token *tok, char *src,
 	expand_token_arrays(tok, count);
 	if (!tok->tokens || !tok->quote)
 		return ;
-	tok->tokens[count] = ft_substr(src, start, len);
+	tok->tokens[count] = value;
 	tok->quote[count] = malloc(sizeof(t_quote_type));
 	if (tok->quote[count])
 		*(tok->quote[count]) = qt;
@@ -90,8 +89,28 @@ static void	skip_spaces_operators(char *s, int *i, t_token *tok)
 		len = 1;
 		if (s[*i] == s[*i + 1] && (s[*i] == '<' || s[*i] == '>'))
 			len = 2;
-		store_token(tok, s, *i, len, QTE_NONE);
+		store_token_struct(tok, ft_substr(s, *i, len), QTE_NONE);
 		*i += len;
+	}
+}
+
+static void	read_word(char *s, int *i, t_quote_type *qt)
+{
+	*qt = QTE_NONE;
+	while (s[*i] && !is_operator(s[*i]) && s[*i] != ' ' && s[*i] != '\t')
+	{
+		if (s[*i] == '\'')
+		{
+			*qt = QTE_SINGLE;
+			*i += skip_quotes(&s[*i], s[*i]);
+		}
+		else if (s[*i] == '"')
+		{
+			*qt = QTE_DOUBLE;
+			*i += skip_quotes(&s[*i], s[*i]);
+		}
+		else
+			(*i)++;
 	}
 }
 
@@ -114,18 +133,8 @@ t_token	*tokenize(char *s)
 		if (!s[i] || is_operator(s[i]) || s[i] == ' ' || s[i] == '\t')
 			continue ;
 		start = i;
-		qt = QTE_NONE;
-		while (s[i] && !is_operator(s[i]) && s[i] != ' ' && s[i] != '\t')
-		{
-			if (s[i] == '\'' || s[i] == '"')
-			{
-				qt = (s[i] == '\'') ? QTE_SINGLE : QTE_DOUBLE;
-				i += skip_quotes(&s[i], s[i]);
-			}
-			else
-				i++;
-		}
-		store_token(tok, s, start, i - start, qt);
+		read_word(s, &i, &qt);
+		store_token_struct(tok, ft_substr(s, start, i - start), qt);
 	}
 	return (tok);
 }
