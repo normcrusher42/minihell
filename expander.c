@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:58:16 by nanasser          #+#    #+#             */
-/*   Updated: 2025/08/09 18:06:03 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/08/10 19:29:31 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,8 @@ char	*dollar_expander(char *token, int last_status, char **envp)
 			new_token = very_specific_expander(token, merge, envp, i);
 		else
 			continue ;
-		free(token);
+
+	// {	free(token);}
 		token = new_token;
 		i = -1;
 	}

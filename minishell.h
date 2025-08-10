@@ -90,4 +90,8 @@ void	handle_sigint(int sig);
 void	handle_sigquit(int sig);
 t_token	*tokenize(char *input);
 void	free_tokens(t_token *token);
+char	*process_token(char *token, t_quote_type qt, char **envp,
+			int last_status);
+void	process_all_tokens(t_token *tok, char **envp, int last_status);
+char	**expand_token(t_token *token, char **envp, int last_status);
 #endif
