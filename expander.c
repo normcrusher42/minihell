@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:58:16 by nanasser          #+#    #+#             */
-/*   Updated: 2025/08/09 18:06:03 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/08/10 18:54:55 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ char	**expand_token(t_token *token, char **envp, int last_status)
 		else
 			result[i] = ft_strdup(token->tokens[i]);
 		if (!result[i])
-			return (free_arr(&result, NO), NULL);
+			return (free_arr(&result, NO), free_arr(&token->tokens, NO), NULL);
 	}
 	free_arr(&token->tokens, NO);
 	return (result);

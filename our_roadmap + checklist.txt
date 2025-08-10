@@ -76,7 +76,7 @@ Goal: Tokenizer, env expansion, and command structure.
 
 Workdays: 4 days
 Day 1
-
+-------------------------------------------
     Beans: Lexer (tokenize input).
 
         Handle spaces, quotes, operators (|, <, >, <<, >>).
@@ -101,7 +101,7 @@ Day 2
         int output_fd;
         t_redir *redirs;
     } t_cmd;
-
+------------------------------------------- 🦉 -> in progress
 Day 3
 
     Build parser:
