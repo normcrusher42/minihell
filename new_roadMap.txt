@@ -1,0 +1,373 @@
+---
+
+## 📅 Week A — 🧩 Parser → Command Struct
+
+---
+
+### 🗓 Day 1
+
+🫘 **Beans — Build command model**
+
+* 🏗 Create files: `parsing/cmd_table.c`, `parsing/cmd_table.h`.
+* ✏️ Define:
+
+  * `typedef enum e_redir { R_IN, R_OUT, R_APP, R_HEREDOC } t_redirtype;`
+  * `typedef struct s_redir { t_redirtype type; char *arg; } t_redir;`
+  * Extend `t_cmd` → `char **argv; int argc; t_redir *redirs; int redir_count;`
+* 🔎 Scan token stream:
+
+  * Split on `|` into command segments.
+  * Within a segment, push words → `argv`, operators+targets → `redirs`.
+  * Detect immediate syntax errors: pipe at start/end, `| |`, operator at end, redir without target.
+* 🧼 Implement `free_cmd_table(t_cmd *cmds, int n)` to free argv, redirs, and array.
+
+**✅ Acceptance**
+
+* Given tokens of `echo hi | wc -c`, you produce 2 `t_cmd` with correct `argv[]`.
+* `cat >` yields error message + status 258 (syntax).
+
+**🧪 Quick test**
+
+* Manual: tokenize -> parse -> print structure (make a debug printer).
+
+🐤 **Pika — Executor interface**
+
+* 🛠 Create `exec/exec.h`, `exec/driver.c`.
+* Define `int execute_job(t_cmd *cmds, int n, t_shell *sh);` (no body yet).
+* Decide calling contract: executor owns no memory; it only reads and forks.
+
+**✅ Acceptance**
+
+* Main can call `execute_job()` with mocked commands without crashing.
+
+---
+
+### 🗓 Day 2
+
+🫘 **Beans — Redirections in parser**
+
+* 🧭 While parsing, support `<<`, `<`, `>`, `>>` (store `arg` as raw token, not opened yet).
+* 🧷 Preserve original quote type flags for heredoc delimiter (quoted vs unquoted).
+* 🧪 Validate “target must be a WORD” (not operator).
+
+**✅ Acceptance**
+
+* `cat < in > out >> log` becomes redirs in order: IN\:in, OUT\:out, APP\:log.
+
+🐤 **Pika — Builtin detection**
+
+* 🧩 Add `builtins/builtins.h/.c`:
+
+  * `int is_parent_builtin(const char*)` → `cd`, `export`, `unset`, `exit`
+  * `int is_child_builtin(const char*)` → `echo`, `pwd`, `env`
+  * `int dispatch_parent_builtin(t_cmd*, t_shell*)`
+  * `int dispatch_child_builtin(t_cmd*, t_shell*)`
+* Wire into `execute_job` (stub): if `n==1 && parent-builtin` → call parent path, else fall through.
+
+**✅ Acceptance**
+
+* For `cd /`, job runs parent path and returns an int status.
+
+---
+
+### 🗓 Day 3
+
+🫘 **Beans — Pipeline layout**
+
+* 🔗 Confirm parse splits N commands by `|` and preserves order.
+* 📦 Add `print_cmd_table()` to dump `argv` and `redirs` for debugging (guarded by `#ifdef DEBUG`).
+
+**✅ Acceptance**
+
+* Complex: `cat < in | grep a | wc -l >> out` prints 3 commands with accurate redirs.
+
+🐤 **Pika — Exec loop skeleton**
+
+* 🔁 In `execute_job()`:
+
+  * For now, **no pipes**: if `n==1`, route to `run_single_cmd()` that calls builtins/exec (to be implemented later).
+  * Prepare placeholders for future: `run_pipeline()` signature, arrays for PIDs.
+
+**✅ Acceptance**
+
+* Single command path compiles and returns a status without FD work.
+
+---
+
+### 🗓 Day 4 (Integration)
+
+🤝 **Both**
+
+* 🔌 Main flow: tokenize → parse → (keep expansion placement TBD) → `execute_job()`.
+* 🧱 On parse error: print message, set `sh->last_exit_status=258`, skip exec.
+
+**✅ Acceptance**
+
+* `| ls` yields parse error 258 and loop continues gracefully.
+* Memory: `free_cmd_table()` called after each iteration.
+
+---
+
+## 📅 Week B — ✨ Expander Placement & Quote Removal
+
+---
+
+### 🗓 Day 5
+
+🫘 **Beans — Expansion stage (placement)**
+
+* 🪄 Insert “expand pass” **after parsing** and **before** execution:
+
+  * For each command’s `argv[i]`: expand `$VAR` and `$?` unless token came from single quotes.
+  * For redir **targets**: expand if appropriate; **heredoc delimiter** rules:
+
+    * Quoted delimiter → **no** expansion inside heredoc.
+    * Unquoted delimiter → expansion occurs in heredoc lines (implement next week).
+* Keep your existing expand helpers; just apply them at node level.
+
+**✅ Acceptance**
+
+* `echo "$USER"` expands; `echo '$USER'` does NOT.
+
+🐤 **Pika — Quote stripping**
+
+* ✂ After expansion, strip outer matching quotes from each `argv[i]` and redir **targets** (not heredoc content).
+* Ensure empty result becomes `""` argument (not NULL).
+
+**✅ Acceptance**
+
+* `echo "a b"` results in `argv[1]="a b"` (one argument).
+
+---
+
+### 🗓 Day 6
+
+🫘 **Beans — Edge-expand tests**
+
+* 🧪 Cases:
+
+  * `echo "$USER-$?"`
+  * `grep "$HOME/Desktop"`
+  * `echo '$HOME-$?'`
+* Verify `argv` counts are correct after stripping quotes.
+
+🐤 **Pika — Executor validation**
+
+* 🧪 Feed the executor with expanded/stripped nodes and confirm it sees the expected `argv[]`.
+
+**✅ Acceptance**
+
+* Internal trace shows `argv` normalized, no stray quotes, no empty `argv[0]`.
+
+---
+
+### 🗓 Day 7–8 (Integration & hardening)
+
+🤝 **Both**
+
+* 🚫 Unclosed quotes: tokenizer should have flagged earlier; add guard to refuse execution with 258 if any token indicates “unclosed”.
+* 🧼 Confirm freeing of any temporary expanded strings.
+
+**✅ Acceptance**
+
+* Fuzz inputs with weird quotes; shell never segfaults, always returns to prompt.
+
+---
+
+## 📅 Week C — ⚙️ Executor: Builtins & External Exec
+
+---
+
+### 🗓 Day 9
+
+🐤 **Pika — External execution**
+
+* 🚀 Implement `run_single_cmd()`:
+
+  * If not builtin: `find_command_path()`:
+
+    * If `cmd` has `/`, try exec directly; else iterate `$PATH` (`:` split).
+    * `ENOENT` → 127 “command not found”; `EACCES` → 126.
+  * `fork()` and `execve()`. Parent `waitpid`, propagate `WEXITSTATUS` or `128+sig`.
+* 🔧 In child: restore default SIGINT/SIGQUIT; in parent keep readline behavior.
+
+**✅ Acceptance**
+
+* `foo` → 127; `/bin/ls` → 0; `/bin/ls nofile` → non-zero.
+
+🫘 **Beans — Parser validation for argv\[0]**
+
+* 🧷 Ensure that empty command (e.g., `"" | wc`) is still a command with empty `argv[0]` → will fail in exec with 127, not crash parser.
+
+---
+
+### 🗓 Day 10
+
+🐤 **Pika — Builtins (all 7)**
+
+* `echo [-n*]`, `pwd`, `env` (ignore args), `cd` (update `PWD`/`OLDPWD`), `export`, `unset`, `exit`.
+* Parent/child split:
+
+  * Parent-only when `n==1` & no pipeline (so `cd` persists).
+  * Otherwise, child-builtins run in child.
+* Return proper statuses:
+
+  * `exit` with non-numeric → print error, exit 2.
+  * `exit` with too many args → print error, **don’t** exit, return 1.
+
+**✅ Acceptance**
+
+* `cd /; pwd` shows new path.
+* `exit 42` exits shell with code 42.
+
+🫘 **Beans — Parser sanity**
+
+* 📌 Ensure `export KEY=VAL` is parsed as one arg; forbid `=` operator recognition here.
+
+---
+
+### 🗓 Day 11–12 (Integration)
+
+🤝 **Both**
+
+* 🧪 Standalone redirs (no pipes yet):
+
+  * `cat < in`
+  * `echo hi > out`
+  * `echo hi >> out`
+* ✅ Exit codes bubble into `sh->last_exit_status`.
+
+---
+
+## 📅 Week D — 🔗 Pipes + 📂 Redirections
+
+---
+
+### 🗓 Day 13
+
+🫘 **Beans — Pipeline runner**
+
+* 🔄 Implement `run_pipeline(t_cmd *cmds, int n, t_shell *sh)`:
+
+  * Loop commands, `pipe()` for i < n-1.
+  * Child i: set `dup2(prev_read, 0)` when i>0; set `dup2(pipe_write, 1)` when i\<n-1; close unused FDs.
+  * Parent: close write asap; carry read to next; collect PIDs.
+
+**✅ Acceptance**
+
+* `echo hi | wc -c` prints `3\n` (or `2\n` depending on echo behavior).
+
+🐤 **Pika — Redirection applier**
+
+* 📂 `apply_redirections(t_cmd*, int *errcode)` called **in child before exec**:
+
+  * `<` O\_RDONLY; `>` O\_WRONLY|O\_CREAT|O\_TRUNC 0644; `>>` O\_WRONLY|O\_CREAT|O\_APPEND 0644.
+  * On open error: print error, set `*errcode`, `_exit(1 or 126)` as appropriate.
+
+**✅ Acceptance**
+
+* `cat < nope` prints “No such file” and child exits 1; pipeline continues appropriately.
+
+---
+
+### 🗓 Day 14 (Integration)
+
+🤝 **Both**
+
+* 🔀 Combine: pipelines + redirs + builtins.
+* 📏 Parent-builtin rule: only when single cmd & no pipes. Otherwise, run in child (state changes like `cd` won’t persist—same as bash pipeline behavior).
+
+**✅ Acceptance**
+
+* `cd / | pwd` prints `/` (in child) but parent `pwd` unchanged after.
+
+---
+
+### 🗓 Day 15–16 (Matrix testing)
+
+🧪 **Both**
+
+* `cat < in | grep a > out`
+* `echo a >> out && echo b >> out` *(run as two lines for now, `&&` not required)*
+* Err cases:
+
+  * `> out ls` → 258 (syntax)
+  * `cat | | wc` → 258
+
+**✅ Acceptance**
+
+* Last pipeline command status stored in `last_exit_status`.
+
+---
+
+## 📅 Week E — 📜 Here‑Doc & 🎯 Final Polishing
+
+---
+
+### 🗓 Day 17
+
+🫘 **Beans — Here‑doc reader**
+
+* 📝 For each `R_HEREDOC`:
+
+  * Before forking the pipeline, create a pipe; in parent, read lines until delimiter **exact** match (no trimming). Don’t add to history.
+  * If delimiter token was quoted → **disable** expansion in the here‑doc body.
+  * If unquoted → mark this here‑doc as “expand” (Pika applies expansion per line).
+  * Ctrl‑C: abort here‑doc, set status 130, discard content.
+
+**✅ Acceptance**
+
+* `cat <<EOF` collects lines; breaks on `EOF`; produces an FD ready for STDIN.
+
+🐤 **Pika — Here‑doc integration**
+
+* 🔌 Replace command’s STDIN with here‑doc read end **before** other `<` redirs (but remember “last redir wins” rule—so if later `< file` exists, it overrides).
+
+**✅ Acceptance**
+
+* `cat <<EOF | wc -l` counts the lines entered.
+
+---
+
+### 🗓 Day 18 (Here‑doc expansion & cleanup)
+
+🫘 **Beans**
+
+* 🧹 Ensure all temporary here‑doc FDs closed in parent after forking children.
+
+🐤 **Pika**
+
+* ✨ If here‑doc is marked “expand”, run `$VAR` and `$?` expansions per line before writing to the here‑doc pipe.
+
+**✅ Acceptance**
+
+* With `export X=hi`:
+  `cat <<EOF` + lines containing `$X` expand only when delimiter unquoted.
+
+---
+
+### 🗓 Day 19–20 (Polish & Defense)
+
+🤝 **Both**
+
+* 🕵️ Valgrind full suite (ignore readline leaks): no leaks in parser, expander, executor, heredoc.
+* 🔒 FD hygiene: no leaked pipes/opens on success/error.
+* 📏 Norm compliance: functions < 25 lines; split helpers where needed.
+* 📜 Defense script covering:
+
+  * Prompt/history, signals, quotes, `$`/`$?`, all 4 redirs, `|` pipelines, all 7 builtins, heredoc behavior, exit codes.
+
+**✅ Acceptance**
+
+* Run defense script top-to-bottom with no crashes and expected outputs.
+
+---
+
+### Tiny “what to code today” reminder (copy/paste)
+
+* Add file(s) 🗂️
+* Implement function(s) 🔧
+* Hook into flow 🔌
+* Free/close on all paths 🧹
+* Minimal tests 🧪
+* Mark status codes 🎯

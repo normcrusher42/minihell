@@ -83,6 +83,7 @@ void	execute_command(char *cmd, char **env);
 char	*ft_strjoin3(const char *key, const char *input, const char *value);
 char	*dollar_expander(char *token, int last_status, char **envp);
 int		ft_isspace(int c);
+int		execute_job(t_cmd *cmds, int n, t_shell *sh);
 
 void	init_signals(void);
 void	rl_replace_line(const char *text, int clear_undo);
