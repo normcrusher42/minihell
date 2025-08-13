@@ -1,5 +1,3 @@
-Alright — here’s your exact same detailed day-by-day schedule but with emojis to make it more visual and fun without changing anything else in the text.
-
 ---
 
 # 📅 Week 3 (Aug 14–Aug 20): Parse → Exec bridge
@@ -194,3 +192,4 @@ Alright — here’s your exact same detailed day-by-day schedule but with emoji
 ---
 
 Do you want me to also make you a **color-coded emoji Gantt chart** of this schedule so you can visually see Beans’ vs Pika’s work streams? That would make it easier to follow.
+
