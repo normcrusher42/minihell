@@ -1,214 +1,196 @@
-📅 Updated Roadmap (July 29 – Aug 28)
-Workdays: ~3–4 days/week (~12–16 total)
-Theme:
+Alright — here’s your exact same detailed day-by-day schedule but with emojis to make it more visual and fun without changing anything else in the text.
 
-Beans → Parsing, Signals, Pipes
+---
 
-Pika → Execution, Builtins, Redirections
+# 📅 Week 3 (Aug 14–Aug 20): Parse → Exec bridge
 
-Both → Testing, Integration, Debugging
+## 🗓 Day 1 — Command table design (Beans)
 
-✅ Week 1 (Jul 29 – Aug 4) — Project Skeleton + Core Loop
-Status: Completed in your current repo
+* 🛠 Create `parsing/ast.c` (or `parsing/cmd_table.c`):
 
-Both
+  * 🗂 Define `t_redir { int type; char *arg; }` with types: IN(<), OUT(>), APP(>>), HEREDOC(<<).
+  * ✏ Extend `t_cmd` in `minishell.h` to include `t_redir *redirs; int redir_count;` and `int argc;` (keep `argv`).
+* 📦 From `t_token` (already produced with quote info), **split by `|` into commands**; for each command:
 
-Git repo initialized
+  * Collect words → `argv[]`, collect redir operators + targets into `redirs[]`.
+  * ✅ Validate syntax: missing filename after redir, pipe at start/end, double operators.
+* 📄 Deliverables:
 
-File structure set up
+  * `parse_command_table(t_token *tok, t_cmd **out, int *count)` returning array of commands.
+  * ❌ Fails with an error message and status 258 on syntax errors (bash-like).
 
-Makefile with all, clean, fclean, re
+## 🗓 Day 2 — PATH search & argv exec (Pika)
 
-Libft integrated
+* 🗂 Implement `exec/path.c`:
 
-REPL loop with readline + history
+  * `char *find_command_path(const char *cmd, char **envp)` — if `cmd` contains `/`, check exec directly; else iterate `$PATH` and join dir+cmd (use `access(X_OK)`).
+* 🔄 Upgrade `execute_command` (replace stub) to accept a single `t_cmd`:
 
-Signal handling (Ctrl-C, Ctrl-D, Ctrl-)
+  * Use `fork()`, in child `dup2()` any pre-prepared FDs (tomorrow) then `execve(realpath, argv, envp)`.
+  * On `ENOENT` → 127; `EACCES` → 126; print `perror` as needed. (Today: no redirs/pipes yet.)
+* 🧪 Test commands:
+  `ls -l`, `echo hello`, `./miniOdy` (should print exec error unless real binary).
 
-Environment array duplication
+## 🗓 Day 3 — Builtin detection skeleton (Both)
 
-✅ Week 2 (Aug 5 – Aug 11) — Tokenizing, Quotes, Expansion
-Status: In progress — tokenizer, expander mostly working; needs parser
+* 🛠 Create `builtins/builtins.c`:
 
-Day 1–2 (Aug 5–6)
-Beans
+  * `int is_parent_builtin(const char *cmd)` → {cd, export, unset, exit}.
+  * `int is_child_builtin(const char *cmd)` → {echo, pwd, env}.
+* ⚙ In the executor:
 
-Tokenizer for words + operators (|, <, >, <<, >>)
+  * If **single command and parent-builtin** → run in parent (no fork).
+  * Else → child handles child-builtins or external `execve`.
+* 🔗 Wire main loop to: tokenize → expand → *parse* → execute first command (no pipes yet).
 
-Quote type tracking (none, single, double)
+## 🗓 Day 4 — Finish argv & status propagation (Both)
 
-Space skipping improvements
+* 📊 Ensure `shell->last_exit_status` is updated after each command or pipeline front (temporary): store `WIFEXITED/WEXITSTATUS` or signal status.
+* 🚫 Add basic errors:
 
-Pika
+  * Command not found → `miniOdy: foo: command not found` (127).
+  * Permission denied → 126.
+* 🧪 Smoke tests:
 
-$VAR, $?, $$ expansion logic
+  * `foo` (127), `/bin/ls` (0), `./not_exec` (126).
 
-Skip expansion inside single quotes
+---
 
-Strip only outer quotes after expansion
+# 📅 Week 4 (Aug 21–Aug 27): Builtins & return codes
 
-Day 3–4 (Aug 7–8)
-Beans
+## 🗓 Day 1 — echo/pwd/env (Beans)
 
-Token classification pass → Assign T_WORD, T_PIPE, T_REDIR_IN, etc.
+* 🖨 Implement:
 
-Parser skeleton:
+  * `echo [-n*]` (treat multiple `-n` as valid): print with/without trailing newline.
+  * `pwd` (use `getcwd`).
+  * `env` (print `envp` lines exactly; reject args with non-option text by exiting 0 and ignoring extra per subject).
+* 🧪 Unit tests:
 
-Group tokens into t_cmd (argv + redirs list)
+  * `echo -n hello` → `hello` with no newline.
+  * `pwd` matches `getcwd`.
+  * `env` prints all; `env foo` prints env (ignore extra).
 
-Detect pipes and redirs
+## 🗓 Day 2 — cd/export/unset/exit (Pika)
 
-Syntax validation: | not first/last, no ||, redir followed by filename
+* 📂 `cd [path]`:
 
-Pika
+  * With arg: `chdir`; on success update `PWD`, `OLDPWD` via `set_env_value()`; on failure print `miniOdy: cd: msg`, return 1.
+* 📤 `export` (no options): with `KEY=VAL` pairs:
 
-Finalize t_cmd struct (rename av → argv)
+  * Validate identifier; update env using `set_env_value`. With no args, print sorted env in `declare -x` format (optional).
+* 🗑 `unset` (no options): remove keys via `unset_env_value`.
+* 🚪 `exit`:
 
-Define t_redir struct for I/O
+  * No args → exit with last status.
+  * One numeric arg → exit with that (mod 256).
+  * Non-numeric or more args → bash-like messages (2 for non-numeric; 1 for too many args without exiting).
 
-Implement find_executable() using $PATH
+## 🗓 Day 3 — Status & signals polish (Both)
 
-Prepare exec_line() signature (exec array of t_cmd)
+* ⚡ Parent should **not** exit on child SIGINT/SIGQUIT; set `last_exit_status = 128 + signal`.
+* ⌨ Interactive behavior:
 
-Integration checkpoint:
+  * Ctrl-C shows new prompt; Ctrl-\ does nothing; Ctrl-D exits. Already matched in `signals.c`; ensure exec-time signals reset to default in child.
 
-Manual tests:
+## 🗓 Day 4 — Acceptance suite v1 (Both)
 
-echo hello → argv parsing correct
+* 🧪 Script a set of commands to verify builtins + PATH + statuses.
+* 🧹 Fix any leaks identified (exclude readline).
 
-ls -l | grep txt → two t_cmd in array
+---
 
-echo > file → redir node created
+# 📅 Week 5 (Aug 28–Sept 3): Pipes & Redirections
 
-📅 Week 3 (Aug 12 – Aug 18) — Execution Core + Builtins
-Day 1 (Aug 12)
-Pika
+## 🗓 Day 1 — Pipes skeleton (Beans)
 
-Implement single command exec flow:
+* ➡ Add `exec/pipeline.c`:
 
-If builtin → run in-process (cd, export, unset, exit)
+  * `int run_pipeline(t_cmd *cmds, int n, char **envp, t_shell *sh)`.
+  * For i in \[0..n-1]: create pipe (except last), fork:
 
-Else PATH search → fork → execve
+    * Child: set `dup2(prev_read, STDIN)` if i>0; set `dup2(pipe_write, STDOUT)` if i\<n-1; close unused; run builtin/exec.
+    * Parent: close write end immediately; carry read end to next loop; collect PIDs.
+  * After loop: close last read; wait all; set final `last_exit_status`.
 
-Proper exit codes: 0 OK, 126 permission, 127 not found
+## 🗓 Day 2 — Redirections (Pika)
 
-Builtins: echo, pwd, env (safe to run in child)
+* 📂 Implement `exec/redir.c`:
 
-Beans
+  * Open modes: `<` O\_RDONLY; `>` O\_WRONLY|O\_CREAT|O\_TRUNC; `>>` O\_WRONLY|O\_CREAT|O\_APPEND.
+  * In child before exec: apply redirs with `dup2(fd, STDIN/STDOUT)`; on open error, print and exit with 1.
 
-Adjust parser to provide envp copy to exec layer
+## 🗓 Day 3 — Integrate pipes + redirs + builtins (Both)
 
-Handle last_exit_status updates from exec results
+* 🔄 Rules:
 
-Day 2 (Aug 13)
-Pika
+  * Parent-builtins only run in parent **when single command & no pipe**; otherwise run them in child.
+  * Child-builtins run anywhere.
+* 🧪 Test:
 
-Implement parent-only builtins: cd, export, unset, exit
+  * `echo hi | wc -c`
+  * `cat < in | grep a > out`
+  * `echo hi >> out && echo bye >> out`
 
-Connect builtin detection table to exec dispatcher
+## 🗓 Day 4 — Error handling & msgs (Both)
 
-Beans
+* 🚫 Missing file for `<`: `miniOdy: file: No such file or directory`, exit 1 for that child.
+* Permission on output: 1/126 depending on errno; align with bash.
 
-Validate parser output for builtins with no args
+---
 
-Day 3–4 (Aug 14–15)
-Both
+# 📅 Week 6 (Sept 4–Sept 10): Heredoc + Edge cases
 
-Integration testing:
+## 🗓 Day 1 — Heredoc reader (Beans)
 
-cd ..
+* 📜 `exec/heredoc.c`:
 
-pwd
+  * For each `<< delim`: before forking pipeline, create a pipe; read lines until **exact** delimiter (no expansion inside if quoted; expand if unquoted).
+  * ❌ Do **not** add to history.
+  * Ctrl-C during heredoc aborts and sets status 130.
 
-env
+## 🗓 Day 2 — Redir + heredoc interplay (Pika)
 
-export VAR=123 → check in env
+* 🔄 Apply heredoc pipe as command’s STDIN, but still allow later `<` to override per POSIX order (last redir wins).
+* 🧹 Clean up temp FDs.
 
-$VAR expansion works in next command
+## 🗓 Day 3 — Quote/expansion corner cases (Both)
 
-Add errors: command not found, permission denied
+* 📏 Ensure expansion respects quotes:
 
-Memory cleanup for t_cmd arrays
+  * Single quotes block `$` expansion; double quotes allow it.
+* ✂ Keep `remove_quotes()` after expansion.
+* 🚫 Detect unclosed quotes at tokenize stage.
 
-📅 Week 4 (Aug 19 – Aug 24) — Pipes + Redirections + Heredoc
-Day 1 (Aug 19)
-Beans
+## 🗓 Day 4 — Full pipeline stress (Both)
 
-Implement pipe setup (pipe(), dup2()) for two commands
+* 🧪 Test:
 
-Pika
+  * `cat <<EOF | grep a | wc -l`
+  * `echo "$USER-$?" | tr a-z A-Z`
+  * `grep x < notfound | wc`
 
-Implement > and >> redirections in exec phase
+---
 
-Day 2 (Aug 20)
-Beans
+# 📅 Week 7 (Sept 11–Sept 15): Integration, Norm, Defense
 
-Support multiple pipes in parser → N t_cmd in a chain
+## 🗓 Day 1 — Cleanup & Norm (Both)
 
-Pika
+* 🧹 Remove debug prints, ensure file layout matches Makefile.
+* ✂ Split long functions to satisfy Norm.
 
-Implement < (input redir) and << (heredoc)
+## 🗓 Day 2 — Memory & FDs (Both)
 
-Heredoc reads until delimiter, doesn’t add to history
+* 🔍 Valgrind each scenario; ensure:
 
-Day 3 (Aug 21)
-Both
+  * All mallocs freed each loop iteration.
+  * FDs always closed on both success and error paths.
 
-Integrate pipes + redirections:
+## 🗓 Day 3 — Defense kit & final pass (Both)
 
-Redirs apply before exec in each process
+* 📜 Prepare a demonstration script covering **every** subject bullet.
+* 📄 Add `README.md` with build/run, supported features, known limitations.
 
-Mixed case: cat file | grep text > out.txt works
+---
 
-Day 4 (Aug 22)
-Both
-
-Stress test:
-
-Chain pipes + redirs
-
-Signals during execution
-
-Unclosed quotes → parser error
-
-📅 Week 5 (Aug 25 – Aug 28) — Final Integration + Defense Prep
-Day 1 (Aug 25)
-Both
-
-Merge final branches → master
-
-Remove debug prints
-
-Normalize error messages
-
-Day 2 (Aug 26)
-Both
-
-Valgrind session: fix leaks (except readline)
-
-Test invalid syntax, mixed quotes, $?, unset vars
-
-Day 3 (Aug 27)
-Both
-
-Defense checklist:
-
-Builtins, pipes, redirs, heredoc, signals, env
-
-Test cases prepared for peer eval
-
-Day 4 (Aug 28)
-Both
-
-Push final version to repo
-
-Run last compile with -Wall -Wextra -Werror
-
-Dry-run defense Q&A
-
-🚦 Key Rules
-Interface freeze: agree on parser.h and exec.h early so work stays parallel.
-
-Daily sync: Beans & Pika review parser/exec contracts before EOD.
-
-Testing habit: after each new feature, add it to a tests/ script for quick re-runs.
+Do you want me to also make you a **color-coded emoji Gantt chart** of this schedule so you can visually see Beans’ vs Pika’s work streams? That would make it easier to follow.
