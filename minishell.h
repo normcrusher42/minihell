@@ -37,6 +37,10 @@ typedef struct s_cmd
 	char	**av;
 	int		input_fd;
 	int		output_fd;
+	int		append;       // 1 if ">>", 0 if ">"
+    int		pipe_in;      // 1 if stdin comes from a previous pipe
+    int		pipe_out;     // 1 if stdout goes to next pipe
+    int		is_builtin;
 	// t_redir	*redirs;
 }	t_cmd;
 

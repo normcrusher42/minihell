@@ -18,10 +18,10 @@ void	execute_command(char *cmd, char **env)
 	char	*av[2];
 	int		status;
 
-	pid = fork();
 	av[0] = cmd;
 	av[1] = NULL;
 	status = 0;
+	pid = fork();
 	if (pid == 0)
 	{
 		execve(cmd, av, env);

@@ -5,7 +5,7 @@
 ---
 
 ### 🗓 Day 1
-
+----------------------------------------------------------- v we're here ❌
 🫘 **Beans — Build command model**
 
 * 🏗 Create files: `parsing/cmd_table.c`, `parsing/cmd_table.h`.
@@ -39,8 +39,7 @@
 **✅ Acceptance**
 
 * Main can call `execute_job()` with mocked commands without crashing.
-
----
+----------------------------------------------------------- ^ we're here ❌
 
 ### 🗓 Day 2
 
