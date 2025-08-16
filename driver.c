@@ -16,10 +16,8 @@ int	execute_job(t_cmd *cmds, int n, t_shell *sh)
 {
 	int	i;
 
-	i = -1;
-	(void)sh;
-	printf("Executor received %d commands:\n", n);
-	while (++i < n)
+	i = 0;
+	while (i < n)
 	{
 		printf("  Command %d: %s\n", i, cmds[i].av[0]);
 	}

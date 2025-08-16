@@ -55,13 +55,13 @@ char	*env_expander(char *token, char **merge, char **envp, int i)
 
 char	*very_specific_expander(char *token, char **merge, char **envp, int i)
 {
-	unsigned char next;
+	unsigned char	next;
 
 	next = (unsigned char)token[i + 1];
 	if (!ft_isalnum(next) && next != '_' && !ft_isspace(next))
-		return (merge_str(token, -1, i, merge)); 
+		return (merge_str(token, -1, i, merge));
 	else
-		return(env_expander(token, merge, envp, i));
+		return (env_expander(token, merge, envp, i));
 	return (ft_strdup(token));
 }
 

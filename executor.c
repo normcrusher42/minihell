@@ -21,15 +21,21 @@ void	execute_command(char *cmd, char **env)
 	av[0] = cmd;
 	av[1] = NULL;
 	status = 0;
-	pid = fork();
-	if (pid == 0)
+	if (is_builtin(av[0]))
+		return (g_last_status = exec_builtin(av[0], env), (void)0);
+	else
 	{
+		pid = fork();
 		execve(cmd, av, env);
 		perror(RED "and u faillled!!!" RESET);
 		exit(127);
 	}
-	else if (pid > 0)
-		waitpid(pid, &status, 0);
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		g_last_status = WEXITSTATUS(status);
 	else
+	{
 		perror(RED "and u faillled!!!" RESET);
+		g_last_status = 1;
+	}
 }

@@ -39,7 +39,7 @@
 **✅ Acceptance**
 
 * Main can call `execute_job()` with mocked commands without crashing.
------------------------------------------------------------ ^ we're here ❌
+----------------------------------------------------------- ^ we're here ❌ / ✅
 
 ### 🗓 Day 2
 
@@ -67,7 +67,7 @@
 
 * For `cd /`, job runs parent path and returns an int status.
 
----
+----------------------------------------------------------- ^ Pika is here clearing and waiting ❌
 
 ### 🗓 Day 3
 
