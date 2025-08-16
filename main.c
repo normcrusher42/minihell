@@ -64,7 +64,6 @@ int	main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
-	g_last_status = 0;
 	shell = (t_shell){0};
 	init_shell(envp, &shell);
 	init_signals();

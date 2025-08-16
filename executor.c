@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+int	g_last_status = 0;
+
 void	execute_command(char *cmd, char **env)
 {
 	pid_t	pid;
@@ -22,20 +24,20 @@ void	execute_command(char *cmd, char **env)
 	av[1] = NULL;
 	status = 0;
 	if (is_builtin(av[0]))
-		return (g_last_status = exec_builtin(av[0], env), (void)0);
-	else
+		return (g_last_status = exec_builtin(av, &env), (void)0);
+	pid = fork();
+	if (pid == 0)
 	{
-		pid = fork();
 		execve(cmd, av, env);
-		perror(RED "and u faillled!!!" RESET);
+		perror(RED "sm error occured idk" RESET);
 		exit(127);
 	}
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		g_last_status = WEXITSTATUS(status);
-	else
+	if (pid > 0)
 	{
-		perror(RED "and u faillled!!!" RESET);
-		g_last_status = 1;
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			g_last_status = WEXITSTATUS(status);
 	}
+	else
+		return (perror(RED "Fork Error" RESET), g_last_status = 1, (void)0);
 }
