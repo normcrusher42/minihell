@@ -12,6 +12,19 @@
 
 #include "minishell.h"
 
+// Self-explanatory.
+// Merges 3 strings together. Mainly used for the expander and env creation
+char	*ft_strjoin3(const char *key, const char *input, const char *value)
+{
+	char	*temp;
+	char	*new_str;
+
+	temp = ft_strjoin(key, input);
+	new_str = ft_strjoin(temp, value);
+	free(temp);
+	return (new_str);
+}
+
 int	ft_isspace(int c)
 {
 	if ((c >= 9 && c <= 13) || c == ' ')
@@ -27,4 +40,21 @@ int	ft_arrlen(char **arr)
 	while (arr[i])
 		i++;
 	return (i);
+}
+
+int	is_numeric(const char *str)
+{
+	int i;
+
+	i = 0;
+	if (!str || !str[0])
+		return (0);
+	if (str[i] == '+' || str[i] == '-')
+		i++;
+	if (!ft_isdigit(str[i]))
+		return (0);
+	while (str[i])
+		if (!ft_isdigit(str[i++]))
+			return (0);
+	return (1);
 }

@@ -14,12 +14,13 @@
 
 int	g_last_status = 0;
 
-void	execute_command(char *cmd, char **env)
+void	execute_command(char *cmd, char **env, t_shell *sh)
 {
 	pid_t	pid;
 	char	*av[2];
 	int		status;
 
+	(void)sh;
 	av[0] = cmd;
 	av[1] = NULL;
 	status = 0;

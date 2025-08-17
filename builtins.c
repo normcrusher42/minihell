@@ -34,6 +34,84 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
+int	is_valid_identifier(const char *s)
+{
+	int	i;
+
+	if (!s || (!ft_isalpha(s[0]) && s[0] != '_'))
+		return (0);
+	i = 1;
+	while (s[i] && s[i] != '=')
+	{
+		if (!ft_isalnum(s[i]) && s[i] != '_')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+int	ft_exit(char **av, t_shell *sh)
+{
+	long	code;
+
+	if (ft_arrlen(av) > 2)
+		return (perror("mOdy: exit: too many arguments"), 1);
+	else if (ft_arrlen(av) < 2)
+	{
+		call_janitor(sh);
+		exit(g_last_status);
+	}
+	if (!is_numeric(av[1]) || ft_atoi(av[1]) > INT_MAX)
+	code = ft_atoi(av[1]);
+	if ()
+	{
+		perror("mOdy: exit: numeric argument required");
+		call_janitor(sh);
+		exit(2);
+	}
+	return (0);
+}
+
+int	ft_unset(char **av, char ***envp, t_shell *sh)
+{
+	if (ft_arrlen(av) == 1)
+		return (0);
+	while (av[++i])
+	{
+		if (!is_valid_identifier(av[i]))
+			continue ;
+	}
+	(*envp) = unset_env_value((*envp), av[i], sh);
+	return (0);
+}
+
+// A simple remake of 'export'. Prints 
+int	ft_export(char **av, char ***envp)
+{
+	int		i;
+	char	*equal;
+
+	if (ft_arrlen(av) == 1)
+		return (ft_env(*envp), 0);
+	i = 0;
+	while (av[++i])
+	{
+		if (!is_valid_identifier(av[i]))
+		{
+			ft_putstr_fd("mOdy: export: `", 2);
+			ft_putstr_fd(av[i], 2);
+			ft_putendl_fd("': not a valid identifier", 2);
+			continue ;
+		}
+		equal = ft_strchr(av[i], '=');
+		if (equal)
+			set_env_value(envp, av[i], equal + 1);
+		else if (!get_env_value(*envp, av[i]))
+			set_env_value(envp, av[i], "");
+	}
+	return (0);
+}
+
 // A simple remake of 'cd'. Changes current working directory based on input
 int	ft_cd(char **av, char **envp)
 {
@@ -68,10 +146,7 @@ int	ft_env(char **envp)
 
 	i = 0;
 	while (envp[i])
-	{
-		ft_putendl_fd(envp[i], 1);
-		i++;
-	}
+		ft_putendl_fd(envp[i++], 1);
 	return (0);
 }
 

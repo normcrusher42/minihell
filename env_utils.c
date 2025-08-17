@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+// Frees the passed double array pointer and its content (with a reuse switch) 
 void	free_arr(char ***arr, bool reuse)
 {
 	int	i;
@@ -31,17 +32,22 @@ void	free_arr(char ***arr, bool reuse)
 	}
 }
 
-char	*ft_strjoin3(const char *key, const char *input, const char *value)
+// reallocates and copies from the old env array to the new.
+char	**realloc_env(char **envp, int extra)
 {
-	char	*temp;
-	char	*new_str;
+	int		i;
+	char	**new_envp;
 
-	temp = ft_strjoin(key, input);
-	new_str = ft_strjoin(temp, value);
-	free(temp);
-	return (new_str);
+	new_envp = ft_calloc(ft_arrlen(envp) + extra + 1, sizeof(char *));
+	if (!new_envp)
+		return (NULL);
+	i = -1;
+	while (envp[++i])
+		new_envp[i] = envp[i];
+	return (new_envp);
 }
 
+// Finds the environment variable name passed by key and returns its definition
 char	*get_env_value(char **envp, const char *key)
 {
 	int	i;
@@ -50,48 +56,55 @@ char	*get_env_value(char **envp, const char *key)
 	i = -1;
 	len = ft_strlen(key);
 	while (envp[++i])
+	{
 		if (!ft_strncmp(envp[i], key, len) && envp[i][len] == '=')
-			return (envp[i] + len + 1);
+		{
+			if (envp[i][len] == '=')
+				return (envp[i] + len + 1);
+			else if (envp[i][len] == '\0')
+				return (NULL);
+		}
+	}
 	return (NULL);
 }
 
+// Sets/updates an environment variable through their passed definition (value)
 void	set_env_value(char ***envp, const char *key, const char *value)
 {
 	int		i;
-	int		len;
 	char	**new_envp;
 
 	i = -1;
-	len = ft_strlen(key);
 	while ((*envp)[++i])
 	{
-		if (!ft_strncmp((*envp)[i], key, len) && (*envp)[i][len] == '=')
+		if (!ft_strncmp((*envp)[i], key, ft_strlen(key))
+			&& ((*envp)[i][ft_strlen(key)] == '=' || (*envp)[i][ft_strlen(key)]
+				== '\0'))
 		{
-			free((*envp)[i]);
-			(*envp)[i] = ft_strjoin3(key, "=", value);
-			return ;
+			if (value)
+				return (free((*envp)[i]), (*envp)[i] = ft_strjoin3(key, "=",
+						value), (void)0);
+			else
+				return (free((*envp)[i]), (*envp)[i] = ft_strdup(key), (void)0);
 		}
 	}
-	new_envp = malloc(sizeof(char *) * (i + 2));
+	new_envp = realloc_env(*envp, 1);
 	if (!new_envp)
 		return ;
-	i = -1;
-	while ((*envp)[++i])
-		new_envp[i] = (*envp)[i];
-	new_envp[i++] = ft_strjoin3(key, "=", value);
-	new_envp[i] = NULL;
-	free(*envp);
-	*envp = new_envp;
+	if (value)
+		new_envp[i++] = ft_strjoin3(key, "=", value);
+	else
+		new_envp[i++] = ft_strdup(key);
+	return (free(*envp), (*envp) = new_envp, (void)0);
 }
 
+// removes an environemnt variable through its passed name (key)
 char	**unset_env_value(char **envp, const char *key, t_shell *shell)
 {
 	int		i;
 	int		j;
-	int		len;
 	char	**new_envp;
 
-	len = ft_strlen(key);
 	i = ft_arrlen(envp);
 	new_envp = malloc(sizeof(char *) * i);
 	if (!new_envp)
@@ -100,7 +113,9 @@ char	**unset_env_value(char **envp, const char *key, t_shell *shell)
 	j = 0;
 	while (envp[++i])
 	{
-		if (!ft_strncmp(envp[i], key, len) && envp[i][len] == '=')
+		if (!ft_strncmp(envp[i], key, ft_strlen(key))
+			&& (envp[i][ft_strlen(key)] == '=' || envp[i][ft_strlen(key)]
+				== '\0'))
 		{
 			free(envp[i]);
 			shell->removed = true;
