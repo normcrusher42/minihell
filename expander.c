@@ -86,7 +86,7 @@ char	*dollar_expander(char *token, int last_status, char **envp)
 		token = new_token;
 		i = -1;
 	}
-	return (free_arr(&merge, NO), new_token);
+	return (free_arr(&merge, NO), token);
 }
 
 char	**expand_token(t_token *token, char **envp, int last_status)
