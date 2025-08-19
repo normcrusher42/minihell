@@ -6,11 +6,11 @@
 /*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 19:22:59 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/08/12 19:22:59 by lsahloul         ###   ########.fr       */
+/*   Updated: 2025/08/16 15:00:00 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "minishell.h"           /* ensure this includes parsing/cmd_table.h */
 
 void	butter_free(t_shell *shell)
 {
@@ -37,7 +37,7 @@ static char	**dup_env(char **envp)
 	return (new_envp);
 }
 
-static void	init_shell(char **envp, t_shell	*shell)
+static void	init_shell(char **envp, t_shell *shell)
 {
 	char	cwd[1024];
 
@@ -74,20 +74,36 @@ int	main(int ac, char **av, char **envp)
 			break ;
 		if (*shell.input)
 			add_history(shell.input);
-
-		/* Week 2 flow (stub):
-		 * 1) tokenize -> expand -> remove quotes
-		 * 2) (later) parse into command table
-		 * 3) (later) exec
-		 */
-		/* Example: just tokenize & expand for now */
 		if (*shell.input)
 		{
-			t_token *tok = tokenize(shell.input);
+			t_token	*tok;
+
+			tok = tokenize(shell.input);
 			if (tok)
 			{
+				/* 1) expand + strip quotes */
 				process_all_tokens(tok, shell.envp, shell.last_exit_status);
-				/* TODO: parse & exec next weeks */
+
+				/* 2) NEW: build command table (Beans parser test) */
+				{
+					t_cmd	*cmds;
+					int		ncmd;
+					int		ok;
+
+					cmds = NULL;
+					ncmd = 0;
+					ok = parse_command_table(tok, &cmds, &ncmd,
+							&shell.last_exit_status);
+					if (ok)
+					{
+#ifdef PARSE_DEBUG
+						print_cmd_table(cmds, ncmd); /* test output */
+#endif
+						/* 3) (later) pass cmds to executor here */
+						free_cmd_table(cmds, ncmd);
+					}
+					/* on error, parse_command_table already set status=258 */
+				}
 				free_tokens(tok);
 			}
 		}

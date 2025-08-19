@@ -47,14 +47,6 @@ typedef struct s_token
 	t_quote_type	*quote;   /* quote type per token */
 }	t_token;
 
-typedef struct s_cmd
-{
-	char	**argv;
-	int		input_fd;
-	int		output_fd;
-	/* t_redir *redirs;  // (for Week 4) */
-}	t_cmd;
-
 typedef struct s_shell
 {
 	char	*input;              /* readline buffer */
@@ -73,6 +65,43 @@ typedef enum e_token_type
 	T_APPEND,
 	T_HEREDOC
 }	t_token_type;
+
+/* ===================== */
+/* === cmd_table part ===*/
+/* ===================== */
+
+/* Redirection types */
+typedef enum e_redirtype
+{
+	R_IN,
+	R_OUT,
+	R_APP,
+	R_HEREDOC
+}	t_redirtype;
+
+/* One redirection entry */
+typedef struct s_redir
+{
+	t_redirtype	type;
+	char		*arg;       /* file or heredoc delimiter */
+	int			is_quoted;  /* heredoc delim quoted? 1/0  */
+}	t_redir;
+
+/* Command built by the parser */
+typedef struct s_cmd
+{
+	char	**argv;
+	int		argc;
+	t_redir	*redirs;
+	int		redir_count;
+}	t_cmd;
+
+/* Public API for parser */
+int		parse_command_table(t_token *tk, t_cmd **out, int *count, int *st);
+void	free_cmd_table(t_cmd *cmds, int n);
+void	print_cmd_table(t_cmd *cmds, int n);
+
+/* ===================== */
 
 /* env_utils.c */
 char	*get_env_value(char **envp, const char *key);
