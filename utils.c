@@ -51,10 +51,10 @@ int	is_numeric(const char *str)
 		return (0);
 	if (str[i] == '+' || str[i] == '-')
 		i++;
-	if (!ft_isdigit(str[i]))
+	if (!str[i] || !ft_isdigit((unsigned char)str[i]))
 		return (0);
 	while (str[i])
-		if (!ft_isdigit(str[i++]))
+		if (!ft_isdigit((unsigned char)str[i++]))
 			return (0);
 	return (1);
 }
