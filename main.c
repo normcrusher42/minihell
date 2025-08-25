@@ -6,11 +6,11 @@
 /*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 19:22:59 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/08/16 15:00:00 by lsahloul         ###   ########.fr       */
+/*   Updated: 2025/08/16 20:30:00 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"           /* ensure this includes parsing/cmd_table.h */
+#include "minishell.h"
 
 void	butter_free(t_shell *shell)
 {
@@ -58,6 +58,41 @@ static void	init_shell(char **envp, t_shell *shell)
 	}
 }
 
+/* return 1 if we should print the parsed table */
+static int	should_debug_parse(void)
+{
+	const char	*val;
+
+	val = getenv("MSH_PARSE_DEBUG");
+	if (!val || !*val)
+		return (0);
+	return (1);
+}
+
+static void	process_line_tokens(t_shell *sh)
+{
+	t_token	*tok;
+	t_cmd	*cmds;
+	int		ncmd;
+	int		ok;
+
+	tok = tokenize(sh->input);
+	if (!tok)
+		return ;
+	process_all_tokens(tok, sh->envp, sh->last_exit_status);
+	cmds = NULL;
+	ncmd = 0;
+	ok = parse_command_table(tok, &cmds, &ncmd, &sh->last_exit_status);
+	if (ok)
+	{
+		if (should_debug_parse())
+			print_cmd_table(cmds, ncmd);
+		/* later: execute_job(cmds, ncmd, sh); */
+		free_cmd_table(cmds, ncmd);
+	}
+	free_tokens(tok);
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	t_shell	shell;
@@ -75,38 +110,7 @@ int	main(int ac, char **av, char **envp)
 		if (*shell.input)
 			add_history(shell.input);
 		if (*shell.input)
-		{
-			t_token	*tok;
-
-			tok = tokenize(shell.input);
-			if (tok)
-			{
-				/* 1) expand + strip quotes */
-				process_all_tokens(tok, shell.envp, shell.last_exit_status);
-
-				/* 2) NEW: build command table (Beans parser test) */
-				{
-					t_cmd	*cmds;
-					int		ncmd;
-					int		ok;
-
-					cmds = NULL;
-					ncmd = 0;
-					ok = parse_command_table(tok, &cmds, &ncmd,
-							&shell.last_exit_status);
-					if (ok)
-					{
-#ifdef PARSE_DEBUG
-						print_cmd_table(cmds, ncmd); /* test output */
-#endif
-						/* 3) (later) pass cmds to executor here */
-						free_cmd_table(cmds, ncmd);
-					}
-					/* on error, parse_command_table already set status=258 */
-				}
-				free_tokens(tok);
-			}
-		}
+			process_line_tokens(&shell);
 		butter_free(&shell);
 	}
 	free_arr(&shell.envp, NO);
