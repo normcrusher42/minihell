@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 15:09:19 by nanasser          #+#    #+#             */
-/*   Updated: 2025/08/16 15:49:38 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/08/25 21:08:49 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ int	is_valid_identifier(const char *s)
 	return (1);
 }
 
+
+
 int	ft_exit(char **av, t_shell *sh)
 {
 	long	code;
@@ -74,13 +76,14 @@ int	ft_exit(char **av, t_shell *sh)
 
 int	ft_unset(char **av, char ***envp, t_shell *sh)
 {
+	int	i;
+
+	i = 0;
 	if (ft_arrlen(av) == 1)
 		return (0);
 	while (av[++i])
-	{
 		if (!is_valid_identifier(av[i]))
 			continue ;
-	}
 	(*envp) = unset_env_value((*envp), av[i], sh);
 	return (0);
 }
@@ -156,10 +159,7 @@ int	ft_pwd(void)
 	char	buf[1024];
 
 	if (getcwd(buf, sizeof(buf)))
-	{
-		ft_putendl_fd(buf, 1);
-		return (0);
-	}
+		return (ft_putendl_fd(buf, 1), 0);
 	perror("pwd");
 	return (1);
 }
