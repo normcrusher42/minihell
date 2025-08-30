@@ -12,6 +12,29 @@
 
 #include "minishell.h"
 
+int	ft_atoll(const char *str)
+{
+	int			i;
+	int			sign;
+	long		result;
+
+	sign = 1;
+	if (str[i] == '+' || str[i] == '-')
+	{
+		if (str[i] == '-')
+			sign *= -1;
+		i++;
+	}
+	result = 0;
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		if (result > (LLONG_MAX / 10))
+			return (-1);
+		result = (result * 10) + (str[i++] - '0');
+	}
+	return (result * sign);
+}
+
 // Self-explanatory.
 // Merges 3 strings together. Mainly used for the expander and env creation
 char	*ft_strjoin3(const char *key, const char *input, const char *value)

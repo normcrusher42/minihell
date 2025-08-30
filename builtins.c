@@ -50,8 +50,6 @@ int	is_valid_identifier(const char *s)
 	return (1);
 }
 
-
-
 int	ft_exit(char **av, t_shell *sh)
 {
 	long	code;
@@ -64,8 +62,8 @@ int	ft_exit(char **av, t_shell *sh)
 		call_janitor(sh);
 		exit(g_last_status);
 	}
-	code = ft_atoi(av[1]);
-	if (!is_numeric(av[1]) || code > 256u)
+	code = ft_atol(av[1]);
+	if (!is_numeric(av[1]))
 	{
 		perror("mOdy: exit: numeric argument required");
 		call_janitor(sh);

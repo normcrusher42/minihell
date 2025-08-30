@@ -97,6 +97,7 @@ int		exec_builtin(char **av, char ***envp);
 char	**realloc_env(char **envp, int extra);
 void	call_janitor(t_shell *sh);
 int		is_numeric(const char *str);
+int		ft_atoll(const char *str);
 
 void	init_signals(void);
 void	rl_replace_line(const char *text, int clear_undo);
