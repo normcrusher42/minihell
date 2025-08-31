@@ -12,6 +12,35 @@
 
 #include "minishell.h"
 
+int	ft_atoll(const char *str, long long *code)
+{
+	int						i;
+	int						sign;
+	unsigned long long		result;
+
+	i = 0;
+	sign = 1;
+	result = 0;
+	while (ft_isspace(str[i]))
+		i++;
+	if (str[i] == '+' || str[i] == '-')
+	{
+		if (str[i] == '-')
+			sign *= -1;
+		i++;
+	}
+	while (ft_isdigit(str[i]))
+	{
+		if (result > ((unsigned long long)LLONG_MAX / 10) || (result == \
+					(unsigned long long)LLONG_MAX / 10
+				&& (unsigned long long)str[i]
+				> (unsigned long long)(LLONG_MAX % 10) + (sign == -1)))
+			return (0);
+		result = (result * 10) + (str[i++] - '0');
+	}
+	return (*code = (long long)(sign * result), 1);
+}
+
 // A checker if the argument is a built-in
 int	is_builtin(char *cmd)
 {
@@ -52,7 +81,7 @@ int	is_valid_identifier(const char *s)
 
 int	ft_exit(char **av, t_shell *sh)
 {
-	long	code;
+	long long	code;
 
 	ft_putendl_fd("exit miniOdy", 1);
 	if (ft_arrlen(av) > 2)
@@ -62,13 +91,14 @@ int	ft_exit(char **av, t_shell *sh)
 		call_janitor(sh);
 		exit(g_last_status);
 	}
-	code = ft_atol(av[1]);
-	if (!is_numeric(av[1]))
+	if (!is_numeric(av[1]) || !ft_atoll(av[1], &code))
 	{
 		perror("mOdy: exit: numeric argument required");
 		call_janitor(sh);
 		exit(2);
 	}
+	call_janitor(sh);
+	exit((unsigned char)code);
 	return (0);
 }
 
@@ -105,16 +135,16 @@ int	ft_export(char **av, char ***envp)
 			continue ;
 		}
 		equal = ft_strchr(av[i], '=');
-		if (equal)
+		if (equal && *(equal + 1) != '\0')
 			set_env_value(envp, av[i], equal + 1);
 		else if (!get_env_value(*envp, av[i]))
-			set_env_value(envp, av[i], "");
+			set_env_value(envp, av[i], NULL);
 	}
 	return (0);
 }
 
 // A simple remake of 'cd'. Changes current working directory based on input
-int	ft_cd(char **av, char **envp)
+int	ft_cd(char **av, char ***envp)
 {
 	char	*path;
 	char	*old_path;
@@ -124,19 +154,19 @@ int	ft_cd(char **av, char **envp)
 		return (perror("-mOdy: cd: too many arguments"), 1);
 	else if (ft_arrlen(av) == 1)
 	{
-		path = get_env_value(envp, "HOME");
+		path = get_env_value(*envp, "HOME");
 		if (!path)
 			return (perror("-mOdy: cd: HOME not set"), 1);
 	}
 	else
 		path = av[1];
-	old_path = get_env_value(envp, "PWD");
+	old_path = get_env_value(*envp, "PWD");
 	if (chdir(path) != 0)
 		return (perror("-mOdy: cd: path error"), 1);
 	if (old_path)
-		set_env_value(&envp, "OLDPWD", old_path);
+		set_env_value(envp, "OLDPWD", old_path);
 	if (getcwd(cwd, sizeof(cwd)))
-		set_env_value(&envp, "PWD", cwd);
+		set_env_value(envp, "PWD", cwd);
 	return (0);
 }
 
