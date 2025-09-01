@@ -98,6 +98,8 @@ char	**realloc_env(char **envp, int extra);
 void	call_janitor(t_shell *sh);
 int		is_numeric(const char *str);
 int		ft_atoll(const char *str, long long *code);
+int	is_key_match(const char *env, const char *key);
+int	ft_export_print(char **envp);
 int	ft_env(char **envp);
 int	ft_cd(char **av, char ***envp);
 int	ft_export(char **av, char ***envp);

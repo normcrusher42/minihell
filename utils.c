@@ -12,6 +12,18 @@
 
 #include "minishell.h"
 
+int	is_key_match(const char *env, const char *key)
+{
+	size_t len;
+
+	len = ft_strlen(key);
+	if (ft_strncmp(env, key, len) != 0)
+		return (0);
+	if (env[len] == '=' || env[len] == '\0')
+		return (1);
+	return (0);
+}
+
 // Self-explanatory.
 // Merges 3 strings together. Mainly used for the expander and env creation
 char	*ft_strjoin3(const char *key, const char *input, const char *value)
@@ -49,6 +61,8 @@ int	is_numeric(const char *str)
 	i = 0;
 	if (!str || !str[0])
 		return (0);
+	while (ft_isspace(str[i]))
+		i++;
 	if (str[i] == '+' || str[i] == '-')
 		i++;
 	if (!str[i] || !ft_isdigit((unsigned char)str[i]))

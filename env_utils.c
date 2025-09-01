@@ -32,7 +32,7 @@ void	free_arr(char ***arr, bool reuse)
 	}
 }
 
-// reallocates and copies from the old env array to the new.
+// Reallocates and copies from the old env array to the new.
 char	**realloc_env(char **envp, int extra)
 {
 	int		i;
@@ -77,45 +77,46 @@ void	set_env_value(char ***envp, const char *key, const char *value)
 	i = -1;
 	while ((*envp)[++i])
 	{
-		if (!ft_strncmp((*envp)[i], key, ft_strlen(key))
-			&& ((*envp)[i][ft_strlen(key)] == '=' || (*envp)[i][ft_strlen(key)]
-				== '\0'))
+		if (is_key_match((*envp)[i], key))
 		{
-			if (value)
-				return (free((*envp)[i]), (*envp)[i] = ft_strjoin3(key, "=",
-						value), (void)0);
+			free((*envp)[i]);
+			if (value != NULL)
+				(*envp)[i] = ft_strjoin3(key, "=", value);
 			else
-				return (free((*envp)[i]), (*envp)[i] = ft_strdup(key), (void)0);
+				(*envp)[i] = ft_strdup(key);
+			return ;
 		}
 	}
 	new_envp = realloc_env(*envp, 1);
 	if (!new_envp)
 		return ;
-	if (value)
-		new_envp[i++] = ft_strjoin3(key, "=", value);
+	if (value != NULL)
+		new_envp[i] = ft_strjoin3(key, "=", value);
 	else
-		new_envp[i++] = ft_strdup(key);
-	return (free(*envp), (*envp) = new_envp, (void)0);
+		new_envp[i] = ft_strdup(key);
+	free(*envp);
+	*envp = new_envp;
 }
 
-// removes an environemnt variable through its passed name (key)
+// Removes an environemnt variable through its passed name (key)
+// NOTE!!! : make sure undefined variable doesn't overwrite existing variable
 char	**unset_env_value(char **envp, const char *key, t_shell *shell)
 {
 	int		i;
 	int		j;
+	size_t	key_len;
 	char	**new_envp;
 
-	i = ft_arrlen(envp);
-	new_envp = malloc(sizeof(char *) * i);
+	key_len = ft_strlen(key);
+	new_envp = malloc(sizeof(char *) * ft_arrlen(envp));
 	if (!new_envp)
 		return (envp);
 	i = -1;
 	j = 0;
 	while (envp[++i])
 	{
-		if (!ft_strncmp(envp[i], key, ft_strlen(key))
-			&& (envp[i][ft_strlen(key)] == '=' || envp[i][ft_strlen(key)]
-				== '\0'))
+		if (!ft_strncmp(envp[i], key, key_len)
+			&& (envp[i][key_len] == '=' || envp[i][key_len] == '\0'))
 		{
 			free(envp[i]);
 			shell->removed = true;
