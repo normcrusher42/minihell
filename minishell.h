@@ -96,6 +96,16 @@ typedef struct s_cmd
 	int		redir_count;
 }	t_cmd;
 
+typedef struct s_parse_ctx
+{
+	t_token	*tk;
+	t_cmd	cur;
+	t_cmd	*arr;
+	int		n;
+	int		i;
+	int		*st;
+}	t_parse_ctx;
+
 /* Public API for parser */
 int		parse_command_table(t_token *tk, t_cmd **out, int *count, int *st);
 void	free_cmd_table(t_cmd *cmds, int n);

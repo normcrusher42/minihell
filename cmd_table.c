@@ -6,7 +6,7 @@
 /*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 15:44:42 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/08/16 15:48:12 by lsahloul         ###   ########.fr       */
+/*   Updated: 2025/09/02 21:11:40 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ static int	redir_kind(const char *s)
 		return (R_HEREDOC);
 	return (-1);
 }
-
-/* ------------------------ dyn arrays (argv/redirs) ------------------------ */
 
 static int	push_word(t_cmd *c, const char *w)
 {
@@ -87,8 +85,6 @@ static int	push_redir(t_cmd *c, t_redirtype t, const char *arg, int quoted)
 	return (1);
 }
 
-/* ------------------------ frees & errors ---------------------------------- */
-
 static void	free_one_cmd(t_cmd *c)
 {
 	int	i;
@@ -109,13 +105,15 @@ static void	free_one_cmd(t_cmd *c)
 static int	syntax_err(const char *tok, int *st)
 {
 	ft_putstr_fd("minishell: syntax error near `", 2);
-	ft_putstr_fd((char *)(tok ? tok : "newline"), 2);
+	if (tok)
+		ft_putstr_fd((char *)tok, 2);
+	else
+		ft_putstr_fd("newline", 2);
 	ft_putstr_fd("'\n", 2);
 	if (st)
 		*st = 258;
 	return (0);
 }
-
 
 static int	finalize_segment(t_cmd **arr, int *n, t_cmd *cur)
 {
@@ -138,10 +136,10 @@ static int	finalize_segment(t_cmd **arr, int *n, t_cmd *cur)
 	return (1);
 }
 
-
 static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, int *st)
 {
 	int	k;
+	int	is_quoted;
 
 	k = redir_kind(tk->tokens[i]);
 	if (k >= 0)
@@ -149,9 +147,13 @@ static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, int *st)
 		if (!tk->tokens[i + 1] || is_pipe(tk->tokens[i + 1])
 			|| redir_kind(tk->tokens[i + 1]) >= 0)
 			return (syntax_err(tk->tokens[i + 1], st));
-		if (!push_redir(cur, k, tk->tokens[i + 1],
-				(k == R_HEREDOC && tk->quote) ? (tk->quote[i + 1] != QTE_NONE)
-				: 0))
+		is_quoted = 0;
+		if (k == R_HEREDOC && tk->quote)
+		{
+			if (tk->quote[i + 1] != QTE_NONE)
+				is_quoted = 1;
+		}
+		if (!push_redir(cur, k, tk->tokens[i + 1], is_quoted))
 			return (0);
 		return (2);
 	}
@@ -160,62 +162,72 @@ static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, int *st)
 	return (1);
 }
 
-int	parse_command_table(t_token *tk, t_cmd **out, int *count, int *st)
+static int	init_parse_ctx(t_parse_ctx *p)
 {
-	t_cmd	cur;
-	t_cmd	*arr;
-	int		n;
-	int		i;
-	int		step;
-
-	if (!tk || !tk->tokens || !out || !count)
+	p->arr = NULL;
+	p->n = 0;
+	p->i = -1;
+	init_cmd(&p->cur);
+	if (!p->tk || !p->tk->tokens)
 		return (0);
-	arr = NULL;
-	n = 0;
-	i = -1;
-	init_cmd(&cur);
-	if (tk->tokens[0] && is_pipe(tk->tokens[0]))
-		return (syntax_err(tk->tokens[0], st));
-	while (tk->tokens[++i])
-	{
-		if (is_pipe(tk->tokens[i]))
-		{
-			if (!finalize_segment(&arr, &n, &cur))
-				return (syntax_err(tk->tokens[i], st));
-			continue ;
-		}
-		step = parse_segment_token(&cur, tk, i, st);
-		if (step == 0)
-			return (free_one_cmd(&cur), free_cmd_table(arr, n), 0);
-		i += (step - 1);
-	}
-	if (!finalize_segment(&arr, &n, &cur))
-		return (free_one_cmd(&cur), syntax_err(NULL, st));
-	*out = arr;
-	*count = n;
+	if (p->tk->tokens[0] && is_pipe(p->tk->tokens[0]))
+		return (syntax_err(p->tk->tokens[0], p->st));
 	return (1);
 }
 
+static int	handle_token(t_parse_ctx *p)
+{
+	int	step;
+
+	if (is_pipe(p->tk->tokens[p->i]))
+	{
+		if (!finalize_segment(&p->arr, &p->n, &p->cur))
+			return (syntax_err(p->tk->tokens[p->i], p->st));
+	}
+	else
+	{
+		step = parse_segment_token(&p->cur, p->tk, p->i, p->st);
+		if (step == 0)
+		{
+			free_one_cmd(&p->cur);
+			free_cmd_table(p->arr, p->n);
+			return (0);
+		}
+		p->i += (step - 1);
+	}
+	return (1);
+}
+
+int	parse_command_table(t_token *tk, t_cmd **out, int *count, int *st)
+{
+	t_parse_ctx	p;
+
+	p.tk = tk;
+	p.st = st;
+	if (!out || !count || !init_parse_ctx(&p))
+		return (0);
+	while (p.tk->tokens[++p.i])
+		if (!handle_token(&p))
+			return (0);
+	if (!finalize_segment(&p.arr, &p.n, &p.cur))
+	{
+		free_one_cmd(&p.cur);
+		return (syntax_err(NULL, p.st));
+	}
+	*out = p.arr;
+	*count = p.n;
+	return (1);
+}
 
 void	free_cmd_table(t_cmd *cmds, int n)
 {
 	int	i;
-	int	j;
 
 	if (!cmds)
 		return ;
 	i = -1;
 	while (++i < n)
-	{
-		j = -1;
-		while (++j < cmds[i].argc)
-			free(cmds[i].argv[j]);
-		free(cmds[i].argv);
-		j = -1;
-		while (++j < cmds[i].redir_count)
-			free(cmds[i].redirs[j].arg);
-		free(cmds[i].redirs);
-	}
+		free_one_cmd(&cmds[i]);
 	free(cmds);
 }
 
@@ -241,4 +253,3 @@ void	print_cmd_table(t_cmd *cmds, int n)
 				cmds[i].redirs[j].is_quoted);
 	}
 }
-
