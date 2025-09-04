@@ -14,7 +14,7 @@
 
 int	is_key_match(const char *env, const char *key)
 {
-	size_t len;
+	size_t	len;
 
 	len = ft_strlen(key);
 	if (ft_strncmp(env, key, len) != 0)
@@ -56,7 +56,7 @@ int	ft_arrlen(char **arr)
 
 int	is_numeric(const char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (!str || !str[0])

@@ -5,7 +5,7 @@
 ---
 
 ### 🗓 Day 1
------------------------------------------------------------ ❌
+----------------------------------------------------------- ✅
 🫘 **Beans — Build command model**
 
 * 🏗 Create files: `parsing/cmd_table.c`, `parsing/cmd_table.h`.
@@ -67,7 +67,7 @@
 
 * For `cd /`, job runs parent path and returns an int status.
 
------------------------------------------------------------ ❌
+----------------------------------------------------------- ✅ / ❌ just 2 bugs to fix
 
 ### 🗓 Day 3
 
@@ -91,7 +91,7 @@
 
 * Single command path compiles and returns a status without FD work.
 
----
+----------------------------------------------------------- ✅ / ❌ 
 
 ### 🗓 Day 4 (Integration)
 
