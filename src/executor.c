@@ -52,7 +52,7 @@ int	exec_builtin(char **av, char ***envp)
 void	execute_command(char *cmd, char **env, t_shell *sh)
 {
 	pid_t	pid;
-	char	*argv_[2];
+	char	*av[2];
 	int		status;
 
 	(void)sh;

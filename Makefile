@@ -1,6 +1,6 @@
 # Object and source path directories
-OBJ_PATH = obj/
-BUILTINS = builtins/
+OBJ_PATH = src/obj/
+BUILTINS = src/builtins/
 OBJ_PATH2 = $(BUILTINS)obj/
 LIBFT_PATH = libft/
 
@@ -9,12 +9,12 @@ NAME = minishell
 LIBFT = $(LIBFT_PATH)libft.a
 
 # Program sauce files
-SRC = ./main.c env_utils.c utils.c executor.c expander.c signals.c tokenizer.c token_process.c cmd_table.c cleanup.c
+SRC = ./src/main.c src/env_utils.c src/utils.c src/executor.c src/expander.c src/signals.c src/tokenizer.c src/token_process.c src/cmd_table.c src/cleanup.c
 SRC2 = ./$(BUILTINS)ft_cd.c $(BUILTINS)ft_echo.c $(BUILTINS)ft_env.c $(BUILTINS)ft_exit.c \
 $(BUILTINS)ft_export.c $(BUILTINS)ft_pwd.c $(BUILTINS)ft_unset.c
 
 # Object files
-OBJ = $(SRC:%.c=$(OBJ_PATH)%.o)
+OBJ = $(SRC:src/%.c=$(OBJ_PATH)%.o)
 OBJ2 = $(SRC2:$(BUILTINS)%.c=$(OBJ_PATH2)%.o)
 
 # Compiler n flags
@@ -44,7 +44,7 @@ $(LIBFT):
 	@make -C $(LIBFT_PATH) all
 	@echo "$(WHITE)libft is $(BGREEN)ready! $(RESET)✅"
 
-$(OBJ_PATH)%.o : %.c
+$(OBJ_PATH)%.o : src/%.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_PATH2)%.o : $(BUILTINS)%.c

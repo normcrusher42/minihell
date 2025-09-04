@@ -38,18 +38,6 @@
 
 extern int	g_last_status; // last exit return value
 
-typedef struct s_cmd
-{
-	char	**av;
-	int		input_fd;
-	int		output_fd;
-	int		append; // 1 if ">>", 0 if ">"
-	int		pipe_in; // 1 if stdin comes from a previous pipe
-	int		pipe_out; // 1 if stdout goes to next pipe
-	int		is_builtin;
-	// t_redir	*redirs;
-}	t_cmd;
-
 typedef enum e_quote_type
 {
 	QTE_NONE,
@@ -103,13 +91,18 @@ typedef struct s_redir
 	int			is_quoted;  /* heredoc delim quoted? 1/0  */
 }	t_redir;
 
-/* Command built by the parser */
 typedef struct s_cmd
 {
-	char	**argv;
-	int		argc;
-	t_redir	*redirs;
+	char	**av;
+	int		ac;
+	int		input_fd;
+	int		output_fd;
 	int		redir_count;
+	int		append; // 1 if ">>", 0 if ">"
+	int		pipe_in; // 1 if stdin comes from a previous pipe
+	int		pipe_out; // 1 if stdout goes to next pipe
+	int		is_builtin;
+	t_redir	*redirs;
 }	t_cmd;
 
 typedef struct s_parse_ctx

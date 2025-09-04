@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 15:44:42 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/09/04 20:19:53 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/09/04 21:29:29 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 static void	init_cmd(t_cmd *c)
 {
-	c->argv = NULL;
-	c->argc = 0;
+	c->av = NULL;
+	c->ac = 0;
 	c->redirs = NULL;
 	c->redir_count = 0;
 }
@@ -47,19 +47,19 @@ static int	push_word(t_cmd *c, const char *w)
 	char	**nv;
 	int		i;
 
-	nv = (char **)malloc(sizeof(char *) * (c->argc + 2));
+	nv = (char **)malloc(sizeof(char *) * (c->ac + 2));
 	if (!nv)
 		return (0);
 	i = -1;
-	while (++i < c->argc)
-		nv[i] = c->argv[i];
+	while (++i < c->ac)
+		nv[i] = c->av[i];
 	nv[i] = ft_strdup(w);
 	if (!nv[i])
 		return (free(nv), 0);
 	nv[i + 1] = NULL;
-	free(c->argv);
-	c->argv = nv;
-	c->argc++;
+	free(c->av);
+	c->av = nv;
+	c->ac++;
 	return (1);
 }
 
@@ -92,9 +92,9 @@ static void	free_one_cmd(t_cmd *c)
 	if (!c)
 		return ;
 	i = -1;
-	while (++i < c->argc)
-		free(c->argv[i]);
-	free(c->argv);
+	while (++i < c->ac)
+		free(c->av[i]);
+	free(c->av);
 	i = -1;
 	while (++i < c->redir_count)
 		free(c->redirs[i].arg);
@@ -120,7 +120,7 @@ static int	finalize_segment(t_cmd **arr, int *n, t_cmd *cur)
 	t_cmd	*nv;
 	int		i;
 
-	if (cur->argc == 0 && cur->redir_count == 0)
+	if (cur->ac == 0 && cur->redir_count == 0)
 		return (0);
 	nv = (t_cmd *)malloc(sizeof(t_cmd) * (*n + 1));
 	if (!nv)
@@ -243,8 +243,8 @@ void	print_cmd_table(t_cmd *cmds, int n)
 	{
 		ft_printf("cmd[%d]:\n", i);
 		j = -1;
-		while (++j < cmds[i].argc)
-			ft_printf("  argv[%d]=`%s`\n", j, cmds[i].argv[j]);
+		while (++j < cmds[i].ac)
+			ft_printf("  av[%d]=`%s`\n", j, cmds[i].av[j]);
 		j = -1;
 		while (++j < cmds[i].redir_count)
 			ft_printf("  redir[%d]=%d `%s` q=%d\n", j,
