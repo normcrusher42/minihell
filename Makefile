@@ -1,5 +1,7 @@
 # Object and source path directories
 OBJ_PATH = obj/
+BUILTINS = builtins/
+OBJ_PATH2 = $(BUILTINS)obj/
 LIBFT_PATH = libft/
 
 # Program & build names
@@ -7,10 +9,13 @@ NAME = minishell
 LIBFT = $(LIBFT_PATH)libft.a
 
 # Program sauce files
-SRC = ./main.c env_utils.c utils.c executor.c expander.c signals.c tokenizer.c
+SRC = ./main.c env_utils.c utils.c executor.c expander.c signals.c tokenizer.c cleanup.c
+SRC2 = ./$(BUILTINS)ft_cd.c $(BUILTINS)ft_echo.c $(BUILTINS)ft_env.c $(BUILTINS)ft_exit.c \
+$(BUILTINS)ft_export.c $(BUILTINS)ft_pwd.c $(BUILTINS)ft_unset.c
 
 # Object files
 OBJ = $(SRC:%.c=$(OBJ_PATH)%.o)
+OBJ2 = $(SRC2:$(BUILTINS)%.c=$(OBJ_PATH2)%.o)
 
 # Compiler n flags
 CC		=		cc
@@ -29,9 +34,9 @@ MAKEFLAGS += --no-print-directory
 # Build magicc
 all: $(NAME)
 
-$(NAME): $(LIBFT) $(OBJ_PATH) $(OBJ)
+$(NAME): $(LIBFT) $(OBJ_PATH) $(OBJ_PATH2) $(OBJ) $(OBJ2)
 	@echo "$(WHITE)Compiling $(BWHITE)$(NAME)$(WHITE) program...$(RESET)"
-	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(LDFLAGS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJ) $(OBJ2) $(LIBFT) $(LDFLAGS) -o $(NAME)
 	@echo "$(BWHITE)$(NAME)$(WHITE) program is $(BGREEN)ready! $(RESET)✅"
 
 $(LIBFT):
@@ -42,11 +47,17 @@ $(LIBFT):
 $(OBJ_PATH)%.o : %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 
+$(OBJ_PATH2)%.o : $(BUILTINS)%.c
+	@$(CC) $(CFLAGS) -c $< -o $@
+
 $(OBJ_PATH):
 	@mkdir -p $(OBJ_PATH)
 
+$(OBJ_PATH2):
+	@mkdir -p $(OBJ_PATH2)
+
 clean:
-	@rm -rf $(OBJ_PATH)
+	@rm -rf $(OBJ_PATH) $(OBJ_PATH2)
 	@make clean -C $(LIBFT_PATH)
 	@echo "$(BGREEN)cleaned like the blackhole you guys are getting if you DON'T GET TO COOKING$(WHITE)"
 

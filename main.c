@@ -76,6 +76,7 @@ int	main(int ac, char **av, char **envp)
 			add_history(shell.input);
 		butter_free(&shell);
 	}
+	clear_history();
 	free_arr(&shell.envp, NO);
 	return (0);
 }
