@@ -7,6 +7,7 @@
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:58:16 by nanasser          #+#    #+#             */
 /*   Updated: 2025/08/10 18:54:55 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/08/10 18:54:55 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +17,7 @@ static char	*merge_str(char *token, int last_status, int i, char **merge)
 {
 	merge[0] = ft_substr(token, 0, i);
 	if (token[i + 1] == '$')
+		merge[1] = ft_substr("miniOdy", 0, 8);
 		merge[1] = ft_substr("miniOdy", 0, 8);
 	else if (last_status == -1)
 		merge[1] = ft_strdup("");
@@ -56,9 +58,12 @@ char	*env_expander(char *token, char **merge, char **envp, int i)
 char	*very_specific_expander(char *token, char **merge, char **envp, int i)
 {
 	unsigned char	next;
+	unsigned char	next;
 
 	next = (unsigned char)token[i + 1];
 	if (!ft_isalnum(next) && next != '_' && !ft_isspace(next))
+		return (merge_str(token, -1, i, merge));
+	return (env_expander(token, merge, envp, i));
 		return (merge_str(token, -1, i, merge));
 	return (env_expander(token, merge, envp, i));
 }
@@ -87,6 +92,7 @@ char	*dollar_expander(char *token, int last_status, char **envp)
 		i = -1;
 	}
 	return (free_arr(&merge, NO), token);
+	return (free_arr(&merge, NO), token);
 }
 
 char	**expand_token(t_token *token, char **envp, int last_status)
@@ -106,7 +112,8 @@ char	**expand_token(t_token *token, char **envp, int last_status)
 			result[i] = ft_strdup(token->tokens[i]);
 		if (!result[i])
 			return (free_arr(&result, NO), free_arr(&token->tokens, NO), NULL);
+			return (free_arr(&result, NO), free_arr(&token->tokens, NO), NULL);
 	}
-	free_arr(&token->tokens, NO);
-	return (result);
+	result[i] = NULL;
+	return (free_arr(&token->tokens, NO), result);
 }

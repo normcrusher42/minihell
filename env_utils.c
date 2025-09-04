@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: team                                           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/31 20:07:59 by nanasser          #+#    #+#             */
-/*   Updated: 2025/07/31 21:35:27 by nanasser         ###   ########.fr       */
+/*   Created: 2025/07/31 20:07:59 by team              #+#    #+#             */
+/*   Updated: 2025/08/10 21:00:00 by team             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ char	*get_env_value(char **envp, const char *key)
 	int	i;
 	int	len;
 
+	if (!envp || !key)
+		return (NULL);
 	i = -1;
 	len = ft_strlen(key);
 	while (envp[++i])
@@ -74,6 +76,8 @@ void	set_env_value(char ***envp, const char *key, const char *value)
 	int		i;
 	char	**new_envp;
 
+	if (!envp || !*envp || !key || !value)
+		return ;
 	i = -1;
 	while ((*envp)[++i])
 	{
@@ -126,5 +130,7 @@ char	**unset_env_value(char **envp, const char *key, t_shell *shell)
 	}
 	if (!shell->removed)
 		return (free(new_envp), envp);
-	return (new_envp[j] = NULL, free(envp), new_envp);
+	new_envp[j] = NULL;
+	free(envp);
+	return (new_envp);
 }

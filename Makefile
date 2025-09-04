@@ -9,7 +9,7 @@ NAME = minishell
 LIBFT = $(LIBFT_PATH)libft.a
 
 # Program sauce files
-SRC = ./main.c env_utils.c utils.c executor.c expander.c signals.c tokenizer.c cleanup.c
+SRC = ./main.c env_utils.c utils.c executor.c expander.c signals.c tokenizer.c token_process.c cmd_table.c cleanup.c
 SRC2 = ./$(BUILTINS)ft_cd.c $(BUILTINS)ft_echo.c $(BUILTINS)ft_env.c $(BUILTINS)ft_exit.c \
 $(BUILTINS)ft_export.c $(BUILTINS)ft_pwd.c $(BUILTINS)ft_unset.c
 

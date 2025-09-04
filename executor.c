@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: team                                           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/04 15:54:12 by nanasser          #+#    #+#             */
-/*   Updated: 2025/08/04 15:54:12 by nanasser         ###   ########.fr       */
+/*   Created: 2025/08/04 15:54:12 by team              #+#    #+#             */
+/*   Updated: 2025/08/10 21:00:00 by team             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <errno.h>
 
 int	g_last_status = 0;
 
@@ -51,7 +52,7 @@ int	exec_builtin(char **av, char ***envp)
 void	execute_command(char *cmd, char **env, t_shell *sh)
 {
 	pid_t	pid;
-	char	*av[2];
+	char	*argv_[2];
 	int		status;
 
 	(void)sh;
