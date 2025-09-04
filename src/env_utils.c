@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: team                                           +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/31 20:07:59 by team              #+#    #+#             */
-/*   Updated: 2025/08/10 21:00:00 by team             ###   ########.fr       */
+/*   Created: 2025/09/04 22:05:42 by nanasser          #+#    #+#             */
+/*   Updated: 2025/09/04 22:05:42 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,6 @@ void	set_env_value(char ***envp, const char *key, const char *value)
 	int		i;
 	char	**new_envp;
 
-	if (!envp || !*envp || !key || !value)
-		return ;
 	i = -1;
 	while ((*envp)[++i])
 	{
@@ -112,7 +110,7 @@ char	**unset_env_value(char **envp, const char *key, t_shell *shell)
 	char	**new_envp;
 
 	key_len = ft_strlen(key);
-	new_envp = malloc(sizeof(char *) * ft_arrlen(envp));
+	new_envp = malloc(sizeof(char *) * (ft_arrlen(envp) + 1));
 	if (!new_envp)
 		return (envp);
 	i = -1;
@@ -123,6 +121,7 @@ char	**unset_env_value(char **envp, const char *key, t_shell *shell)
 			&& (envp[i][key_len] == '=' || envp[i][key_len] == '\0'))
 		{
 			free(envp[i]);
+			envp[i] = NULL;
 			shell->removed = true;
 			continue ;
 		}
@@ -130,7 +129,5 @@ char	**unset_env_value(char **envp, const char *key, t_shell *shell)
 	}
 	if (!shell->removed)
 		return (free(new_envp), envp);
-	new_envp[j] = NULL;
-	free(envp);
-	return (new_envp);
+	return (new_envp[j] = NULL, free(envp), new_envp);
 }

@@ -102,17 +102,38 @@ int	main(int ac, char **av, char **envp)
 	shell = (t_shell){0};
 	init_shell(envp, &shell);
 	init_signals();
-	while (1)
-	{
-		shell.input = readline("miniOdy$ ");
-		if (!shell.input)
-			break ;
-		if (*shell.input)
-			add_history(shell.input);
-		if (*shell.input)
-			process_line_tokens(&shell);
-		butter_free(&shell);
-	}
+	char *cd_args[]     = {"cd", NULL};
+	char *echo_args[]   = {"echo", "hello", "world", NULL};
+	char *export_args[] = {"export", "FOO=bar", "FOObar=naw", "imagine", NULL};
+	char *unset_args[]  = {"unset", "nothing lol", "FOO", "FOO", "123", "", "@FOO", NULL};
+	char *exit_args[]   = {"exit", "-9223372036854775809", NULL};
+	printf("== TESTING echo ==\n");
+	ft_echo(echo_args);
+
+	printf("== TESTING cd + pwd ==\n");
+	ft_cd(cd_args, &shell.envp);
+	ft_pwd();
+
+	printf("== TESTING export + env ==\n");
+	ft_export(export_args, &shell.envp);
+	ft_export_print(shell.envp);
+
+
+	printf("== TESTING unset + env ==\n");
+	ft_unset(unset_args, &shell.envp, &shell);
+	ft_env(shell.envp);
+
+	printf("== TESTING exit (will terminate!) ==\n");
+	ft_exit(exit_args, &shell);
+	// while (1)
+	// {
+	// 	shell.input = readline("miniOdy$ ");
+	// 	if (!shell.input)
+	// 		break ;
+	// 	if (*shell.input)
+	// 		add_history(shell.input);
+	// 	butter_free(&shell);
+	// }
 	clear_history();
 	free_arr(&shell.envp, NO);
 	return (0);
