@@ -91,7 +91,7 @@
 
 * Single command path compiles and returns a status without FD work.
 
------------------------------------------------------------ ✅ / ❌ awaiting Pika
+----------------------------------------------------------- ✅
 
 ### 🗓 Day 4 (Integration)
 

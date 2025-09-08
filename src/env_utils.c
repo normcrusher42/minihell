@@ -12,26 +12,6 @@
 
 #include "minishell.h"
 
-// Frees the passed double array pointer and its content (with a reuse switch). 
-void	free_arr(char ***arr, bool reuse)
-{
-	int	i;
-
-	if (!arr || !*arr)
-		return ;
-	i = -1;
-	while ((*arr)[++i])
-	{
-		free((*arr)[i]);
-		(*arr)[i] = NULL;
-	}
-	if (!reuse)
-	{
-		free(*arr);
-		*arr = NULL;
-	}
-}
-
 // Reallocates and copies from the old env array to the new.
 char	**realloc_env(char **envp, int extra)
 {

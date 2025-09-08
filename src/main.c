@@ -12,18 +12,8 @@
 
 #include "minishell.h"
 
-// Frees the stored input.
-void	butter_free_input(t_shell *shell)
-{
-	if (shell->input)
-	{
-		free(shell->input);
-		shell->input = NULL;
-	}
-}
-
 // Duplicates the passed environment variables into the shell struct.
-static char	**dup_env(char **envp)
+char	**dup_env(char **envp)
 {
 	char	**new_envp;
 	int		count;
@@ -91,11 +81,15 @@ static void	process_line_tokens(t_shell *sh)
 	{
 		if (should_debug_parse())
 			print_cmd_table(cmds, ncmd);
-		/* later: execute_job(cmds, ncmd, sh); */
+		// execute_job(cmds, ncmd, sh);
 		free_cmd_table(cmds, ncmd);
 	}
 	free_tokens(tok);
 }
+
+/*      minishell brought to you by none other than @Nasser and @Leen!!!      */
+/*        Expect 80% of what you see to give you "fever dream" vibes          */
+/*                                          -if you know, you know-           */
 
 // le shelling Magie 𝓬𝓸𝓶𝓶𝓮𝓷𝓬𝓮
 int	main(int ac, char **av, char **envp)
@@ -107,38 +101,15 @@ int	main(int ac, char **av, char **envp)
 	shell = (t_shell){0};
 	init_shell(envp, &shell);
 	init_signals();
-	// char *cd_args[]     = {"cd", NULL};
-	// char *echo_args[]   = {"echo", "hello", "world", NULL};
-	char *export_args[] = {"export", "lol=", "lol", "SHELL=miniOdy", "FOObar=naw", "FOObar", NULL};
-	char *unset_args[]  = {"unset", "", "FOO@", "123", "", "@FOO", NULL};
-	// char *exit_args[]   = {"exit", "-9223372036854775809", NULL};
-	// printf("== TESTING echo ==\n");
-	// ft_echo(echo_args);
-
-	// printf("== TESTING cd + pwd ==\n");
-	// ft_cd(cd_args, &shell.envp);
-	// ft_pwd();
-
-	printf("== TESTING export + env ==\n");
-	ft_export(export_args, &shell.envp);
-	// ft_export_print(shell.envp);
-
-
-	printf("== TESTING unset + env ==\n");
-	ft_unset(unset_args, &shell.envp, &shell);
-	ft_export_print(shell.envp);
-
-	// printf("== TESTING exit (will terminate!) ==\n");
-	// ft_exit(exit_args, &shell);
-	// while (1)
-	// {
-	// 	shell.input = readline("miniOdy$ ");
-	// 	if (!shell.input)
-	// 		break ;
-	// 	if (*shell.input)
-	// 		add_history(shell.input);
-	// 	butter_free(&shell);
-	// }
+	while (1)
+	{
+		shell.input = readline("miniOdy$ ");
+		if (!shell.input)
+			break ;
+		if (*shell.input)
+			add_history(shell.input);
+		butter_free_input(&shell);
+	}
 	clear_history();
 	free_arr(&shell.envp, NO);
 	return (0);

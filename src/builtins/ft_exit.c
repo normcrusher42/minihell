@@ -35,7 +35,7 @@ int	ft_atoll(const char *str, long long *code)
 		if (result > ((unsigned long long)LLONG_MAX / 10) || (result == \
 					(unsigned long long)LLONG_MAX / 10
 				&& (unsigned long long)(str[i] - '0')
-				> (unsigned long long)(LLONG_MAX % 10) + (sign == -1)))
+			> (unsigned long long)(LLONG_MAX % 10) + (sign == -1)))
 			return (0);
 		result = (result * 10) + (str[i++] - '0');
 	}

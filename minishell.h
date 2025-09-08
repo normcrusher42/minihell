@@ -148,7 +148,6 @@ int		execute_job(t_cmd *cmds, int n, t_shell *sh);
 int		is_builtin(char *cmd);
 int		exec_builtin(char **av, char ***envp);
 char	**realloc_env(char **envp, int extra);
-void	call_janitor(t_shell *sh);
 int		is_numeric(const char *str);
 int		ft_atoll(const char *str, long long *code);
 int	is_key_match(const char *env, const char *key);
@@ -177,8 +176,11 @@ char	**expand_token(t_token *token, char **envp, int last_status);
 char	*dollar_expander(char *token, int last_status, char **envp);
 void	process_all_tokens(t_token *tok, char **envp, int last_status);
 
-/* main.c */
-int		main(int argc, char **argv, char **envp);
+/* janitor functions */
+/* aka cleanup for u boomers */
+/* ..we can keep this in the final submission right Leen? */
+char	**dup_env(char **envp);
 void	butter_free_input(t_shell *shell);
+void	call_janitor(t_shell *sh);
 
 #endif

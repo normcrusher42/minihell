@@ -48,6 +48,7 @@ int	exec_builtin(char **av, char ***envp)
 	return (1);
 }
 
+// Runs a single cmd passed and checks if its a builtin or a program
 void	execute_command(char *cmd, char **env, t_shell *sh)
 {
 	pid_t	pid;

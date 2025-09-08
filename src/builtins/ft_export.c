@@ -61,10 +61,10 @@ int	ft_export_print(char **envp)
 }
 
 // Splits & stores the key and value to better process the '=' condition.
-static t_kv split_key_value(const char *arg)
+static t_kv	split_key_value(const char *arg)
 {
-	t_kv   kv;
-	char  *equal;
+	t_kv	kv;
+	char	*equal;
 
 	kv = (t_kv){0};
 	equal = ft_strchr(arg, '=');
@@ -81,10 +81,10 @@ static t_kv split_key_value(const char *arg)
 }
 
 // A not-so-simple remake of 'export'. Can print declared envs and defines them.
-int ft_export(char **av, char ***envp)
+int	ft_export(char **av, char ***envp)
 {
-	int   i;
-	t_kv  kv;
+	int		i;
+	t_kv	kv;
 
 	if (ft_arrlen(av) == 1)
 		return (ft_export_print(*envp));
@@ -94,7 +94,7 @@ int ft_export(char **av, char ***envp)
 		if (!is_valid_identifier(av[i]))
 		{
 			export_error(av[i]);
-			continue;
+			continue ;
 		}
 		kv = split_key_value(av[i]);
 		if (!kv.has_equal)
