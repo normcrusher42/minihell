@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-// Frees the passed double array pointer and its content (with a reuse switch) 
+// Frees the passed double array pointer and its content (with a reuse switch). 
 void	free_arr(char ***arr, bool reuse)
 {
 	int	i;
@@ -47,7 +47,7 @@ char	**realloc_env(char **envp, int extra)
 	return (new_envp);
 }
 
-// Finds the environment variable name passed by key and returns its definition
+// Finds the environment variable name passed by key and returns its definition.
 char	*get_env_value(char **envp, const char *key)
 {
 	int	i;
@@ -70,8 +70,8 @@ char	*get_env_value(char **envp, const char *key)
 	return (NULL);
 }
 
-// Sets/updates an environment variable through their passed definition (value)
-void	set_env_value(char ***envp, const char *key, const char *value)
+// Sets/updates an environment variable through their passed definition (value).
+void	set_env_value(char ***envp, const char *key, const char *val, int exist)
 {
 	int		i;
 	char	**new_envp;
@@ -81,27 +81,26 @@ void	set_env_value(char ***envp, const char *key, const char *value)
 	{
 		if (is_key_match((*envp)[i], key))
 		{
+			if (exist)
+				return ;
 			free((*envp)[i]);
-			if (value != NULL)
-				(*envp)[i] = ft_strjoin3(key, "=", value);
+			if (val)
+				return ((*envp)[i] = ft_strjoin3(key, "=", val), (void)0);
 			else
-				(*envp)[i] = ft_strdup(key);
-			return ;
+				return ((*envp)[i] = ft_strdup(key), (void)0);
 		}
 	}
 	new_envp = realloc_env(*envp, 1);
 	if (!new_envp)
 		return ;
-	if (value != NULL)
-		new_envp[i] = ft_strjoin3(key, "=", value);
+	if (val != NULL)
+		new_envp[i] = ft_strjoin3(key, "=", val);
 	else
 		new_envp[i] = ft_strdup(key);
-	free(*envp);
-	*envp = new_envp;
+	return (free(*envp), *envp = new_envp, (void)0);
 }
 
-// Removes an environemnt variable through its passed name (key)
-// NOTE!!! : make sure undefined variable doesn't overwrite existing variable
+// Removes an environemnt variable through its passed name (key).
 char	**unset_env_value(char **envp, const char *key, t_shell *shell)
 {
 	int		i;
@@ -121,7 +120,6 @@ char	**unset_env_value(char **envp, const char *key, t_shell *shell)
 			&& (envp[i][key_len] == '=' || envp[i][key_len] == '\0'))
 		{
 			free(envp[i]);
-			envp[i] = NULL;
 			shell->removed = true;
 			continue ;
 		}

@@ -11,11 +11,10 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <errno.h>
 
 int	g_last_status = 0;
 
-// A checker if the argument is a built-in
+// A checker if the argument is a built-in.
 int	is_builtin(char *cmd)
 {
 	if (!cmd)
@@ -37,7 +36,7 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-// The built-ins executor based on the passed argument
+// The built-ins executor based on the passed argument.
 int	exec_builtin(char **av, char ***envp)
 {
 	if (!ft_strncmp(av[0], "echo", ft_strlen("echo")))

@@ -67,7 +67,12 @@ fclean: clean
 
 re: fclean $(NAME)
 
-leak:
+# complies and runs program at once (does not re)
+runngun: all
+	./minishell
+
+# compiles and runs program and valgrind at once (and supresses readline leaks as it will always leak)
+leak: all
 	valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all --track-origins=yes  --trace-children=yes --track-fds=yes ./minishell
 
 .PHONY: all clean fclean re leak

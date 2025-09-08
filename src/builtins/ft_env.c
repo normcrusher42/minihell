@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-// A simple remake of 'env'. Prints all environment variables
+// A simple remake of 'env'. Prints all environment variables.
 int	ft_env(char **envp)
 {
 	int	i;

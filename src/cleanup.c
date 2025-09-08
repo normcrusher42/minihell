@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+// The all-in-one cleanup function for the exit function.
 void	call_janitor(t_shell *sh)
 {
 	if (!sh)

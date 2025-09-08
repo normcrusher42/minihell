@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+// Compares strings and checks if they're matching and checks their last value.
 int	is_key_match(const char *env, const char *key)
 {
 	size_t	len;
@@ -25,7 +26,7 @@ int	is_key_match(const char *env, const char *key)
 }
 
 // Self-explanatory.
-// Merges 3 strings together. Mainly used for the expander and env creation
+// Merges 3 strings together. Mainly used for the expander and env creation.
 char	*ft_strjoin3(const char *key, const char *input, const char *value)
 {
 	char	*temp;
@@ -37,11 +38,13 @@ char	*ft_strjoin3(const char *key, const char *input, const char *value)
 	return (new_str);
 }
 
+// Self-explanatory.
 int	ft_isspace(int c)
 {
 	return ((c >= 9 && c <= 13) || c == ' ');
 }
 
+// Self-explanatory. But Nasser's dumbass forgot u could do that with strlen 🗿
 int	ft_arrlen(char **arr)
 {
 	int	i;
@@ -54,6 +57,7 @@ int	ft_arrlen(char **arr)
 	return (i);
 }
 
+// Checks if the passed string is numeric (atoi hacks basically).
 int	is_numeric(const char *str)
 {
 	int	i;

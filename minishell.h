@@ -28,7 +28,8 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-/* Colors (optional) */
+/* Colors ✨ */
+/* Pls use appropriately */
 # define RED   "\033[0;31m"
 # define BRED  "\033[1;31m"
 # define RESET "\033[0m"
@@ -50,6 +51,14 @@ typedef struct s_token
 	char			**tokens; /* tokens parsed */
 	t_quote_type	*quote;   /* quote type per token */
 }	t_token;
+
+// Stores key and value, and a bool check if it has an equal.
+typedef struct s_kv
+{
+	char	*key;
+	char	*val;
+	bool	has_equal;
+}	t_kv;
 
 typedef struct s_shell
 {
@@ -124,11 +133,10 @@ void	print_cmd_table(t_cmd *cmds, int n);
 
 /* env_utils.c */
 char	*get_env_value(char **envp, const char *key);
-void	set_env_value(char ***envp, const char *key, const char *value);
+void	set_env_value(char ***envp, const char *key, const char *val, int exist);
 char	**unset_env_value(char **envp, const char *key, t_shell *shell);
 int		ft_arrlen(char **arr);
 void	free_arr(char ***arr, bool reuse);
-void	butter_free(t_shell *shell);
 void	execute_command(char *cmd, char **env, t_shell *sh);
 char	*ft_strjoin3(const char *key, const char *input, const char *value);
 char	*dollar_expander(char *token, int last_status, char **envp);
@@ -171,6 +179,6 @@ void	process_all_tokens(t_token *tok, char **envp, int last_status);
 
 /* main.c */
 int		main(int argc, char **argv, char **envp);
-void	butter_free(t_shell *shell);
+void	butter_free_input(t_shell *shell);
 
 #endif

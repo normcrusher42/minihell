@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+// Validity identifier for the first character of the key.
 static int	is_valid_identifier(const char *s)
 {
 	int	i;
@@ -28,6 +29,7 @@ static int	is_valid_identifier(const char *s)
 	return (1);
 }
 
+// Unsets one or more environment variables from the passed arguments.
 int	ft_unset(char **av, char ***envp, t_shell *sh)
 {
 	int	i;

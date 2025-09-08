@@ -12,7 +12,8 @@
 
 #include "minishell.h"
 
-void	butter_free(t_shell *shell)
+// Frees the stored input.
+void	butter_free_input(t_shell *shell)
 {
 	if (shell->input)
 	{
@@ -21,6 +22,7 @@ void	butter_free(t_shell *shell)
 	}
 }
 
+// Duplicates the passed environment variables into the shell struct.
 static char	**dup_env(char **envp)
 {
 	char	**new_envp;
@@ -37,6 +39,7 @@ static char	**dup_env(char **envp)
 	return (new_envp);
 }
 
+// Prepares shell environment variables by copying them (otherwise, create one).
 static void	init_shell(char **envp, t_shell *shell)
 {
 	char	cwd[1024];
@@ -69,6 +72,7 @@ static int	should_debug_parse(void)
 	return (1);
 }
 
+// Leen, contextualize this. I ain't re-readin alladat LOL
 static void	process_line_tokens(t_shell *sh)
 {
 	t_token	*tok;
@@ -93,6 +97,7 @@ static void	process_line_tokens(t_shell *sh)
 	free_tokens(tok);
 }
 
+// le shelling Magie 𝓬𝓸𝓶𝓶𝓮𝓷𝓬𝓮
 int	main(int ac, char **av, char **envp)
 {
 	t_shell	shell;
@@ -102,29 +107,29 @@ int	main(int ac, char **av, char **envp)
 	shell = (t_shell){0};
 	init_shell(envp, &shell);
 	init_signals();
-	char *cd_args[]     = {"cd", NULL};
-	char *echo_args[]   = {"echo", "hello", "world", NULL};
-	char *export_args[] = {"export", "FOO=bar", "FOObar=naw", "imagine", NULL};
-	char *unset_args[]  = {"unset", "nothing lol", "FOO", "FOO", "123", "", "@FOO", NULL};
-	char *exit_args[]   = {"exit", "-9223372036854775809", NULL};
-	printf("== TESTING echo ==\n");
-	ft_echo(echo_args);
+	// char *cd_args[]     = {"cd", NULL};
+	// char *echo_args[]   = {"echo", "hello", "world", NULL};
+	char *export_args[] = {"export", "lol=", "lol", "SHELL=miniOdy", "FOObar=naw", "FOObar", NULL};
+	char *unset_args[]  = {"unset", "", "FOO@", "123", "", "@FOO", NULL};
+	// char *exit_args[]   = {"exit", "-9223372036854775809", NULL};
+	// printf("== TESTING echo ==\n");
+	// ft_echo(echo_args);
 
-	printf("== TESTING cd + pwd ==\n");
-	ft_cd(cd_args, &shell.envp);
-	ft_pwd();
+	// printf("== TESTING cd + pwd ==\n");
+	// ft_cd(cd_args, &shell.envp);
+	// ft_pwd();
 
 	printf("== TESTING export + env ==\n");
 	ft_export(export_args, &shell.envp);
-	ft_export_print(shell.envp);
+	// ft_export_print(shell.envp);
 
 
 	printf("== TESTING unset + env ==\n");
 	ft_unset(unset_args, &shell.envp, &shell);
-	ft_env(shell.envp);
+	ft_export_print(shell.envp);
 
-	printf("== TESTING exit (will terminate!) ==\n");
-	ft_exit(exit_args, &shell);
+	// printf("== TESTING exit (will terminate!) ==\n");
+	// ft_exit(exit_args, &shell);
 	// while (1)
 	// {
 	// 	shell.input = readline("miniOdy$ ");
