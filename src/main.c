@@ -81,7 +81,7 @@ static void	process_line_tokens(t_shell *sh)
 	{
 		if (should_debug_parse())
 			print_cmd_table(cmds, ncmd);
-		// execute_job(cmds, ncmd, sh);
+		execute_job(cmds, ncmd, sh);
 		free_cmd_table(cmds, ncmd);
 	}
 	free_tokens(tok);
