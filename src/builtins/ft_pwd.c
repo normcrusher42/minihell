@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-// A simple remake of 'pwd', prints the current working directory
+// A simple remake of 'pwd', prints the current working directory.
 int	ft_pwd(void)
 {
 	char	buf[1024];

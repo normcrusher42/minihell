@@ -3,34 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: team                                           +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/31 20:07:59 by team              #+#    #+#             */
-/*   Updated: 2025/08/10 21:00:00 by team             ###   ########.fr       */
+/*   Created: 2025/09/04 22:05:42 by nanasser          #+#    #+#             */
+/*   Updated: 2025/09/04 22:05:42 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// Frees the passed double array pointer and its content (with a reuse switch) 
-void	free_arr(char ***arr, bool reuse)
-{
-	int	i;
-
-	if (!arr || !*arr)
-		return ;
-	i = -1;
-	while ((*arr)[++i])
-	{
-		free((*arr)[i]);
-		(*arr)[i] = NULL;
-	}
-	if (!reuse)
-	{
-		free(*arr);
-		*arr = NULL;
-	}
-}
 
 // Reallocates and copies from the old env array to the new.
 char	**realloc_env(char **envp, int extra)
@@ -47,7 +27,7 @@ char	**realloc_env(char **envp, int extra)
 	return (new_envp);
 }
 
-// Finds the environment variable name passed by key and returns its definition
+// Finds the environment variable name passed by key and returns its definition.
 char	*get_env_value(char **envp, const char *key)
 {
 	int	i;
@@ -70,40 +50,37 @@ char	*get_env_value(char **envp, const char *key)
 	return (NULL);
 }
 
-// Sets/updates an environment variable through their passed definition (value)
-void	set_env_value(char ***envp, const char *key, const char *value)
+// Sets/updates an environment variable through their passed definition (value).
+void	set_env_value(char ***envp, const char *key, const char *val, int exist)
 {
 	int		i;
 	char	**new_envp;
 
-	if (!envp || !*envp || !key || !value)
-		return ;
 	i = -1;
 	while ((*envp)[++i])
 	{
 		if (is_key_match((*envp)[i], key))
 		{
+			if (exist)
+				return ;
 			free((*envp)[i]);
-			if (value != NULL)
-				(*envp)[i] = ft_strjoin3(key, "=", value);
+			if (val)
+				return ((*envp)[i] = ft_strjoin3(key, "=", val), (void)0);
 			else
-				(*envp)[i] = ft_strdup(key);
-			return ;
+				return ((*envp)[i] = ft_strdup(key), (void)0);
 		}
 	}
 	new_envp = realloc_env(*envp, 1);
 	if (!new_envp)
 		return ;
-	if (value != NULL)
-		new_envp[i] = ft_strjoin3(key, "=", value);
+	if (val != NULL)
+		new_envp[i] = ft_strjoin3(key, "=", val);
 	else
 		new_envp[i] = ft_strdup(key);
-	free(*envp);
-	*envp = new_envp;
+	return (free(*envp), *envp = new_envp, (void)0);
 }
 
-// Removes an environemnt variable through its passed name (key)
-// NOTE!!! : make sure undefined variable doesn't overwrite existing variable
+// Removes an environemnt variable through its passed name (key).
 char	**unset_env_value(char **envp, const char *key, t_shell *shell)
 {
 	int		i;
@@ -112,7 +89,7 @@ char	**unset_env_value(char **envp, const char *key, t_shell *shell)
 	char	**new_envp;
 
 	key_len = ft_strlen(key);
-	new_envp = malloc(sizeof(char *) * ft_arrlen(envp));
+	new_envp = malloc(sizeof(char *) * (ft_arrlen(envp) + 1));
 	if (!new_envp)
 		return (envp);
 	i = -1;
@@ -130,7 +107,5 @@ char	**unset_env_value(char **envp, const char *key, t_shell *shell)
 	}
 	if (!shell->removed)
 		return (free(new_envp), envp);
-	new_envp[j] = NULL;
-	free(envp);
-	return (new_envp);
+	return (new_envp[j] = NULL, free(envp), new_envp);
 }

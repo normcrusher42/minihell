@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-// A simple remake of 'cd'. Changes current working directory based on input
+// A simple remake of 'cd'. Changes current working directory based on input.
 int	ft_cd(char **av, char ***envp)
 {
 	char	*path;
@@ -33,8 +33,8 @@ int	ft_cd(char **av, char ***envp)
 	if (chdir(path) != 0)
 		return (perror("-mOdy: cd: path error"), 1);
 	if (old_path)
-		set_env_value(envp, "OLDPWD", old_path);
+		set_env_value(envp, "OLDPWD", old_path, 0);
 	if (getcwd(cwd, sizeof(cwd)))
-		set_env_value(envp, "PWD", cwd);
+		set_env_value(envp, "PWD", cwd, 0);
 	return (0);
 }

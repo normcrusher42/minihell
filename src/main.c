@@ -12,16 +12,8 @@
 
 #include "minishell.h"
 
-void	butter_free(t_shell *shell)
-{
-	if (shell->input)
-	{
-		free(shell->input);
-		shell->input = NULL;
-	}
-}
-
-static char	**dup_env(char **envp)
+// Duplicates the passed environment variables into the shell struct.
+char	**dup_env(char **envp)
 {
 	char	**new_envp;
 	int		count;
@@ -37,6 +29,7 @@ static char	**dup_env(char **envp)
 	return (new_envp);
 }
 
+// Prepares shell environment variables by copying them (otherwise, create one).
 static void	init_shell(char **envp, t_shell *shell)
 {
 	char	cwd[1024];
@@ -69,6 +62,7 @@ static int	should_debug_parse(void)
 	return (1);
 }
 
+// Leen, contextualize this. I ain't re-readin alladat LOL
 static void	process_line_tokens(t_shell *sh)
 {
 	t_token	*tok;
@@ -87,12 +81,17 @@ static void	process_line_tokens(t_shell *sh)
 	{
 		if (should_debug_parse())
 			print_cmd_table(cmds, ncmd);
-		/* later: execute_job(cmds, ncmd, sh); */
+		// execute_job(cmds, ncmd, sh);
 		free_cmd_table(cmds, ncmd);
 	}
 	free_tokens(tok);
 }
 
+/*      minishell brought to you by none other than @Nasser and @Leen!!!      */
+/*        Expect 80% of what you see to give you "fever dream" vibes          */
+/*                                          -if you know, you know-           */
+
+// le shelling Magie 𝓬𝓸𝓶𝓶𝓮𝓷𝓬𝓮
 int	main(int ac, char **av, char **envp)
 {
 	t_shell	shell;
@@ -109,9 +108,7 @@ int	main(int ac, char **av, char **envp)
 			break ;
 		if (*shell.input)
 			add_history(shell.input);
-		if (*shell.input)
-			process_line_tokens(&shell);
-		butter_free(&shell);
+		butter_free_input(&shell);
 	}
 	clear_history();
 	free_arr(&shell.envp, NO);

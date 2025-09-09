@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+// Self-explanatory. But with long long max.
 int	ft_atoll(const char *str, long long *code)
 {
 	int						i;
@@ -33,14 +34,15 @@ int	ft_atoll(const char *str, long long *code)
 	{
 		if (result > ((unsigned long long)LLONG_MAX / 10) || (result == \
 					(unsigned long long)LLONG_MAX / 10
-				&& (unsigned long long)str[i]
-				> (unsigned long long)(LLONG_MAX % 10) + (sign == -1)))
+				&& (unsigned long long)(str[i] - '0')
+			> (unsigned long long)(LLONG_MAX % 10) + (sign == -1)))
 			return (0);
 		result = (result * 10) + (str[i++] - '0');
 	}
 	return (*code = (long long)(sign * result), 1);
 }
 
+// A kinda-simple remake of 'exit'. Exits the program with an exit code.
 int	ft_exit(char **av, t_shell *sh)
 {
 	long long	code;

@@ -12,6 +12,15 @@
 
 #include "minishell.h"
 
+// Error message for bad export values (whilst pointing to the bad argument).
+static void	export_error(char *arg)
+{
+	ft_putstr_fd("mOdy: export: `", 2);
+	ft_putstr_fd(arg, 2);
+	ft_putendl_fd("': not a valid identifier", 2);
+}
+
+// Validity identifier for the first character of the key.
 static int	is_valid_identifier(const char *s)
 {
 	int	i;
@@ -28,6 +37,7 @@ static int	is_valid_identifier(const char *s)
 	return (1);
 }
 
+// Prints all environment variables with "declare -x" prepended.
 int	ft_export_print(char **envp)
 {
 	int		i;
@@ -50,31 +60,31 @@ int	ft_export_print(char **envp)
 	return (0);
 }
 
-static void	export_error(char *arg)
+// Splits & stores the key and value to better process the '=' condition.
+static t_kv	split_key_value(const char *arg)
 {
-	ft_putstr_fd("mOdy: export: `", 2);
-	ft_putstr_fd(arg, 2);
-	ft_putendl_fd("': not a valid identifier", 2);
+	t_kv	kv;
+	char	*equal;
+
+	kv = (t_kv){0};
+	equal = ft_strchr(arg, '=');
+	if (!equal)
+	{
+		kv.key = ft_strdup(arg);
+		return (kv);
+	}
+	kv.has_equal = 1;
+	kv.key = ft_substr(arg, 0, equal - arg);
+	if (*(equal + 1) != '\0')
+		kv.val = ft_strdup(equal + 1);
+	return (kv);
 }
 
-static void	export_assign(char ***envp, const char *arg, char *equal)
-{
-	char	*key;
-	char	*value;
-
-	key = ft_substr(arg, 0, equal - arg);
-	value = ft_strdup(equal + 1);
-	if (key)
-		set_env_value(envp, key, value);
-	free(key);
-	free(value);
-}
-
-// A simple remake of 'export'. Prints 
+// A not-so-simple remake of 'export'. Can print declared envs and defines them.
 int	ft_export(char **av, char ***envp)
 {
 	int		i;
-	char	*equal;
+	t_kv	kv;
 
 	if (ft_arrlen(av) == 1)
 		return (ft_export_print(*envp));
@@ -86,11 +96,16 @@ int	ft_export(char **av, char ***envp)
 			export_error(av[i]);
 			continue ;
 		}
-		equal = ft_strchr(av[i], '=');
-		if (equal)
-			export_assign(envp, av[i], equal);
+		kv = split_key_value(av[i]);
+		if (!kv.has_equal)
+			set_env_value(envp, kv.key, NULL, 1);
+		else if (kv.val == NULL)
+			set_env_value(envp, kv.key, "", 0);
 		else
-			set_env_value(envp, av[i], NULL);
+			set_env_value(envp, kv.key, kv.val, 0);
+		free(kv.key);
+		if (kv.val)
+			free(kv.val);
 	}
 	return (0);
 }

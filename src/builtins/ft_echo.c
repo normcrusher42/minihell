@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-// A simple remake of 'echo' with the -n flag included. Prints input arguments
+// A simple remake of 'echo' with the -n flag included. Prints input arguments.
 int	ft_echo(char **av)
 {
 	int	i;

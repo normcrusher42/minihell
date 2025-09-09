@@ -3,19 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: team                                           +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/04 15:54:12 by team              #+#    #+#             */
-/*   Updated: 2025/08/10 21:00:00 by team             ###   ########.fr       */
+/*   Created: 2025/09/04 22:06:01 by nanasser          #+#    #+#             */
+/*   Updated: 2025/09/04 22:06:01 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <errno.h>
 
 int	g_last_status = 0;
 
-// A checker if the argument is a built-in
+// A checker if the argument is a built-in.
 int	is_builtin(char *cmd)
 {
 	if (!cmd)
@@ -37,7 +36,7 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-// The built-ins executor based on the passed argument
+// The built-ins executor based on the passed argument.
 int	exec_builtin(char **av, char ***envp)
 {
 	if (!ft_strncmp(av[0], "echo", ft_strlen("echo")))
@@ -49,6 +48,7 @@ int	exec_builtin(char **av, char ***envp)
 	return (1);
 }
 
+// Runs a single cmd passed and checks if its a builtin or a program
 void	execute_command(char *cmd, char **env, t_shell *sh)
 {
 	pid_t	pid;

@@ -5,27 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/09 15:58:16 by nanasser          #+#    #+#             */
-/*   Updated: 2025/08/10 18:54:55 by nanasser         ###   ########.fr       */
-/*   Updated: 2025/08/10 18:54:55 by nanasser         ###   ########.fr       */
+/*   Created: 2025/09/04 22:06:10 by nanasser          #+#    #+#             */
+/*   Updated: 2025/09/04 22:06:10 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*merge_str(char *token, int last_status, int i, char **merge)
-{
-	merge[0] = ft_substr(token, 0, i);
-	if (token[i + 1] == '$')
-		merge[1] = ft_substr("miniOdy", 0, 8);
-	else if (last_status == -1)
-		merge[1] = ft_strdup("");
-	else
-		merge[1] = ft_itoa(last_status);
-	merge[2] = ft_substr(token, i + 2, ft_strlen(token));
-	return (ft_strjoin3(merge[0], merge[1], merge[2]));
-}
-
+// The holy grail of expanding valid $ input if the other cases weren't met.
 char	*env_expander(char *token, char **merge, char **envp, int i)
 {
 	char		*updated_token;
@@ -54,6 +41,21 @@ char	*env_expander(char *token, char **merge, char **envp, int i)
 	return (free_arr(&env_values, NO), ft_strdup(token));
 }
 
+// Straight forward merging for cases like special characters or $$ & $?.
+static char	*merge_str(char *token, int last_status, int i, char **merge)
+{
+	merge[0] = ft_substr(token, 0, i);
+	if (token[i + 1] == '$')
+		merge[1] = ft_substr("miniOdy", 0, 8);
+	else if (last_status == -1)
+		merge[1] = ft_strdup("");
+	else
+		merge[1] = ft_itoa(last_status);
+	merge[2] = ft_substr(token, i + 2, ft_strlen(token));
+	return (ft_strjoin3(merge[0], merge[1], merge[2]));
+}
+
+// Scans for special characters (including unicode) and decides if expandable.
 char	*very_specific_expander(char *token, char **merge, char **envp, int i)
 {
 	unsigned char	next;
@@ -64,6 +66,7 @@ char	*very_specific_expander(char *token, char **merge, char **envp, int i)
 	return (env_expander(token, merge, envp, i));
 }
 
+// The '$' condition scanner for $VAR, $?, & $$.
 char	*dollar_expander(char *token, int last_status, char **envp)
 {
 	int		i;
@@ -90,6 +93,7 @@ char	*dollar_expander(char *token, int last_status, char **envp)
 	return (free_arr(&merge, NO), token);
 }
 
+// The main expander loop after being parsed by the tokenizer.
 char	**expand_token(t_token *token, char **envp, int last_status)
 {
 	int		i;
