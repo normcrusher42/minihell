@@ -111,7 +111,7 @@ static int	syntax_err(const char *tok, int *st)
 		ft_putstr_fd("newline", 2);
 	ft_putstr_fd("'\n", 2);
 	if (st)
-		*st = 258;
+		*st = 127;
 	return (0);
 }
 

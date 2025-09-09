@@ -31,6 +31,8 @@ void	process_all_tokens(t_token *tok, char **envp, int last_status)
 	if (!tok)
 		return ;
 	tok->tokens = expand_token(tok, envp, last_status);
+	if (!tok->tokens)
+		return ;
 	i = 0;
 	while (tok->tokens && tok->tokens[i])
 	{
