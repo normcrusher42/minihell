@@ -81,7 +81,7 @@ static void	process_line_tokens(t_shell *sh)
 	{
 		if (should_debug_parse())
 			print_cmd_table(cmds, ncmd);
-		// execute_job(cmds, ncmd, sh);
+		execute_job(cmds, ncmd, sh);
 		free_cmd_table(cmds, ncmd);
 	}
 	free_tokens(tok);
@@ -108,6 +108,8 @@ int	main(int ac, char **av, char **envp)
 			break ;
 		if (*shell.input)
 			add_history(shell.input);
+		if (*shell.input)
+			process_line_tokens(&shell);
 		butter_free_input(&shell);
 	}
 	clear_history();
