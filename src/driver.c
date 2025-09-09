@@ -24,6 +24,6 @@ int	run_pipeline(t_cmd *cmds, int n, t_shell *sh)
 int	execute_job(t_cmd *cmds, int n, t_shell *sh)
 {
 	if (n == 1)
-		return (execute_command(cmds, sh->envp, sh), g_last_status);
+		return (execute_command(cmds, sh->envp, sh));
 	return (run_pipeline(cmds, n, sh));
 }
