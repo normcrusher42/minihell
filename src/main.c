@@ -108,6 +108,8 @@ int	main(int ac, char **av, char **envp)
 			break ;
 		if (*shell.input)
 			add_history(shell.input);
+		if (*shell.input)
+			process_line_tokens(&shell);
 		butter_free_input(&shell);
 	}
 	clear_history();
