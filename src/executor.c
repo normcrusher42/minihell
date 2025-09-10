@@ -57,7 +57,7 @@ int	exec_builtin(char **av, char ***envp, t_shell *sh)
 }
 
 // Runs a single cmd passed and checks if its a builtin or a program
-int	execute_command(t_cmd *cmd, char **env, t_shell *sh)
+int	execute_command(t_cmd *cmd, char ***env, t_shell *sh)
 {
 	pid_t	pid;
 	int		status;
@@ -65,11 +65,11 @@ int	execute_command(t_cmd *cmd, char **env, t_shell *sh)
 	if (!cmd->av || !cmd->av[0])
 		return (g_last_status = 0);
 	if (is_builtin(cmd->av[0]))
-		return (g_last_status = exec_builtin(cmd->av, &env, sh));
+		return (g_last_status = exec_builtin(cmd->av, env, sh));
 	pid = fork();
 	if (pid == 0)
 	{
-		execve(cmd->av[0], cmd->av, env);
+		execve(cmd->av[0], cmd->av, *env);
 		ft_putstr_fd(cmd->av[0], 2);
 		ft_putendl_fd(": command not found", 2);
 		exit(127);

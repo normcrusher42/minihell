@@ -137,7 +137,7 @@ void	set_env_value(char ***envp, const char *key, const char *val, int exist);
 char	**unset_env_value(char **envp, const char *key, t_shell *shell);
 int		ft_arrlen(char **arr);
 void	free_arr(char ***arr, bool reuse);
-int		execute_command(t_cmd *cmd, char **env, t_shell *sh);
+int		execute_command(t_cmd *cmd, char ***env, t_shell *sh);
 char	*ft_strjoin3(const char *key, const char *input, const char *value);
 char	*dollar_expander(char *token, int last_status, char **envp);
 char	*ft_strjoin3(const char *a, const char *b, const char *c);
