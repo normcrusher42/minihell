@@ -230,7 +230,7 @@ void	free_cmd_table(t_cmd *cmds, int n)
 		free_one_cmd(&cmds[i]);
 	free(cmds);
 }
-
+/*							remove this later if done						  */
 void	print_cmd_table(t_cmd *cmds, int n)
 {
 	int	i;

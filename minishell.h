@@ -159,6 +159,7 @@ int	ft_unset(char **av, char ***envp, t_shell *sh);
 int	ft_exit(char **av, t_shell *sh);
 int	ft_pwd(void);
 int	ft_echo(char **av);
+void	update_shlvl(char ***envp);
 
 /* signals.c */
 void	init_signals(void);

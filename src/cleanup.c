@@ -48,5 +48,6 @@ void	call_janitor(t_shell *sh)
 	if (!sh)
 		return ;
 	free_arr(&sh->envp, NO);
+	free_arr(&sh->token.tokens, NO);
 	free(sh->input);
 }

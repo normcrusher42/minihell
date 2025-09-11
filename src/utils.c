@@ -44,7 +44,7 @@ int	ft_isspace(int c)
 	return ((c >= 9 && c <= 13) || c == ' ');
 }
 
-// Self-explanatory. But Nasser's dumbass forgot u could do that with strlen 🗿
+// Self-explanatory. But Nasser's dumbass forgot we could do that with strlen 🗿
 int	ft_arrlen(char **arr)
 {
 	int	i;

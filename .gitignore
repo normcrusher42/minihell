@@ -1,6 +1,7 @@
 *.o
 *.a
 minishell
+minishell.dSYM/
 minihell
 .DS_Store
 obj

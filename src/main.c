@@ -12,6 +12,31 @@
 
 #include "minishell.h"
 
+void	update_shlvl(char ***envp)
+{
+	char	*val;
+	int		lvl;
+	char	*new_val;
+
+	val = get_env_value(*envp, "SHLVL");
+	if (!val)
+	{
+		set_env_value(envp, "SHLVL", "1", 0);
+		return ;
+	}
+	lvl = ft_atoi(val);
+	if (lvl < 0 || lvl > 1000)
+		lvl = 1;
+	else
+		lvl++;
+	new_val = ft_itoa(lvl);
+	if (!new_val)
+		return ;
+	set_env_value(envp, "SHLVL", new_val, 0);
+	free(new_val);
+}
+
+
 // Duplicates the passed environment variables into the shell struct.
 char	**dup_env(char **envp)
 {
@@ -49,6 +74,7 @@ static void	init_shell(char **envp, t_shell *shell)
 		else
 			shell->envp[0] = NULL;
 	}
+	update_shlvl(&shell->envp);
 }
 
 /* return 1 if we should print the parsed table */
@@ -87,9 +113,9 @@ static void	process_line_tokens(t_shell *sh)
 	free_tokens(tok);
 }
 
-/*      minishell brought to you by none other than @Nasser and @Leen!!!      */
-/*        Expect 80% of what you see to give you "fever dream" vibes          */
-/*                                          -if you know, you know-           */
+/*   minishell brought to you by none other than @Nasser and @Leen!!!      */
+/*     Expect 80% of what you see to give you "fever dream" vibes          */
+/*                                        -if you know, you know-          */
 
 // le shelling Magie 𝓬𝓸𝓶𝓶𝓮𝓷𝓬𝓮
 int	main(int ac, char **av, char **envp)
