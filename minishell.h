@@ -64,7 +64,6 @@ typedef struct s_shell
 {
 	char	*input;              /* readline buffer */
 	char	**envp;              /* environment array */
-	int		last_exit_status;    /* last pipeline exit status */
 	bool	removed;             /* env unset helper flag */
 	t_token	token;
 }	t_shell;
