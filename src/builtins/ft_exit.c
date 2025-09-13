@@ -49,8 +49,7 @@ int	ft_exit(char **av, t_shell *sh)
 
 	ft_putendl_fd("exit miniOdy", 1);
 	if (ft_arrlen(av) > 2)
-		return (ft_putendl_fd("mOdy: exit: too many arguments", 2), 
-				g_last_status = 1);
+		return (ft_putendl_fd("mOdy: exit: too many arguments", 2), 1);
 	else if (ft_arrlen(av) < 2)
 	{
 		call_janitor(sh);

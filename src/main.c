@@ -99,10 +99,10 @@ static void	process_line_tokens(t_shell *sh)
 	tok = tokenize(sh->input);
 	if (!tok)
 		return ;
-	process_all_tokens(tok, sh->envp, sh->last_exit_status);
+	process_all_tokens(tok, sh->envp, g_last_status);
 	cmds = NULL;
 	ncmd = 0;
-	ok = parse_command_table(tok, &cmds, &ncmd, &sh->last_exit_status);
+	ok = parse_command_table(tok, &cmds, &ncmd, &g_last_status);
 	if (ok)
 	{
 		if (should_debug_parse())
