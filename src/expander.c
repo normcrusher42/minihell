@@ -110,8 +110,8 @@ char	**expand_token(t_token *token, char **envp, int last_status)
 		else
 			result[i] = ft_strdup(token->tokens[i]);
 		if (!result[i])
-			return (free_arr(&result, NO), free_arr(&token->tokens, NO), NULL);
+			return (free_arr(&result, NO), NULL);
 	}
 	result[i] = NULL;
-	return (free_arr(&token->tokens, NO), result);
+	return (result);
 }

@@ -19,6 +19,6 @@ int	ft_pwd(void)
 
 	if (getcwd(buf, sizeof(buf)))
 		return (ft_putendl_fd(buf, 1), 0);
-	perror("pwd");
+	ft_putendl_fd("pwd", 2);
 	return (1);
 }

@@ -111,7 +111,7 @@ static int	syntax_err(const char *tok, int *st)
 		ft_putstr_fd("newline", 2);
 	ft_putstr_fd("'\n", 2);
 	if (st)
-		*st = 258;
+		*st = 127;
 	return (0);
 }
 
@@ -230,7 +230,7 @@ void	free_cmd_table(t_cmd *cmds, int n)
 		free_one_cmd(&cmds[i]);
 	free(cmds);
 }
-
+/*							remove this later if done						  */
 void	print_cmd_table(t_cmd *cmds, int n)
 {
 	int	i;

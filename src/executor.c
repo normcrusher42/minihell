@@ -55,8 +55,9 @@ int	exec_builtin(char **av, char ***envp, t_shell *sh)
 		return (ft_cd(av, envp));
 	return (1);
 }
+
 // Runs a single cmd passed and checks if its a builtin or a program
-int	execute_command(t_cmd *cmd, char **env, t_shell *sh)
+int	execute_command(t_cmd *cmd, char ***env, t_shell *sh)
 {
 	pid_t	pid;
 	int		status;
@@ -64,19 +65,22 @@ int	execute_command(t_cmd *cmd, char **env, t_shell *sh)
 	if (!cmd->av || !cmd->av[0])
 		return (g_last_status = 0);
 	if (is_builtin(cmd->av[0]))
-		return (g_last_status = exec_builtin(cmd->av, &env, sh));
+		return (g_last_status = exec_builtin(cmd->av, env, sh));
 	pid = fork();
 	if (pid == 0)
 	{
-		execve(cmd->av[0], cmd->av, env);
-		perror("execve error");
+		execve(cmd->av[0], cmd->av, *env);
+		ft_putstr_fd(cmd->av[0], 2);
+		ft_putendl_fd(": command not found", 2);
 		exit(127);
 	}
 	else if (pid > 0)
 	{
 		waitpid(pid, &status, 0);
 		if (WIFEXITED(status))
-			g_last_status = WEXITSTATUS(status);
+    		g_last_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+    		g_last_status = 128 + WTERMSIG(status);
 	}
 	else
 		return (perror(RED "Fork Error" RESET), g_last_status = 1);

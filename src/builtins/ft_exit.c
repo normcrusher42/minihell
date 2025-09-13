@@ -49,7 +49,7 @@ int	ft_exit(char **av, t_shell *sh)
 
 	ft_putendl_fd("exit miniOdy", 1);
 	if (ft_arrlen(av) > 2)
-		return (perror("mOdy: exit: too many arguments"), 1);
+		return (ft_putendl_fd("mOdy: exit: too many arguments", 2), 1);
 	else if (ft_arrlen(av) < 2)
 	{
 		call_janitor(sh);
@@ -57,7 +57,7 @@ int	ft_exit(char **av, t_shell *sh)
 	}
 	if (!is_numeric(av[1]) || !ft_atoll(av[1], &code))
 	{
-		perror("mOdy: exit: numeric argument required");
+		ft_putendl_fd("mOdy: exit: numeric argument required", 2);
 		call_janitor(sh);
 		exit(2);
 	}
