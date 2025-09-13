@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_table.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 15:44:42 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/09/04 21:29:29 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/09/09 20:03:23 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,6 +211,7 @@ int	parse_command_table(t_token *tk, t_cmd **out, int *count, int *st)
 			return (0);
 	if (!finalize_segment(&p.arr, &p.n, &p.cur))
 	{
+		free_cmd_table(p.arr, p.n);
 		free_one_cmd(&p.cur);
 		return (syntax_err(NULL, p.st));
 	}
