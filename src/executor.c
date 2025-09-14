@@ -78,11 +78,9 @@ int	execute_command(t_cmd *cmd, char ***env, t_shell *sh)
 	{
 		waitpid(pid, &status, 0);
 		if (WIFEXITED(status))
-    		g_last_status = WEXITSTATUS(status);
+    		return (g_last_status = WEXITSTATUS(status));
 		else if (WIFSIGNALED(status))
-    		g_last_status = 128 + WTERMSIG(status);
+    		return (g_last_status = 128 + WTERMSIG(status));
 	}
-	else
-		return (perror(RED "Fork Error" RESET), g_last_status = 1);
-	return (g_last_status);
+	return (perror(RED "Fork Error" RESET), g_last_status = 1);
 }
