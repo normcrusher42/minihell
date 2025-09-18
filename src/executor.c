@@ -72,6 +72,9 @@ int	execute_command(t_cmd *cmd, char ***env, t_shell *sh)
 		execve(cmd->av[0], cmd->av, *env);
 		ft_putstr_fd(cmd->av[0], 2);
 		ft_putendl_fd(": command not found", 2);
+		free_cmd_table(cmd, 1);
+		free_tokens(&sh->token);
+		free_arr(&sh->envp, NO);
 		exit(127);
 	}
 	else if (pid > 0)
