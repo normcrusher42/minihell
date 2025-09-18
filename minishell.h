@@ -138,7 +138,7 @@ int		ft_arrlen(char **arr);
 void	free_arr(char ***arr, bool reuse);
 int		execute_command(t_cmd *cmd, char ***env, t_shell *sh);
 char	*ft_strjoin3(const char *key, const char *input, const char *value);
-char	*dollar_expander(char *token, int last_status, char **envp);
+char	*dollar_expander(char *str, int last_status, char **envp);
 char	*ft_strjoin3(const char *a, const char *b, const char *c);
 
 /* utils.c */
@@ -159,6 +159,7 @@ int	ft_exit(char **av, t_shell *sh);
 int	ft_pwd(void);
 int	ft_echo(char **av);
 void	update_shlvl(char ***envp);
+char	*remove_quotes(const char *str);
 
 /* signals.c */
 void	init_signals(void);

@@ -40,6 +40,13 @@ void	butter_free_input(t_shell *shell)
 		free(shell->input);
 		shell->input = NULL;
 	}
+	if (shell->token.tokens)
+		free_arr(&shell->token.tokens, NO);
+	if (shell->token.quote)
+	{
+		free(shell->token.quote);
+		shell->token.quote = NULL;
+	}
 }
 
 // The all-in-one cleanup function for the exit function.
@@ -48,6 +55,5 @@ void	call_janitor(t_shell *sh)
 	if (!sh)
 		return ;
 	free_arr(&sh->envp, NO);
-	free_arr(&sh->token.tokens, NO);
 	free(sh->input);
 }
