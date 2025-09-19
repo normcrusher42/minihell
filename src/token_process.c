@@ -25,7 +25,6 @@ char	*remove_quotes(const char *str)
 	res = malloc(ft_strlen(str) + 1);
 	if (!res)
 		return (NULL);
-
 	i = 0;
 	j = 0;
 	in_single = 0;
@@ -36,13 +35,13 @@ char	*remove_quotes(const char *str)
 		{
 			in_single = !in_single; // toggle single quote mode
 			i++;
-			continue; // skip the quote char
+			continue ; // skip the quote char
 		}
 		else if (str[i] == '"' && !in_single)
 		{
 			in_double = !in_double; // toggle double quote mode
 			i++;
-			continue; // skip the quote char
+			continue ; // skip the quote char
 		}
 		// Copy character as-is
 		res[j++] = str[i++];
@@ -51,21 +50,21 @@ char	*remove_quotes(const char *str)
 	return (res);
 }
 
-void	process_all_tokens(t_token *tok, char **envp, int last_status)
+void	process_all_tokens(t_shell *sh, char **envp, int last_status)
 {
 	int		i;
 	char	*cleaned;
 
-	if (!tok)
+	if (!sh || !sh->token || !sh->token->tokens)
 		return ;
-	tok->tokens = expand_token(tok, envp, last_status);
-	if (!tok->tokens)
+	sh->token->tokens = expand_token(sh, envp, last_status);
+	if (!sh->token->tokens)
 		return ;
 	i = 0;
-	while (tok->tokens && tok->tokens[i])
+	while (sh->token->tokens && sh->token->tokens[i])
 	{
-		cleaned = remove_quotes(tok->tokens[i]);
-		free(tok->tokens[i]);
-		tok->tokens[i++] = cleaned;
+		cleaned = remove_quotes(sh->token->tokens[i]);
+		free(sh->token->tokens[i]);
+		sh->token->tokens[i++] = cleaned;
 	}
 }

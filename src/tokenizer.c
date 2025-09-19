@@ -111,43 +111,29 @@ static void	read_word(char *s, int *i, t_quote_type *qt)
 	}
 }
 
-t_token	*tokenize(char *s)
+void	tokenize(char *s, t_shell *sh)
 {
-	t_token			*tok;
 	int				i;
 	int				start;
 	t_quote_type	qt;
 
-	if (!s)
-		return (NULL);
+	if (!s || !sh)
+		return ;
+	if (sh->token)
+		free_tokens(sh);
+	sh->token = malloc(sizeof(t_token));
+	if (!sh->token)
+		return ;
+	sh->token->tokens = NULL;
+	sh->token->quote = NULL;
 	i = 0;
-	tok = malloc(sizeof(t_token));
-	if (!tok)
-		return (NULL);
-	tok->tokens = NULL;
-	tok->quote = NULL;
 	while (s[i])
 	{
-		skip_spaces_operators(s, &i, tok);
+		skip_spaces_operators(s, &i, sh->token);
 		if (!s[i] || is_operator(s[i]) || s[i] == ' ' || s[i] == '\t')
 			continue ;
 		start = i;
 		read_word(s, &i, &qt);
-		store_token_struct(tok, ft_substr(s, start, i - start), qt);
+		store_token_struct(sh->token, ft_substr(s, start, i - start), qt);
 	}
-	return (tok);
-}
-
-void	free_tokens(t_token *tok)
-{
-	int	i;
-
-	if (!tok)
-		return ;
-	i = 0;
-	while (tok->tokens && tok->tokens[i])
-		free(tok->tokens[i++]);
-	free(tok->tokens);
-	free(tok->quote);
-	free(tok);
 }

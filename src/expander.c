@@ -192,7 +192,7 @@ char	*dollar_expander(char *str, int last_status, char **envp)
 // 	return (result);
 // }
 
-char	**expand_token(t_token *token, char **envp, int last_status)
+char	**expand_token(t_shell *sh, char **envp, int last_status)
 {
 	int		i;
 	int		j;
@@ -201,48 +201,45 @@ char	**expand_token(t_token *token, char **envp, int last_status)
 	char	**result;
 	char	*expanded;
 
-	if (!token || !token->tokens)
+	if (!sh->token || !sh->token->tokens)
 		return (NULL);
-
-	result = malloc(sizeof(char *) * (ft_arrlen(token->tokens) + 1));
+	result = malloc(sizeof(char *) * (ft_arrlen(sh->token->tokens) + 1));
 	if (!result)
 		return (NULL);
-
 	i = -1;
-	while (token->tokens[++i])
+	while (sh->token->tokens[++i])
 	{
 		in_single = 0;
 		in_double = 0;
 		j = 0;
 		expanded = NULL;
-
 		// Expand the token character by character
-		while (token->tokens[i][j])
+		while (sh->token->tokens[i][j])
 		{
-			if (token->tokens[i][j] == '\'' && !in_double)
+			if (sh->token->tokens[i][j] == '\'' && !in_double)
 				in_single = !in_single;
-			else if (token->tokens[i][j] == '"' && !in_single)
+			else if (sh->token->tokens[i][j] == '"' && !in_single)
 				in_double = !in_double;
-			else if (token->tokens[i][j] == '$' && !in_single)
+			else if (sh->token->tokens[i][j] == '$' && !in_single)
 			{
 				// expand $VAR or $? (not inside single quotes)
-				expanded = dollar_expander(token->tokens[i], last_status, envp);
-				break; // full replacement, no need to keep scanning
+				expanded = dollar_expander(sh->token->tokens[i], last_status, envp);
+				break ; // full replacement, no need to keep scanning
 			}
 			j++;
 		}
 		if (!expanded)
-			expanded = ft_strdup(token->tokens[i]);
+			expanded = ft_strdup(sh->token->tokens[i]);
 		if (!expanded)
-			return (free_arr(&result, NO), free_arr(&token->tokens, NO), NULL);
+			return (free_arr(&result, NO), free_arr(&sh->token->tokens, NO), NULL);
 
 		// Now remove quotes properly
 		result[i] = remove_quotes(expanded);
 		free(expanded);
 		if (!result[i])
-			return (free_arr(&result, NO), free_arr(&token->tokens, NO), NULL);
+			return (free_arr(&result, NO), free_arr(&sh->token->tokens, NO), NULL);
 	}
 	result[i] = NULL;
-	free_arr(&token->tokens, NO);
+	free_arr(&sh->token->tokens, NO);
 	return (result);
 }

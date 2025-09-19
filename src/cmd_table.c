@@ -175,6 +175,19 @@ static int	init_parse_ctx(t_parse_ctx *p)
 	return (1);
 }
 
+// Helper for freeing a temporary cmd table
+static void	free_cmd_table_ctx(t_cmd *cmds, int n)
+{
+	int	i;
+
+	i = 0;
+	if (!cmds)
+		return ;
+	while (i < n)
+		free_one_cmd(&cmds[i++]);
+	free(cmds);
+}
+
 static int	handle_token(t_parse_ctx *p)
 {
 	int	step;
@@ -190,7 +203,7 @@ static int	handle_token(t_parse_ctx *p)
 		if (step == 0)
 		{
 			free_one_cmd(&p->cur);
-			free_cmd_table(p->arr, p->n);
+			free_cmd_table_ctx(p->arr, p->n);
 			return (0);
 		}
 		p->i += (step - 1);
@@ -198,59 +211,62 @@ static int	handle_token(t_parse_ctx *p)
 	return (1);
 }
 
-int	parse_command_table(t_token *tk, t_cmd **out, int *count, int *st)
+int	parse_command_table(t_shell *sh, int *st)
 {
 	t_parse_ctx	p;
 
-	p.tk = tk;
+	p.tk = sh->token;
 	p.st = st;
-	if (!out || !count || !init_parse_ctx(&p))
+	if (!init_parse_ctx(&p))
 		return (0);
 	while (p.tk->tokens[++p.i])
 		if (!handle_token(&p))
 			return (0);
 	if (!finalize_segment(&p.arr, &p.n, &p.cur))
 	{
-		free_cmd_table(p.arr, p.n);
+		free_cmd_table(sh);
 		free_one_cmd(&p.cur);
 		return (syntax_err(NULL, p.st));
 	}
-	*out = p.arr;
-	*count = p.n;
+	sh->cmds = p.arr;
+	sh->ncmd = p.n;
 	return (1);
 }
 
-void	free_cmd_table(t_cmd *cmds, int n)
+void	free_cmd_table(t_shell *sh)
 {
 	int	i;
 
-	if (!cmds)
+	if (!sh->cmds)
 		return ;
 	i = -1;
-	while (++i < n)
-		free_one_cmd(&cmds[i]);
-	free(cmds);
+	while (++i < sh->ncmd)
+		free_one_cmd(&sh->cmds[i]);
+	free(sh->cmds);
+	sh->cmds = NULL;
+	sh->ncmd = 0;
 }
+
 /*							remove this later if done						  */
-void	print_cmd_table(t_cmd *cmds, int n)
+void	print_cmd_table(t_shell *sh)
 {
 	int	i;
 	int	j;
 
-	if (!cmds)
+	if (!sh->cmds)
 		return ;
 	i = -1;
-	while (++i < n)
+	while (++i < sh->ncmd)
 	{
 		ft_printf("cmd[%d]:\n", i);
 		j = -1;
-		while (++j < cmds[i].ac)
-			ft_printf("  av[%d]=`%s`\n", j, cmds[i].av[j]);
+		while (++j < sh->cmds[i].ac)
+			ft_printf("  av[%d]=`%s`\n", j, sh->cmds[i].av[j]);
 		j = -1;
-		while (++j < cmds[i].redir_count)
+		while (++j < sh->cmds[i].redir_count)
 			ft_printf("  redir[%d]=%d `%s` q=%d\n", j,
-				cmds[i].redirs[j].type,
-				cmds[i].redirs[j].arg,
-				cmds[i].redirs[j].is_quoted);
+				sh->cmds[i].redirs[j].type,
+				sh->cmds[i].redirs[j].arg,
+				sh->cmds[i].redirs[j].is_quoted);
 	}
 }

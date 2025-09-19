@@ -12,18 +12,16 @@
 
 #include "minishell.h"
 
-int	run_pipeline(t_cmd *cmds, int n, t_shell *sh)
+int	run_pipeline(t_shell *sh)
 {
-	(void)cmds;
-	(void)n;
 	(void)sh;
 	ft_putendl_fd("pipeline execution not implemented yet", 2);
 	return (g_last_status);
 }
 
-int	execute_job(t_cmd *cmds, int n, t_shell *sh)
+int	execute_job(t_shell *sh)
 {
-	if (n == 1)
-		return (execute_command(cmds, &sh->envp, sh));
-	return (run_pipeline(cmds, n, sh));
+	if (sh->ncmd == 1)
+		return (execute_command(&sh->envp, sh));
+	return (run_pipeline(sh));
 }
