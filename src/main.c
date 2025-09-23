@@ -36,7 +36,6 @@ void	update_shlvl(char ***envp)
 	free(new_val);
 }
 
-
 // Duplicates the passed environment variables into the shell struct.
 char	**dup_env(char **envp)
 {
@@ -91,26 +90,19 @@ static int	should_debug_parse(void)
 // Leen, contextualize this. I ain't re-readin alladat LOL
 static void	process_line_tokens(t_shell *sh)
 {
-	t_token	*tok;
-	t_cmd	*cmds;
-	int		ncmd;
 	int		ok;
 
-	tok = tokenize(sh->input);
-	if (!tok)
-		return ;
-	process_all_tokens(tok, sh->envp, g_last_status);
-	cmds = NULL;
-	ncmd = 0;
-	ok = parse_command_table(tok, &cmds, &ncmd, &g_last_status);
+	tokenize(sh->input, sh);
+	process_all_tokens(sh, sh->envp, g_last_status);
+	ok = parse_command_table(sh, &g_last_status);
 	if (ok)
 	{
 		if (should_debug_parse())
-			print_cmd_table(cmds, ncmd);
-		execute_job(cmds, ncmd, sh);
-		free_cmd_table(cmds, ncmd);
+			print_cmd_table(sh);
+		execute_job(sh);
+		free_cmd_table(sh);
 	}
-	free_tokens(tok);
+	free_tokens(sh);
 }
 
 /*   minishell brought to you by none other than @Nasser and @Leen!!!      */
