@@ -52,17 +52,9 @@ typedef enum e_redirtype
 	R_HEREDOC
 }	t_redirtype;
 
-typedef enum e_quote_type
-{
-	QTE_NONE,
-	QTE_SINGLE,
-	QTE_DOUBLE
-}	t_quote_type;
-
 typedef struct s_token
 {
 	char			**tokens; /* tokens parsed */
-	t_quote_type	*quote;   /* quote type per token */
 }	t_token;
 
 /* One redirection entry */
@@ -104,6 +96,20 @@ typedef struct s_kv
 	char	*val;
 	bool	has_equal;
 }	t_kv;
+
+// Variables for Quote stripping
+typedef struct s_quote_vars
+{
+	int		i;
+	int		j;
+	int		in_single;
+	int		in_double;
+	char	*res;
+	int		start;
+	char	*tmp;
+	char	*var;
+	char	*new_res;
+}	t_quote_vars;
 
 typedef struct s_shell
 {
@@ -162,6 +168,7 @@ int	ft_pwd(void);
 int	ft_echo(char **av);
 void	update_shlvl(char ***envp);
 char	*remove_quotes(const char *str);
+int		ft_strcmp(const char *s1, const char *s2);
 
 /* signals.c */
 void	init_signals(void);

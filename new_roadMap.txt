@@ -67,7 +67,7 @@
 
 * For `cd /`, job runs parent path and returns an int status.
 
------------------------------------------------------------ ❌ / ✅ the leaks, Leen. THE DAMN LEAKS
+----------------------------------------------------------- ✅
 
 ### 🗓 Day 3
 
@@ -105,11 +105,11 @@
 * `| ls` yields parse error 258 and loop continues gracefully.
 * Memory: `free_cmd_table()` called after each iteration.
 
----
+----------------------------------------------------------- ✅
 
 ## 📅 Week B — ✨ Expander Placement & Quote Removal
 
----
+----------------------------------------------------------- ✅
 
 ### 🗓 Day 5
 
@@ -137,7 +137,7 @@
 
 * `echo "a b"` results in `argv[1]="a b"` (one argument).
 
----
+----------------------------------------------------------- ✅
 
 ### 🗓 Day 6
 

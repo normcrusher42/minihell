@@ -14,24 +14,39 @@
 
 int	g_last_status = 0;
 
+// strncmp except it actually compares full string lengths cs it aint in libft??
+int	ft_strcmp(const char *s1, const char *s2)
+{
+	size_t	i;
+
+	i = 0;
+	while ((s1[i] || s2[i]))
+	{
+		if (s1[i] != s2[i])
+			return ((unsigned char) s1[i] - (unsigned char) s2[i]);
+		i++;
+	}
+	return (0);
+}
+
 // A checker if the argument is a built-in.
 int	is_builtin(char *cmd)
 {
 	if (!cmd)
 		return (0);
-	if (!ft_strncmp(cmd, "echo", ft_strlen(cmd)))
+	if (!ft_strcmp(cmd, "echo"))
 		return (1);
-	if (!ft_strncmp(cmd, "pwd", ft_strlen(cmd)))
+	if (!ft_strcmp(cmd, "pwd"))
 		return (1);
-	if (!ft_strncmp(cmd, "env", ft_strlen(cmd)))
+	if (!ft_strcmp(cmd, "env"))
 		return (1);
-	if (!ft_strncmp(cmd, "cd", ft_strlen(cmd)))
+	if (!ft_strcmp(cmd, "cd"))
 		return (1);
-	if (!ft_strncmp(cmd, "export", ft_strlen(cmd)))
+	if (!ft_strcmp(cmd, "export"))
 		return (1);
-	if (!ft_strncmp(cmd, "unset", ft_strlen(cmd)))
+	if (!ft_strcmp(cmd, "unset"))
 		return (1);
-	if (!ft_strncmp(cmd, "exit", ft_strlen(cmd)))
+	if (!ft_strcmp(cmd, "exit"))
 		return (1);
 	return (0);
 }
@@ -39,19 +54,19 @@ int	is_builtin(char *cmd)
 // The built-ins executor based on the passed argument.
 int	exec_builtin(char **av, char ***envp, t_shell *sh)
 {
-	if (!ft_strncmp(av[0], "echo", ft_strlen(av[0])))
+	if (!ft_strcmp(av[0], "echo"))
 		return (ft_echo(av));
-	if (!ft_strncmp(av[0], "pwd", ft_strlen(av[0])))
+	if (!ft_strcmp(av[0], "pwd"))
 		return (ft_pwd());
-	if (!ft_strncmp(av[0], "env", ft_strlen(av[0])))
+	if (!ft_strcmp(av[0], "env"))
 		return (ft_env(*envp));
-	if (!ft_strncmp(av[0], "export", ft_strlen(av[0])))
+	if (!ft_strcmp(av[0], "export"))
 		return (ft_export(av, envp));
-	if (!ft_strncmp(av[0], "unset", ft_strlen(av[0])))
+	if (!ft_strcmp(av[0], "unset"))
 		return (ft_unset(av, envp, sh));
-	if (!ft_strncmp(av[0], "exit", ft_strlen(av[0])))
+	if (!ft_strcmp(av[0], "exit"))
 		return (ft_exit(av, sh));
-	if (!ft_strncmp(av[0], "cd", ft_strlen(av[0])))
+	if (!ft_strcmp(av[0], "cd"))
 		return (ft_cd(av, envp));
 	return (1);
 }

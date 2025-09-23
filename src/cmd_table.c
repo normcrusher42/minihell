@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_table.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42.ae>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 15:44:42 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/09/18 19:41:03 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/09/24 01:03:33 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ static int	push_word(t_cmd *c, const char *w)
 	return (1);
 }
 
-static int	push_redir(t_cmd *c, t_redirtype t, const char *arg, int quoted)
+static int	push_redir(t_cmd *c, t_redirtype t, const char *arg)
 {
 	t_redir	*nr;
 	int		i;
@@ -76,7 +76,6 @@ static int	push_redir(t_cmd *c, t_redirtype t, const char *arg, int quoted)
 		nr[i] = c->redirs[i];
 	nr[i].type = t;
 	nr[i].arg = ft_strdup(arg);
-	nr[i].is_quoted = quoted;
 	if (!nr[i].arg)
 		return (free(nr), 0);
 	free(c->redirs);
@@ -139,7 +138,6 @@ static int	finalize_segment(t_cmd **arr, int *n, t_cmd *cur)
 static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, int *st)
 {
 	int	k;
-	int	is_quoted;
 
 	k = redir_kind(tk->tokens[i]);
 	if (k >= 0)
@@ -147,13 +145,7 @@ static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, int *st)
 		if (!tk->tokens[i + 1] || is_pipe(tk->tokens[i + 1])
 			|| redir_kind(tk->tokens[i + 1]) >= 0)
 			return (syntax_err(tk->tokens[i + 1], st));
-		is_quoted = 0;
-		if (k == R_HEREDOC && tk->quote)
-		{
-			if (tk->quote[i + 1] != QTE_NONE)
-				is_quoted = 1;
-		}
-		if (!push_redir(cur, k, tk->tokens[i + 1], is_quoted))
+		if (!push_redir(cur, k, tk->tokens[i + 1]))
 			return (0);
 		return (2);
 	}

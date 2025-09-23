@@ -31,29 +31,22 @@ static int	skip_quotes(char *s, char quote)
 
 static void	expand_token_arrays(t_token *tok, int count)
 {
-	char			**new_tokens;
-	t_quote_type	*new_quotes;
-	int				i;
+	char	**new_tokens;
+	int		i;
 
 	new_tokens = malloc(sizeof(char *) * (count + 2));
-	new_quotes = malloc(sizeof(t_quote_type) * (count + 2));
-	if (!new_tokens || !new_quotes)
-		return (free(new_tokens), free(new_quotes), (void)0);
+	if (!new_tokens)
+		return ;
 	i = -1;
 	while (++i < count)
-	{
 		new_tokens[i] = tok->tokens[i];
-		new_quotes[i] = tok->quote[i];
-	}
 	new_tokens[count] = NULL;
-	new_quotes[count] = QTE_NONE;
+	new_tokens[count + 1] = NULL;
 	free(tok->tokens);
-	free(tok->quote);
 	tok->tokens = new_tokens;
-	tok->quote = new_quotes;
 }
 
-static void	store_token_struct(t_token *tok, char *value, t_quote_type qt)
+static void	store_token_struct(t_token *tok, char *value)
 {
 	int	count;
 
@@ -61,12 +54,10 @@ static void	store_token_struct(t_token *tok, char *value, t_quote_type qt)
 	while (tok->tokens && tok->tokens[count])
 		count++;
 	expand_token_arrays(tok, count);
-	if (!tok->tokens || !tok->quote)
+	if (!tok->tokens)
 		return ;
 	tok->tokens[count] = value;
-	tok->quote[count] = qt;
 	tok->tokens[count + 1] = NULL;
-	tok->quote[count + 1] = QTE_NONE;
 }
 
 static void	consume_spaces(char *s, int *i)
@@ -86,26 +77,17 @@ static void	skip_spaces_operators(char *s, int *i, t_token *tok)
 		len = 1;
 		if (s[*i] == s[*i + 1] && (s[*i] == '<' || s[*i] == '>'))
 			len = 2;
-		store_token_struct(tok, ft_substr(s, *i, len), QTE_NONE);
+		store_token_struct(tok, ft_substr(s, *i, len));
 		*i += len;
 	}
 }
 
-static void	read_word(char *s, int *i, t_quote_type *qt)
+static void	read_word(char *s, int *i)
 {
-	*qt = QTE_NONE;
 	while (s[*i] && !is_operator(s[*i]) && s[*i] != ' ' && s[*i] != '\t')
 	{
-		if (s[*i] == '\'')
-		{
-			*qt = QTE_SINGLE;
+		if (s[*i] == '\'' || s[*i] == '"')
 			*i += skip_quotes(&s[*i], s[*i]);
-		}
-		else if (s[*i] == '"')
-		{
-			*qt = QTE_DOUBLE;
-			*i += skip_quotes(&s[*i], s[*i]);
-		}
 		else
 			(*i)++;
 	}
@@ -113,9 +95,8 @@ static void	read_word(char *s, int *i, t_quote_type *qt)
 
 void	tokenize(char *s, t_shell *sh)
 {
-	int				i;
-	int				start;
-	t_quote_type	qt;
+	int		i;
+	int		start;
 
 	if (!s || !sh)
 		return ;
@@ -125,7 +106,6 @@ void	tokenize(char *s, t_shell *sh)
 	if (!sh->token)
 		return ;
 	sh->token->tokens = NULL;
-	sh->token->quote = NULL;
 	i = 0;
 	while (s[i])
 	{
@@ -133,7 +113,7 @@ void	tokenize(char *s, t_shell *sh)
 		if (!s[i] || is_operator(s[i]) || s[i] == ' ' || s[i] == '\t')
 			continue ;
 		start = i;
-		read_word(s, &i, &qt);
-		store_token_struct(sh->token, ft_substr(s, start, i - start), qt);
+		read_word(s, &i);
+		store_token_struct(sh->token, ft_substr(s, start, i - start));
 	}
 }
