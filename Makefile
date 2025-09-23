@@ -20,7 +20,7 @@ OBJ2 = $(SRC2:$(BUILTINS)%.c=$(OBJ_PATH2)%.o)
 
 # Compiler n flags
 CC		=		cc
-CFLAGS	= -g -I.
+CFLAGS	= -Wall -Wextra -Werror -g -I.
 LDFLAGS = -lreadline -L/opt/vagrant/embedded/lib/ -Iopt/vagrant/embedded/include/readline
 
 # Color codes ✨

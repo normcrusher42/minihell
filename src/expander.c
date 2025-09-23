@@ -101,11 +101,11 @@ char	*dollar_expander(char *str, int last_status, char **envp)
 	char	*result;
 	char	*tmp;
 	char	*var;
+	char	*new_res;
 
 	result = ft_strdup("");
 	if (!result)
 		return (NULL);
-
 	i = 0;
 	in_single = 0;
 	in_double = 0;
@@ -114,12 +114,18 @@ char	*dollar_expander(char *str, int last_status, char **envp)
 		if (str[i] == '\'' && !in_double)
 		{
 			in_single = !in_single;
+			new_res = ft_strjoin3(result, "", "'");
+			free(result);
+			result = new_res;
 			i++;
 			continue;
 		}
 		else if (str[i] == '"' && !in_single)
 		{
 			in_double = !in_double;
+			new_res = ft_strjoin3(result, "", "\"");
+			free(result);
+			result = new_res;
 			i++;
 			continue;
 		}
@@ -128,14 +134,14 @@ char	*dollar_expander(char *str, int last_status, char **envp)
 			if (str[i + 1] == '?')
 			{
 				tmp = ft_itoa(last_status);
-				char *new_res = ft_strjoin3(result, "", tmp);
+				new_res = ft_strjoin3(result, "", tmp);
 				free(result);
-				result = new_res;
 				free(tmp);
+				result = new_res;
 				i += 2;
 				continue;
 			}
-			// Extract variable name
+			// expand $VAR
 			int start = ++i;
 			while (ft_isalnum(str[i]) || str[i] == '_')
 				i++;
@@ -145,29 +151,30 @@ char	*dollar_expander(char *str, int last_status, char **envp)
 				tmp = get_env_value(envp, var);
 				if (tmp)
 				{
-					char *new_res = ft_strjoin3(result, "", tmp);
+					new_res = ft_strjoin3(result, "", tmp);
 					free(result);
 					result = new_res;
 				}
 				free(var);
 				continue;
 			}
-			// Case: $ followed by non-alnum → copy as-is
-			char *new_res = ft_strjoin3(result, "", "$");
+			// lone $
+			new_res = ft_strjoin3(result, "", "$");
 			free(result);
 			result = new_res;
 			continue;
 		}
-		// Default: just append the character
-		char buf[2] = {str[i], '\0'};
-		char *new_res = ft_strjoin3(result, "", buf);
-		free(result);
-		result = new_res;
-		i++;
+		// default: copy literal char
+		{
+			char buf[2] = {str[i], '\0'};
+			new_res = ft_strjoin3(result, "", buf);
+			free(result);
+			result = new_res;
+			i++;
+		}
 	}
 	return (result);
 }
-
 
 // The main expander loop after being parsed by the tokenizer.
 // char	**expand_token(t_token *token, char **envp, int last_status)
@@ -192,54 +199,27 @@ char	*dollar_expander(char *str, int last_status, char **envp)
 // 	return (result);
 // }
 
-char	**expand_token(t_shell *sh, char **envp, int last_status)
+char **expand_token(t_shell *sh, char **envp, int last_status)
 {
-	int		i;
-	int		j;
-	int		in_single;
-	int		in_double;
-	char	**result;
-	char	*expanded;
+    int   i;
+    char **result;
+    char  *expanded;
 
-	if (!sh->token || !sh->token->tokens)
-		return (NULL);
-	result = malloc(sizeof(char *) * (ft_arrlen(sh->token->tokens) + 1));
-	if (!result)
-		return (NULL);
-	i = -1;
-	while (sh->token->tokens[++i])
-	{
-		in_single = 0;
-		in_double = 0;
-		j = 0;
-		expanded = NULL;
-		// Expand the token character by character
-		while (sh->token->tokens[i][j])
-		{
-			if (sh->token->tokens[i][j] == '\'' && !in_double)
-				in_single = !in_single;
-			else if (sh->token->tokens[i][j] == '"' && !in_single)
-				in_double = !in_double;
-			else if (sh->token->tokens[i][j] == '$' && !in_single)
-			{
-				// expand $VAR or $? (not inside single quotes)
-				expanded = dollar_expander(sh->token->tokens[i], last_status, envp);
-				break ; // full replacement, no need to keep scanning
-			}
-			j++;
-		}
-		if (!expanded)
-			expanded = ft_strdup(sh->token->tokens[i]);
-		if (!expanded)
-			return (free_arr(&result, NO), free_arr(&sh->token->tokens, NO), NULL);
-
-		// Now remove quotes properly
-		result[i] = remove_quotes(expanded);
-		free(expanded);
-		if (!result[i])
-			return (free_arr(&result, NO), free_arr(&sh->token->tokens, NO), NULL);
-	}
-	result[i] = NULL;
-	free_arr(&sh->token->tokens, NO);
-	return (result);
+    if (!sh->token || !sh->token->tokens)
+        return (NULL);
+    result = malloc(sizeof(char *) * (ft_arrlen(sh->token->tokens) + 1));
+    if (!result)
+        return (NULL);
+    i = -1;
+    while (sh->token->tokens[++i])
+    {
+        expanded = NULL;
+        if (ft_strchr(sh->token->tokens[i], '$'))
+            expanded = dollar_expander(sh->token->tokens[i], last_status, envp);
+        if (!expanded)
+            expanded = ft_strdup(sh->token->tokens[i]);
+        result[i] = expanded;
+    }
+    result[i] = NULL;
+    return (result);  // ❌ don’t free old tokens here
 }

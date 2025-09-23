@@ -58,21 +58,26 @@ char	*remove_quotes(const char *str)
 	return (res);
 }
 
-void	process_all_tokens(t_shell *sh, char **envp, int last_status)
+void process_all_tokens(t_shell *sh, char **envp, int last_status)
 {
-	int		i;
-	char	*cleaned;
+    int   i;
+    char **expanded;
+    char  *cleaned;
 
-	if (!sh || !sh->token || !sh->token->tokens)
-		return ;
-	sh->token->tokens = expand_token(sh, envp, last_status);
-	if (!sh->token->tokens)
-		return ;
-	i = 0;
-	while (sh->token->tokens && sh->token->tokens[i])
-	{
-		cleaned = remove_quotes(sh->token->tokens[i]);
-		free(sh->token->tokens[i]);
-		sh->token->tokens[i++] = cleaned;
-	}
+    if (!sh || !sh->token || !sh->token->tokens)
+        return ;
+    expanded = expand_token(sh, envp, last_status);
+    if (!expanded)
+        return ;
+    free_arr(&sh->token->tokens, NO);   // free old tokens array + strings
+    sh->token->tokens = expanded;
+    i = 0;
+    while (sh->token->tokens[i])
+    {
+        cleaned = remove_quotes(sh->token->tokens[i]);
+        free(sh->token->tokens[i]);
+        sh->token->tokens[i] = cleaned;
+        i++;
+    }
 }
+
