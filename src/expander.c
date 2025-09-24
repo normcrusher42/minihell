@@ -66,33 +66,6 @@ char	*very_specific_expander(char *token, char **merge, char **envp, int i)
 	return (env_expander(token, merge, envp, i));
 }
 
-// The '$' condition scanner for $VAR, $?, & $$.
-// char	*dollar_expander(char *token, int last_status, char **envp)
-// {
-// 	int		i;
-// 	char	*new_token;
-// 	char	**merge;
-
-// 	i = -1;
-// 	merge = ft_calloc(4, sizeof(char *));
-// 	if (!merge)
-// 		return (NULL);
-// 	while (token[++i])
-// 	{
-// 		free_arr(&merge, YES);
-// 		if (token[i] == '$' && (token[i + 1] == '$' || token[i + 1] == '?'))
-// 			new_token = merge_str(token, last_status, i, merge);
-// 		else if (token[i] == '$' && token[i + 1] && token[i + 1] != '$')
-// 			new_token = very_specific_expander(token, merge, envp, i);
-// 		else
-// 			continue ;
-// 		free(token);
-// 		token = new_token;
-// 		i = -1;
-// 	}
-// 	return (free_arr(&merge, NO), token);
-// }
-
 static int	append_str(t_quote_vars *qv, char *add)
 {
 	qv->new_res = ft_strjoin3(qv->res, "", add);
@@ -139,9 +112,7 @@ static int	handle_variable(t_quote_vars *qv, char *str, char **envp)
 		free(qv->var);
 		return (1);
 	}
-	if (!append_str(qv, "$"))
-		return (0);
-	return (1);
+	return (append_str(qv, "$"));
 }
 
 static int	handle_char(t_quote_vars *qv, char c)
@@ -153,41 +124,31 @@ static int	handle_char(t_quote_vars *qv, char c)
 	return (append_str(qv, buf));
 }
 
+// The '$' condition scanner for $VAR, $?, & $$.
 char	*dollar_expander(char *str, int last_status, char **envp)
 {
 	t_quote_vars	qv;
 
+	qv = (t_quote_vars){0};
 	qv.res = ft_strdup("");
 	if (!qv.res)
 		return (NULL);
-	qv.i = 0;
-	qv.in_single = 0;
-	qv.in_double = 0;
 	while (str[qv.i])
 	{
 		if (str[qv.i] == '\'' && !qv.in_double)
-		{
 			qv.in_single = !qv.in_single;
-			qv.i++;
-			continue ;
-		}
 		else if (str[qv.i] == '"' && !qv.in_single)
-		{
 			qv.in_double = !qv.in_double;
-			qv.i++;
-			continue ;
-		}
 		else if (str[qv.i] == '$' && !qv.in_single)
 		{
-			if (str[qv.i + 1] == '?' && !handle_exit_status(&qv, last_status))
-				return (free(qv.res), NULL);
-			else if (str[qv.i + 1] == '$' && !handle_dollar_dollar(&qv))
-				return (free(qv.res), NULL);
-			else if (!handle_variable(&qv, str, envp))
-				return (free(qv.res), NULL);
-			continue ;
+			if (str[qv.i + 1] == '?' && handle_exit_status(&qv, last_status))
+				{ qv.i += 2; continue ; }
+			if (str[qv.i + 1] == '$' && handle_dollar_dollar(&qv))
+				{ qv.i += 2; continue ; }
+			if (handle_variable(&qv, str, envp))
+				continue ;
 		}
-		else if (!handle_char(&qv, str[qv.i]))
+		if (!handle_char(&qv, str[qv.i]))
 			return (free(qv.res), NULL);
 		qv.i++;
 	}
