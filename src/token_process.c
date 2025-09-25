@@ -70,7 +70,6 @@ char	*remove_quotes(const char *s)
 	return (qv.res);
 }
 
-
 void	process_all_tokens(t_shell *sh, char **envp, int last_status)
 {
 	int		i;

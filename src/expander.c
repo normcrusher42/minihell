@@ -67,61 +67,72 @@ static char	*very_specific_expander(char *token, char **merge, char **envp, int 
 }
 
 // The '$' condition scanner for $VAR, $?, & $$.
-static char	*dollar_expander(char *token, int last_status, char **envp)
+typedef struct s_expander_ctx
 {
 	int		i;
 	bool	expansion;
 	char	*new_token;
 	char	**merge;
+	char	**result;
+}	t_expander_ctx;
 
-	i = -1;
-	expansion = true;
-	merge = ft_calloc(4, sizeof(char *));
-	if (!merge)
+static char	*dollar_expander(char *token, int last_status, char **envp)
+{
+	t_expander_ctx ctx;
+
+	ctx.i = -1;
+	ctx.expansion = false;
+	ctx.merge = ft_calloc(4, sizeof(char *));
+	if (!ctx.merge)
 		return (NULL);
-	while (token[++i])
+	while (token[++ctx.i])
 	{
-		if (token[i] == '\'')
-			expansion = !expansion;
-		else if (expansion && token[i] == '$')
+		if (token[ctx.i] == '\'')
+			ctx.expansion = !ctx.expansion;
+		else if (!ctx.expansion && token[ctx.i] == '$')
 		{
-			free_arr(&merge, YES);
-			if (token[i + 1] == '$' || token[i + 1] == '?')
-				new_token = merge_str(token, last_status, i, merge);
-			else if (token[i + 1])
-				new_token = very_specific_expander(token, merge, envp, i);
+			free_arr(&ctx.merge, YES);
+			if (token[ctx.i + 1] == '$' || token[ctx.i + 1] == '?')
+				ctx.new_token = merge_str(token, last_status, ctx.i, ctx.merge);
+			else if (token[ctx.i + 1])
+				ctx.new_token = very_specific_expander(token, ctx.merge, envp, ctx.i);
 			else
 				continue;
 			free(token);
-			token = new_token;
-			i = -1;
+			token = ctx.new_token;
+			ctx.i = -1;
 		}
 	}
-	return (free_arr(&merge, NO), token);
+	free_arr(&ctx.merge, NO);
+	return (token);
 }
 
 // The main expander loop after being parsed by the tokenizer.
 char	**expand_token(t_shell *sh, char **envp, int last_status)
 {
-	int		i;
-	char	**result;
-	char	*expanded;
+	t_expander_ctx ctx;
 
-	if (!sh->token || !sh->token->tokens)
+	ctx = (t_expander_ctx){0};
+	ctx.result = malloc(sizeof(char *) * (ft_arrlen(sh->token->tokens) + 1));
+	if (!ctx.result)
 		return (NULL);
-	result = malloc(sizeof(char *) * (ft_arrlen(sh->token->tokens) + 1));
-	if (!result)
-		return (NULL);
-	i = -1;
-	while (sh->token->tokens[++i])
+	while (sh->token->tokens[++ctx.i])
 	{
-		expanded = NULL;
-		if (ft_strchr(sh->token->tokens[i], '$'))
-			expanded = dollar_expander(sh->token->tokens[i], last_status, envp);
-		if (!expanded)
-			expanded = ft_strdup(sh->token->tokens[i]);
-		result[i] = expanded;
+		if (ft_strchr(sh->token->tokens[ctx.i], '$'))
+			ctx.result[ctx.i] = dollar_expander(sh->token->tokens[ctx.i], last_status, envp);
+		else
+		{
+			ctx.result[ctx.i] = ft_strdup(sh->token->tokens[ctx.i]);
+			free(sh->token->tokens[ctx.i]);
+		}
+		if (!result[ctx.i])
+		{
+			free_arr(&ctx.result, NO);
+			free_arr(&sh->token->tokens, NO);
+			return (NULL);
+		}
 	}
-	result[i] = NULL;
-	return (result);
+	ctx.result[ctx.i] = NULL;
+	free(sh->token->tokens);
+	return (ctx.result);
 }
