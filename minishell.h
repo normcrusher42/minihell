@@ -102,14 +102,15 @@ typedef struct s_quote_vars
 {
 	int		i;
 	int		j;
-	int		in_single;
-	int		in_double;
+	int		in_quote;
 	char	*res;
 	int		start;
 	char	*tmp;
 	char	*var;
 	char	*new_res;
+	int		error;
 }	t_quote_vars;
+
 
 typedef struct s_shell
 {
@@ -146,8 +147,6 @@ int		ft_arrlen(char **arr);
 void	free_arr(char ***arr, bool reuse);
 int		execute_command(char ***env, t_shell *sh);
 char	*ft_strjoin3(const char *key, const char *input, const char *value);
-char	*dollar_expander(char *str, int last_status, char **envp);
-char	*ft_strjoin3(const char *a, const char *b, const char *c);
 
 /* utils.c */
 int		ft_isspace(int c);
@@ -183,7 +182,6 @@ void	free_tokens(t_shell *sh);
 
 /* expander.c + token_process.c */
 char	**expand_token(t_shell *sh, char **envp, int last_status);
-char	*dollar_expander(char *token, int last_status, char **envp);
 void	process_all_tokens(t_shell *sh, char **envp, int last_status);
 
 /* janitor functions */

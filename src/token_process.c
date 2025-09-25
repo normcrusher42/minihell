@@ -12,58 +12,75 @@
 
 #include "minishell.h"
 
-static void	quote_error(int in_single, int in_double)
+static int	count_without_quotes(const char *s, int *err)
 {
-	ft_putstr_fd("minishell: unexpected EOF while looking for matching `", 2);
-	if (in_single)
-		ft_putstr_fd("'", 2);
-	else if (in_double)
-		ft_putstr_fd("\"", 2);
-	ft_putendl_fd("'", 2);
-	ft_putendl_fd("minishell: syntax error: unexpected end of file", 2);
+	int	i;
+	int	len;
+	int	in_quote;
+
+	i = 0;
+	len = 0;
+	in_quote = 0;
+	while (s[i])
+	{
+		if (!in_quote && (s[i] == '\'' || s[i] == '"'))
+			in_quote = s[i];
+		else if (in_quote && s[i] == in_quote)
+			in_quote = 0;
+		else
+			len++;
+		i++;
+	}
+	if (in_quote)
+	{
+		ft_putendl_fd(
+			"minishell: unexpected EOF while looking for matching quote", 2);
+		ft_putendl_fd("minishell: syntax error: unexpected end of file", 2);
+		*err = 2;
+		return (-1);
+	}
+	return (len);
 }
 
-char	*remove_quotes(const char *str)
+char	*remove_quotes(const char *s)
 {
 	t_quote_vars	qv;
+	int				len;
 
 	qv = (t_quote_vars){0};
-	qv.res = malloc(ft_strlen(str) + 1);
+	if (!s)
+		return (NULL);
+	len = count_without_quotes(s, &qv.error);
+	if (len < 0)
+		return (NULL);
+	qv.res = malloc(len + 1);
 	if (!qv.res)
 		return (NULL);
-	qv.i = -1;
-	while (str[++qv.i])
+	while (s[qv.i])
 	{
-		if (str[qv.i] == '\'' && !qv.in_double)
-		{
-			qv.in_single = !qv.in_single;
-			continue ;
-		}
-		else if (str[qv.i] == '"' && !qv.in_single)
-		{
-			qv.in_double = !qv.in_double;
-			continue ;
-		}
-		qv.res[qv.j++] = str[qv.i];
+		if (!qv.in_quote && (s[qv.i] == '\'' || s[qv.i] == '"'))
+			qv.in_quote = s[qv.i];
+		else if (qv.in_quote && s[qv.i] == qv.in_quote)
+			qv.in_quote = 0;
+		else
+			qv.res[qv.j++] = s[qv.i];
+		qv.i++;
 	}
-	if (qv.in_single || qv.in_double)
-		return (quote_error(qv.in_single, qv.in_double), free(qv.res), NULL);
-	return (qv.res[qv.j] = '\0', qv.res);
+	qv.res[qv.j] = '\0';
+	return (qv.res);
 }
+
 
 void	process_all_tokens(t_shell *sh, char **envp, int last_status)
 {
 	int		i;
-	char	**expanded;
 	char	*cleaned;
 
 	if (!sh || !sh->token || !sh->token->tokens)
 		return ;
-	expanded = expand_token(sh, envp, last_status);
-	if (!expanded)
+	sh->token->tokens = expand_token(sh, envp, last_status);
+	if (!sh->token->tokens)
 		return ;
-	free_arr(&sh->token->tokens, NO);
-	sh->token->tokens = expanded;
 	i = 0;
 	while (sh->token->tokens[i])
 	{
