@@ -97,6 +97,19 @@ typedef struct s_kv
 	bool	has_equal;
 }	t_kv;
 
+// Variables for the expander
+typedef struct s_expander_ctx
+{
+	int		i;
+	bool	expansion;
+	char	**merge;
+	char	*new_token;
+	int		last_status;
+	char	**envp;
+	char	*token;
+	char	**result;
+}	t_expander_ctx;
+
 // Variables for Quote stripping
 typedef struct s_quote_vars
 {

@@ -42,6 +42,7 @@ void	butter_free_input(t_shell *shell)
 	}
 }
 
+// Frees the array of tokens from sh, ready for the next call.
 void	free_tokens(t_shell *sh)
 {
 	if (!sh || !sh->token)

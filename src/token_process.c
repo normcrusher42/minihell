@@ -70,16 +70,19 @@ char	*remove_quotes(const char *s)
 	return (qv.res);
 }
 
-void	process_all_tokens(t_shell *sh, char **envp, int last_status)
+void process_all_tokens(t_shell *sh, char **envp, int last_status)
 {
+	char	**expanded_tokens;
 	int		i;
 	char	*cleaned;
 
 	if (!sh || !sh->token || !sh->token->tokens)
 		return ;
-	sh->token->tokens = expand_token(sh, envp, last_status);
-	if (!sh->token->tokens)
+	expanded_tokens = expand_token(sh, envp, last_status);
+	if (!expanded_tokens)
 		return ;
+	free(sh->token->tokens);
+	sh->token->tokens = expanded_tokens;
 	i = 0;
 	while (sh->token->tokens[i])
 	{
