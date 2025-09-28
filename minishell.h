@@ -108,6 +108,11 @@ typedef struct s_expander_ctx
 	char	**envp;
 	char	*token;
 	char	**result;
+	bool	in_single;
+	bool	in_double;
+	char	*updated_token;
+	char	**env_values;
+	int		strt;
 }	t_expander_ctx;
 
 // Variables for Quote stripping
@@ -194,8 +199,8 @@ void	free_tokens(t_shell *sh);
 
 
 /* expander.c + token_process.c */
-char	**expand_token(t_shell *sh, char **envp, int last_status);
-void	process_all_tokens(t_shell *sh, char **envp, int last_status);
+char	**expand_token(t_shell *sh, char **envp);
+void	process_all_tokens(t_shell *sh, char **envp);
 
 /* janitor functions */
 /* aka cleanup for u boomers */

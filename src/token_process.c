@@ -70,7 +70,7 @@ char	*remove_quotes(const char *s)
 	return (qv.res);
 }
 
-void process_all_tokens(t_shell *sh, char **envp, int last_status)
+void process_all_tokens(t_shell *sh, char **envp)
 {
 	char	**expanded_tokens;
 	int		i;
@@ -78,7 +78,7 @@ void process_all_tokens(t_shell *sh, char **envp, int last_status)
 
 	if (!sh || !sh->token || !sh->token->tokens)
 		return ;
-	expanded_tokens = expand_token(sh, envp, last_status);
+	expanded_tokens = expand_token(sh, envp);
 	if (!expanded_tokens)
 		return ;
 	free(sh->token->tokens);

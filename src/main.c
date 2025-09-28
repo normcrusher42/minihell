@@ -93,7 +93,7 @@ static void	process_line_tokens(t_shell *sh)
 	int		ok;
 
 	tokenize(sh->input, sh);
-	process_all_tokens(sh, sh->envp, g_last_status);
+	process_all_tokens(sh, sh->envp);
 	ok = parse_command_table(sh, &g_last_status);
 	if (ok)
 	{
