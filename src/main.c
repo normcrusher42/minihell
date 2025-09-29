@@ -76,7 +76,7 @@ static void	init_shell(char **envp, t_shell *shell)
 	update_shlvl(&shell->envp);
 }
 
-/* return 1 if we should print the parsed table */
+// Return 1 if we should print the parsed table
 static int	should_debug_parse(void)
 {
 	const char	*val;
@@ -87,7 +87,8 @@ static int	should_debug_parse(void)
 	return (1);
 }
 
-// Leen, contextualize this. I ain't re-readin alladat LOL
+// fine. I'll do it myself.
+// Main parsing work that tokenizes and processes the input before executing
 static void	process_line_tokens(t_shell *sh)
 {
 	int		ok;
@@ -132,5 +133,5 @@ int	main(int ac, char **av, char **envp)
 	}
 	clear_history();
 	free_arr(&shell.envp, NO);
-	return (0);
+	return (g_last_status);
 }

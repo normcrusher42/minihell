@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42.ae>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 22:06:10 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/04 22:06:10 by nanasser         ###   ########.fr       */
+/*   Created: 2025/09/29 04:40:27 by nanasser          #+#    #+#             */
+/*   Updated: 2025/09/29 04:40:27 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 // The holy grail of expanding valid $ input if the other cases weren't met.
 char	*env_expander(char *token, char **merge, char **envp, int i)
 {
-	t_expander_ctx q;
+	t_expander_ctx	q;
 
 	q.env_values = ft_calloc(3, sizeof(char *));
 	if (!q.env_values)
@@ -24,7 +24,7 @@ char	*env_expander(char *token, char **merge, char **envp, int i)
 	{
 		q.strt = i + 1;
 		while (token[q.strt] && (ft_isalnum(token[q.strt])
-			|| token[q.strt] == '_'))
+				|| token[q.strt] == '_'))
 			q.strt++;
 		merge[0] = ft_substr(token, 0, i);
 		q.env_values[0] = ft_substr(token, i + 1, q.strt - (i + 1));
@@ -108,7 +108,7 @@ static char	*dollar_expander(char *token, char **envp)
 // The main expander loop after being parsed by the tokenizer.
 char	**expand_token(t_shell *sh, char **envp)
 {
-	t_expander_ctx ctx;
+	t_expander_ctx	ctx;
 
 	ctx = (t_expander_ctx){0};
 	ctx.result = malloc(sizeof(char *) * (ft_arrlen(sh->token->tokens) + 1));

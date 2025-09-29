@@ -137,11 +137,11 @@
 
 * `echo "a b"` results in `argv[1]="a b"` (one argument).
 
------------------------------------------------------------ ✅
+----------------------------------------------------------- ✅ / ⚠ something is missing
 
-### 🗓 Day 6
+### 🗓 Day 6 - 8
 
-🫘 **Beans — Edge-expand tests**
+🫘 **We test edge-cases and bug hunt. Such as the ways of the Hollow Knight 🐛**
 
 * 🧪 Cases:
 
@@ -149,8 +149,7 @@
   * `grep "$HOME/Desktop"`
   * `echo '$HOME-$?'`
 * Verify `argv` counts are correct after stripping quotes.
-
-🐤 **Pika — Executor validation**
+* 🧷 Ensure that empty command (e.g., `"" | wc`) is still a command with empty `argv[0]` → will fail in exec with 127, not crash parser.
 
 * 🧪 Feed the executor with expanded/stripped nodes and confirm it sees the expected `argv[]`.
 
@@ -158,20 +157,30 @@
 
 * Internal trace shows `argv` normalized, no stray quotes, no empty `argv[0]`.
 
----
-
-### 🗓 Day 7–8 (Integration & hardening)
-
-🤝 **Both**
-
 * 🚫 Unclosed quotes: tokenizer should have flagged earlier; add guard to refuse execution with 258 if any token indicates “unclosed”.
 * 🧼 Confirm freeing of any temporary expanded strings.
+* 📌 Ensure `export KEY=VAL` is parsed as one arg; forbid `=` operator recognition here.
 
 **✅ Acceptance**
 
-* Fuzz inputs with weird quotes; shell never segfaults, always returns to prompt.
+* Fuzz inputs with weird quotes; shell never segfaults, always returns to prompt.... no exceptions. (that one definitely didn't come from Pika :v)
+🐤 **Pika — Builtins (all 7)**
 
----
+* `echo [-n*]`, `pwd`, `env` (ignore args), `cd` (update `PWD`/`OLDPWD`), `export`, `unset`, `exit`.
+* Parent/child split:
+
+  * Parent-only when `n==1` & no pipeline (so `cd` persists).
+  * Otherwise, child-builtins run in child.
+* Return proper statuses:
+
+  * `exit` with non-numeric → print error, exit 2.
+  * `exit` with too many args → print error, **don’t** exit, return 1.
+
+**✅ Acceptance**
+
+* `exit 42` exits shell with code 42.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------- All the testing for what we've done ^
 
 ## 📅 Week C — ⚙️ Executor: Builtins & External Exec
 
@@ -194,38 +203,9 @@
 
 * `foo` → 127; `/bin/ls` → 0; `/bin/ls nofile` → non-zero.
 
-🫘 **Beans — Parser validation for argv\[0]**
-
-* 🧷 Ensure that empty command (e.g., `"" | wc`) is still a command with empty `argv[0]` → will fail in exec with 127, not crash parser.
-
 ---
 
-### 🗓 Day 10
-
-🐤 **Pika — Builtins (all 7)**
-
-* `echo [-n*]`, `pwd`, `env` (ignore args), `cd` (update `PWD`/`OLDPWD`), `export`, `unset`, `exit`.
-* Parent/child split:
-
-  * Parent-only when `n==1` & no pipeline (so `cd` persists).
-  * Otherwise, child-builtins run in child.
-* Return proper statuses:
-
-  * `exit` with non-numeric → print error, exit 2.
-  * `exit` with too many args → print error, **don’t** exit, return 1.
-
-**✅ Acceptance**
-
-* `cd /; pwd` shows new path.
-* `exit 42` exits shell with code 42.
-
-🫘 **Beans — Parser sanity**
-
-* 📌 Ensure `export KEY=VAL` is parsed as one arg; forbid `=` operator recognition here.
-
----
-
-### 🗓 Day 11–12 (Integration)
+### 🗓 Day 10–12 (Integration)
 
 🤝 **Both**
 
@@ -234,7 +214,7 @@
   * `cat < in`
   * `echo hi > out`
   * `echo hi >> out`
-* ✅ Exit codes bubble into `sh->last_exit_status`.
+* ✅ Exit codes bubble into `g_last_status`.
 
 ---
 

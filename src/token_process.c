@@ -33,9 +33,8 @@ static int	count_without_quotes(const char *s, int *err)
 	}
 	if (in_quote)
 	{
-		ft_putendl_fd(
-			"minishell: unexpected EOF while looking for matching quote", 2);
-		ft_putendl_fd("minishell: syntax error: unexpected end of file", 2);
+		ft_putendl_fd(UNEXPECTED_EOF, 2);
+		ft_putendl_fd(SYNTAX_ERROR, 2);
 		*err = 2;
 		return (-1);
 	}
@@ -70,7 +69,7 @@ char	*remove_quotes(const char *s)
 	return (qv.res);
 }
 
-void process_all_tokens(t_shell *sh, char **envp)
+void	process_all_tokens(t_shell *sh, char **envp)
 {
 	char	**expanded_tokens;
 	int		i;

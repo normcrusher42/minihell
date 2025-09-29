@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42.ae>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 22:06:01 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/04 22:06:01 by nanasser         ###   ########.fr       */
+/*   Created: 2025/09/29 04:40:39 by nanasser          #+#    #+#             */
+/*   Updated: 2025/09/29 04:40:39 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,15 @@ int	exec_builtin(char **av, char ***envp, t_shell *sh)
 	return (1);
 }
 
+static void	handle_execution(t_shell *sh, char **env)
+{
+	execve(sh->cmds->av[0], sh->cmds->av, env);
+	ft_putstr_fd(sh->cmds->av[0], 2);
+	ft_putendl_fd(": command not found", 2);
+	call_janitor(sh);
+	exit(127);
+}
+
 // Runs a single cmd passed and checks if its a builtin or a program
 int	execute_command(char ***env, t_shell *sh)
 {
@@ -83,13 +92,7 @@ int	execute_command(char ***env, t_shell *sh)
 		return (g_last_status = exec_builtin(sh->cmds->av, env, sh));
 	pid = fork();
 	if (pid == 0)
-	{
-		execve(sh->cmds->av[0], sh->cmds->av, *env);
-		ft_putstr_fd(sh->cmds->av[0], 2);
-		ft_putendl_fd(": command not found", 2);
-		call_janitor(sh);
-		exit(127);
-	}
+		handle_execution(sh, *env);
 	else if (pid > 0)
 	{
 		waitpid(pid, &status, 0);
@@ -98,5 +101,6 @@ int	execute_command(char ***env, t_shell *sh)
 		else if (WIFSIGNALED(status))
 			return (g_last_status = 128 + WTERMSIG(status));
 	}
-	return (perror(RED "Fork Error" RESET), g_last_status = 1);
+	perror(RED "Well well, how did we get here? That's embarassing." RESET);
+	return (g_last_status = 2);
 }

@@ -37,6 +37,11 @@
 # define YES 1
 # define NO 0
 
+// Error messages
+# define UNEXPECTED_EOF "miniOdy: unexpected EOF while looking for matching quot\
+e"
+# define SYNTAX_ERROR "miniOdy: syntax error: unexpected end of file"
+
 extern int	g_last_status; // last exit return value
 
 /* ===================== */
