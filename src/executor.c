@@ -71,13 +71,66 @@ int	exec_builtin(char **av, char ***envp, t_shell *sh)
 	return (1);
 }
 
-static void	handle_execution(t_shell *sh, char **env)
+static void	print_exec_error(char *cmd, t_shell *sh)
 {
-	execve(sh->cmds->av[0], sh->cmds->av, env);
-	ft_putstr_fd(sh->cmds->av[0], 2);
-	ft_putendl_fd(": command not found", 2);
+	struct stat	st;
+
+	if (stat(cmd, &st) == 0 && S_ISDIR(st.st_mode))
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(cmd, 2);
+		ft_putendl_fd(": Is a directory", 2);
+		call_janitor(sh);
+		exit(126);
+	}
+	perror(cmd);
 	call_janitor(sh);
+	if (errno == EACCES)
+		exit(126);
 	exit(127);
+}
+
+static void	try_direct_exec(char **av, char ***env, t_shell *sh)
+{
+	execve(av[0], av, *env);
+	print_exec_error(av[0], sh);
+}
+
+// Try executing a command directly or via PATH
+static void	exec_external(t_shell *sh, char **av, char ***env)
+{
+	t_exec_vars	vars;
+
+	if (ft_strchr(av[0], '/'))
+		try_direct_exec(av, env, sh);
+	else
+	{
+			vars.path_env = get_env_value(*env, "PATH");
+		if (!vars.path_env)
+			vars.path_env = "/bin:/usr/bin";
+		vars.paths = ft_split(vars.path_env, ':');
+		vars.i = -1;
+	while (vars.paths && vars.paths[++vars.i])
+	{
+		vars.full = ft_strjoin3(vars.paths[vars.i], "/", av[0]);
+		execve(vars.full, av, *env);
+		free(vars.full);
+	}
+		free_arr(&vars.paths, NO);
+		ft_putstr_fd(av[0], 2);
+		ft_putendl_fd(": command not found", 2);
+		call_janitor(sh);
+		exit(127);
+	}
+}
+
+// Runs inside the child process
+static void	handle_execution(t_shell *sh, char ***env)
+{
+	if (is_builtin(sh->cmds->av[0]))
+		exit(exec_builtin(sh->cmds->av, env, sh));
+	else
+		exec_external(sh, sh->cmds->av, env);
 }
 
 // Runs a single cmd passed and checks if its a builtin or a program
@@ -92,7 +145,7 @@ int	execute_command(char ***env, t_shell *sh)
 		return (g_last_status = exec_builtin(sh->cmds->av, env, sh));
 	pid = fork();
 	if (pid == 0)
-		handle_execution(sh, *env);
+		handle_execution(sh, env);
 	else if (pid > 0)
 	{
 		waitpid(pid, &status, 0);

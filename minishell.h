@@ -134,6 +134,13 @@ typedef struct s_quote_vars
 	int		error;
 }	t_quote_vars;
 
+typedef struct s_exec_vars
+{
+	char	*path_env;
+	char	**paths;
+	char	*full;
+	int		i;
+}	t_exec_vars;
 
 typedef struct s_shell
 {
