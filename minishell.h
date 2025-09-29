@@ -27,6 +27,7 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
+#include <termios.h>
 
 /* Colors ✨ */
 /* Pls use appropriately */
@@ -213,5 +214,5 @@ void	process_all_tokens(t_shell *sh, char **envp);
 char	**dup_env(char **envp);
 void	butter_free_input(t_shell *shell);
 void	call_janitor(t_shell *sh);
-
+void	disable_echoctl(void);
 #endif
