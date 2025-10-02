@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42.ae>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 19:37:57 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/04 19:37:57 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/01 13:40:39 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/01 13:40:39 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
+# include <sys/stat.h>
 
 /* Colors ✨ */
 /* Pls use appropriately */
