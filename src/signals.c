@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signals.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/29 20:18:27 by lsahloul          #+#    #+#             */
+/*   Updated: 2025/09/29 20:18:27 by lsahloul         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #define _GNU_SOURCE
 #define RL_USE_OLD_TERMIOS
 #include <readline/readline.h>
@@ -17,6 +29,20 @@ void	handle_sigint(int sig)
 void	handle_sigquit(int sig)
 {
 	(void)sig;
+	write(STDOUT_FILENO, "\b\b  \b\b", 6);
+	rl_on_new_line();
+	rl_redisplay();
+}
+
+void	disable_echoctl(void)
+{
+	struct termios	term;
+
+	if (tcgetattr(STDIN_FILENO, &term) == -1)
+		return ;
+	term.c_lflag &= ~ECHOCTL;
+	if (tcsetattr(STDIN_FILENO, TCSANOW, &term) == -1)
+		return ;
 }
 
 void	init_signals(void)
@@ -24,6 +50,7 @@ void	init_signals(void)
 	struct sigaction	sa_int;
 	struct sigaction	sa_quit;
 
+	disable_echoctl();
 	sa_int.sa_handler = handle_sigint;
 	sigemptyset(&sa_int.sa_mask);
 	sa_int.sa_flags = SA_RESTART;
