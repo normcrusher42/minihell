@@ -127,6 +127,8 @@ static void	exec_external(t_shell *sh, char **av, char ***env)
 // Runs inside the child process
 static void	handle_execution(t_shell *sh, char ***env)
 {
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	if (is_builtin(sh->cmds->av[0]))
 		exit(exec_builtin(sh->cmds->av, env, sh));
 	else
@@ -139,6 +141,7 @@ int	execute_command(char ***env, t_shell *sh)
 	pid_t	pid;
 	int		status;
 
+	
 	if (!sh->cmds->av || !sh->cmds->av[0])
 		return (g_last_status = 0);
 	if (is_builtin(sh->cmds->av[0]))
@@ -150,6 +153,7 @@ int	execute_command(char ***env, t_shell *sh)
 	{
 		signal(SIGINT, SIG_IGN);
 		waitpid(pid, &status, 0);
+		signal(SIGINT, handle_sigint);
 		if (WIFEXITED(status))
 			return (g_last_status = WEXITSTATUS(status));
 		else if (WIFSIGNALED(status))
