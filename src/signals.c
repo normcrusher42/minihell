@@ -29,8 +29,7 @@ void	handle_sigint(int sig)
 void	handle_sigquit(int sig)
 {
 	(void)sig;
-	write(1, "\r", 1);
-	rl_replace_line("", 0);
+	write(STDOUT_FILENO, "\b\b  \b\b", 6);
 	rl_on_new_line();
 	rl_redisplay();
 }

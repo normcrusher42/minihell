@@ -77,7 +77,7 @@ void	set_env_value(char ***envp, const char *key, const char *val, int exist)
 		new_envp[i] = ft_strjoin3(key, "=", val);
 	else
 		new_envp[i] = ft_strdup(key);
-	return (free_arr(envp, false), *envp = new_envp, (void)0);
+	return (free(*envp), *envp = new_envp, (void)0);
 }
 
 // Removes an environemnt variable through its passed name (key).
