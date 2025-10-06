@@ -133,5 +133,6 @@ int	main(int ac, char **av, char **envp)
 	}
 	clear_history();
 	free_arr(&shell.envp, NO);
+    ft_printf("\nexit\n");
 	return (g_last_status);
 }

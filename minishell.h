@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42adbudhabi.ae> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 19:37:57 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/04 19:37:57 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/06 19:40:56 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/06 19:40:56 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
+# include <sys/stat.h>
 #include <termios.h>
 
 /* Colors ✨ */
@@ -135,6 +136,13 @@ typedef struct s_quote_vars
 	int		error;
 }	t_quote_vars;
 
+typedef struct s_exec_vars
+{
+	char	*path_env;
+	char	**paths;
+	char	*full;
+	int		i;
+}	t_exec_vars;
 
 typedef struct s_shell
 {

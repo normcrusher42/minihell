@@ -47,7 +47,7 @@ int	ft_exit(char **av, t_shell *sh)
 {
 	long long	code;
 
-	ft_putendl_fd("exit miniOdy", 1);
+	ft_putendl_fd("exit", 1);
 	if (ft_arrlen(av) > 2)
 		return (ft_putendl_fd("mOdy: exit: too many arguments", 2), 1);
 	else if (ft_arrlen(av) < 2)

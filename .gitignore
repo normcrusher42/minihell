@@ -2,7 +2,6 @@
 *.a
 minishell
 minishell.dSYM/
-shit_to_fix.txt
 test.c
 ./a.out
 minihell
