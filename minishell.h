@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.ae>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42adbudhabi.ae> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/01 13:40:39 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/01 13:40:39 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/06 19:40:56 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/06 19:40:56 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

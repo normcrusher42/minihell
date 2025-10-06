@@ -148,6 +148,7 @@ int	execute_command(char ***env, t_shell *sh)
 		handle_execution(sh, env);
 	else if (pid > 0)
 	{
+		signal(SIGINT, SIG_IGN);
 		waitpid(pid, &status, 0);
 		if (WIFEXITED(status))
 			return (g_last_status = WEXITSTATUS(status));

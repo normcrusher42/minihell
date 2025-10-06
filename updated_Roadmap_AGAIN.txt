@@ -1,133 +1,139 @@
-✅ Already Implemented
-Prompt & history → readline, add_history, clear_history are in place (main.c).
-Environment setup → dup_env, update_shlvl, env_utils.c functions handle envp.
-Signals → init_signals, handle_sigint, handle_sigquit, disable_echoctl (signals.c) handle Ctrl-C, Ctrl-.
-Quoting → remove_quotes, quote tracking in tokenizer & expander.
-Variable expansion → $VAR + $? (expander.c + token_process.c).
-Builtins → All 7 required ones exist:
-echo -n, cd, pwd, export, unset, env, exit (checked in executor.c and headers).
-Command parsing → tokenizer.c + cmd_table.c convert input to command/args + redirections.
-Basic command execution → execute_command forks and runs either builtins or execve.
+Alright 👍 now that we double-checked your **actual code vs the subject**, here’s the **updated 2-week roadmap** tailored exactly to what’s left:
 
-❌ Missing / Incomplete (must finish before submission)
-Pipelines (|)
-run_pipeline() in driver.c is just a stub:
-ft_putendl_fd("pipeline execution not implemented yet", 2);
-Needs real pipe creation, dup2 redirection, child forking, and chaining.
-Redirections (<, >, >>, <<)
-Parser collects them (cmd_table.c → push_redir),
-But execution logic is missing: no open(), dup2() handling for infile/outfile.
-Heredoc (<<) isn’t implemented (reading until delimiter, handling quoted delimiters).
-PATH resolution
-execve currently tries sh->cmds->av[0] directly.
-Must implement a search in $PATH (like which), otherwise ls etc. won’t work.
-Exit status propagation
-$? expansion is handled, but pipeline/builtin/exec errors need consistent updating of g_last_status.
-Ctrl-D
-In main.c, if (!shell.input) break; just exits silently.
-Subject requires printing exit before quitting.
-Error messages
-Syntax errors partly handled (cmd_table.c → syntax_err),
-But edge cases (unclosed quotes, invalid redirections, export/unset errors) should match bash behavior.
-Memory management
-Many allocations/freeing are present, but leaks may remain around token → cmd conversion & heredoc.
-Must pass Valgrind (except known readline leaks).
+---
 
-
-📅 Two-Week Minishell Roadmap (Final Version)
+# 📅 Two-Week Minishell Roadmap (Adjusted to Current Code)
 
-Week 1 — Core Execution Features
-🗓 Day 1–2
-🐤 Pika — PATH Resolution
-Implement find_command_path():
-If cmd contains /, try execve directly.
-Else, iterate $PATH (split by :).
-Handle errors:
-not found → 127
-permission denied → 126.
-Integrate into execute_command().
-🫘 Beans — Ctrl-D & Exit Status Polish
-On !readline, print "exit\n" before quitting.
-Ensure g_last_status always updates (parse errors, builtin errors, exec fails, etc.).
+---
 
-🗓 Day 3–4
-🐤 Pika — Redirections (basic)
-Create apply_redirections(t_cmd*):
-< → open(..., O_RDONLY)
-> → open(..., O_WRONLY|O_CREAT|O_TRUNC, 0644)
->> → open(..., O_WRONLY|O_CREAT|O_APPEND, 0644)
-Apply inside child before execve.
-On error → print message + _exit(1) or 126.
-🫘 Beans — Pipeline Skeleton
-Flesh out run_pipeline():
-Loop commands, create pipe() for i < n-1.
-Child i: dup2(prev_read, 0) if i > 0; dup2(pipe_write, 1) if i < n-1.
-Parent closes unused fds and waits.
-For now, no redirs.
+## **Week 1 — Execution Core**
 
-🗓 Day 5–6
-🐤 Pika — Heredoc Reader
-Implement heredoc collection:
-Read until delimiter (exact match).
-Quoted delimiter → no expansion.
-Unquoted delimiter → allow expansion (to handle later).
-Ctrl-C aborts heredoc, set status 130.
-Don’t add heredoc lines to history.
-🫘 Beans — Redirections + Pipes Integration
-Call apply_redirections() in pipeline children.
-Enforce “last redir wins”.
-Integrate heredoc → stdin comes from heredoc pipe when present.
 
-🗓 Day 7
-🤝 Both — Mid-week Integration
-Test simple cases:
-cat < infile
-echo hi > out
-echo hi >> out
-cat < infile | wc -l
-cat <<EOF | wc -l
+### 🗓 Day 1–4
 
-Week 2 — Edge Cases & Polishing
-🗓 Day 8–9
-🫘 Beans — Syntax & Error Handling
-Detect and handle syntax errors:
-> out ls → 258.
-cat | | wc → 258.
-Unclosed quotes → 258.
-Match bash-like error messages (minishell: <cmd>: <msg>).
-🐤 Pika — Exit/Builtin Behaviors
-exit N → exit with code N.
-exit abc → error, status 255.
-exit with too many args → error, don’t exit, return 1.
-Ensure builtin return codes align with bash.
+🐤 **Pika — Redirections Execution**
 
-🗓 Day 10–11
-🐤 Pika — Signals in Children
-In forked child: restore default SIGINT/QUIT.
-Parent keeps readline handler.
-Confirm exit codes → 128+sig.
-🫘 Beans — Stress Testing / Edge Inputs
-Long pipelines: echo a | echo b | echo c ...
-Weird redirs: echo "" | wc, <<<, etc.
-Ensure no segfaults or leaks.
+* Implement `apply_redirections(t_cmd*)`:
 
-🗓 Day 12–13
-🤝 Both — Final Feature Polishing
-Builtins inside pipelines (cd / | pwd).
-Double-check redirection precedence.
-Fix any regressions found in stress tests.
+  * `<` O_RDONLY
+  * `>` O_WRONLY|O_CREAT|O_TRUNC 0644
+  * `>>` O_WRONLY|O_CREAT|O_APPEND 0644
+* Apply in child before `execve`.
+* On open error → print message, `_exit(1)` or `126`.
 
-🗓 Day 14 — Full Defense Rehearsal
-🤝 Both Together
-One giant test session:
-Prompt + history.
-Signals (Ctrl-C, Ctrl-D, Ctrl-).
-All 7 builtins (echo, cd, pwd, export, unset, env, exit).
-Quotes and expansions ($VAR, $?).
-Redirs <, >, >>.
-Pipelines (cmd1 | cmd2 | cmd3).
-Heredoc (<<).
-Run with Valgrind → no leaks (ignore readline).
-Norminette → pass all files.
-Remove debug prints (print_cmd_table).
-Push final code.
+🫘 **Beans — Pipeline Skeleton**
+
+* Implement `run_pipeline()`:
+
+  * Loop commands.
+  * Create pipes between children.
+  * Child i: connect previous read → stdin, next write → stdout.
+  * Parent closes unused FDs, waits all children.
+
+---
+
+### 🗓 Day 5–6
+
+🐤 **Pika — Heredoc Reader**
+
+* Implement heredoc collection:
+
+  * Read until delimiter.
+  * Quoted delimiter → no expansion.
+  * Unquoted → expansion enabled later.
+  * Ctrl-C → abort heredoc, set status 130.
+  * Don’t add lines to history.
+
+🫘 **Beans — Pipeline + Redirs Integration**
+
+* In child: call `apply_redirections()` after setting up pipes.
+* “Last redir wins” rule.
+* If heredoc exists, replace stdin with heredoc pipe.
+
+---
+
+### 🗓 Day 7
+
+🤝 **Both — Mid-Week Integration**
+
+* Test:
+
+  * `cat < infile`
+  * `echo hi > out`
+  * `echo hi >> out`
+  * `cat < infile | wc -l`
+  * `cat <<EOF | wc -l`
+
+---
+
+## **Week 2 — Errors, Signals, Polishing**
+
+### 🗓 Day 8–9
+
+🫘 **Beans — Syntax & Error Handling**
+
+* `> out ls` → syntax error 258.
+* `cat | | wc` → syntax error 258.
+* Unclosed quotes → syntax error 258.
+* Match bash-style messages.
+
+🐤 **Pika — Builtin Edge Cases**
+
+* Confirm `cd` updates `PWD`/`OLDPWD`.
+* `export` prints sorted, handles invalid identifiers.
+* `unset` ignores invalid identifiers.
+* Ensure `env` prints only valid key=val.
+
+---
+
+### 🗓 Day 10–11
+
+🐤 **Pika — Signals in Children**
+
+* Reset SIGINT/SIGQUIT to default in forked child.
+* Parent keeps readline behavior.
+* Check exit codes (`128+sig`).
+
+🫘 **Beans — Stress Testing**
+
+* Long pipelines.
+* Strange redirs (`echo "" | wc`, `cat <<< nope`).
+* Expansion edge cases: `$?`, nested quotes.
+
+---
+
+### 🗓 Day 12–13
+
+🤝 **Both — Final Feature Polishing**
+
+* Check builtins inside pipelines (`cd / | pwd`).
+* Double-check precedence of multiple redirs.
+* Fix regressions.
+
+---
+
+### 🗓 Day 14 — Full Defense Rehearsal
+
+🤝 **Both Together**
+
+* Test everything:
+
+  * Prompt/history.
+  * Signals (Ctrl-C, Ctrl-D, Ctrl-).
+  * Quotes, expansions, `$?`.
+  * All 7 builtins.
+  * Redirs `<`, `>`, `>>`.
+  * Pipelines.
+  * Heredoc.
+* Run Valgrind (ignore readline leaks).
+* Norminette check.
+* Remove debug prints.
+* Push final version.
+
+---
+
+✅ At the end: **Mandatory part 100% covered** — parser, expansions, redirs, pipes, heredoc, PATH, builtins, signals, exit codes, error messages, memory/FD hygiene.
+
+---
+
+Do you want me to also **split this into a table checklist** (Day | Beans | Pika | Tests) so you and your partner can literally tick things off?
