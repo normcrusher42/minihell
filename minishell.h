@@ -104,6 +104,20 @@ typedef struct s_kv
 	bool	has_equal;
 }	t_kv;
 
+// Variables for setting/unsetting env values
+typedef struct s_envctx
+{
+	int		i;
+	int		j;
+	size_t	key_len;
+	char	**new_envp;
+	char	*key;
+	char	*val;
+	bool	removed; /* env unset helper flag */
+	bool	exist;
+}	t_envctx;
+
+
 // Variables for the expander
 typedef struct s_expander_ctx
 {
@@ -148,7 +162,6 @@ typedef struct s_shell
 {
 	char	*input;              /* readline buffer */
 	char	**envp;              /* environment array */
-	bool	removed;             /* env unset helper flag */
 	t_token	*token;
 	t_cmd	*cmds;
 	int		ncmd;
@@ -174,7 +187,7 @@ void	print_cmd_table(t_shell *sh);
 /* env_utils.c */
 char	*get_env_value(char **envp, const char *key);
 void	set_env_value(char ***envp, const char *key, const char *val, int exist);
-char	**unset_env_value(char **envp, const char *key, t_shell *shell);
+char	**unset_env_value(char **envp, const char *key);
 int		ft_arrlen(char **arr);
 void	free_arr(char ***arr, bool reuse);
 int		execute_command(char ***env, t_shell *sh);
@@ -193,7 +206,7 @@ int	ft_export_print(char **envp);
 int	ft_env(char **envp);
 int	ft_cd(char **av, char ***envp);
 int	ft_export(char **av, char ***envp);
-int	ft_unset(char **av, char ***envp, t_shell *sh);
+int	ft_unset(char **av, char ***envp);
 int	ft_exit(char **av, t_shell *sh);
 int	ft_pwd(void);
 int	ft_echo(char **av);

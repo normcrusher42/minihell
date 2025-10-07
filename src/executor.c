@@ -63,7 +63,7 @@ int	exec_builtin(char **av, char ***envp, t_shell *sh)
 	if (!ft_strcmp(av[0], "export"))
 		return (ft_export(av, envp));
 	if (!ft_strcmp(av[0], "unset"))
-		return (ft_unset(av, envp, sh));
+		return (ft_unset(av, envp));
 	if (!ft_strcmp(av[0], "exit"))
 		return (ft_exit(av, sh));
 	if (!ft_strcmp(av[0], "cd"))
@@ -75,9 +75,9 @@ static void	print_exec_error(char *cmd, t_shell *sh)
 {
 	struct stat	st;
 
+	ft_putstr_fd("miniOdy: ", 2);
 	if (stat(cmd, &st) == 0 && S_ISDIR(st.st_mode))
 	{
-		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(cmd, 2);
 		ft_putendl_fd(": Is a directory", 2);
 		call_janitor(sh);
@@ -141,7 +141,6 @@ int	execute_command(char ***env, t_shell *sh)
 	pid_t	pid;
 	int		status;
 
-	
 	if (!sh->cmds->av || !sh->cmds->av[0])
 		return (g_last_status = 0);
 	if (is_builtin(sh->cmds->av[0]))
@@ -153,7 +152,7 @@ int	execute_command(char ***env, t_shell *sh)
 	{
 		signal(SIGINT, SIG_IGN);
 		waitpid(pid, &status, 0);
-		signal(SIGINT, handle_sigint);
+		init_signals();
 		if (WIFEXITED(status))
 			return (g_last_status = WEXITSTATUS(status));
 		else if (WIFSIGNALED(status))

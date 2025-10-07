@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_table.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.ae>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42adbudhabi.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 15:44:42 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/09/24 01:03:33 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/07 14:49:50 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ static void	free_one_cmd(t_cmd *c)
 
 static int	syntax_err(const char *tok, int *st)
 {
-	ft_putstr_fd("minishell: syntax error near `", 2);
+	ft_putstr_fd("miniOdy: syntax error near `", 2);
 	if (tok)
 		ft_putstr_fd((char *)tok, 2);
 	else

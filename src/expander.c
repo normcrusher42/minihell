@@ -55,24 +55,23 @@ static char	*merge_str(t_expander_ctx *ctx)
 }
 
 // Scans for special characters (including unicode) and decides if expandable.
-static char	*is_expandable(t_expander_ctx *ctx)
-{
-	unsigned char	next;
-
-	next = (unsigned char)ctx->token[ctx->i + 1];
-	if (!ft_isalnum(next) && next != '_' && !ft_isspace(next))
-		return (merge_str(ctx));
-	return (env_expander(ctx->token, ctx->merge, ctx->envp, ctx->i));
-}
-
 // Handles the '$' expansion cases
 static void	handle_dollar(t_expander_ctx *ctx)
 {
+	unsigned char	next;
+
 	free_arr(&ctx->merge, YES);
+	next = (unsigned char)ctx->token[ctx->i + 1];
 	if (ctx->token[ctx->i + 1] == '$' || ctx->token[ctx->i + 1] == '?')
 		ctx->new_token = merge_str(ctx);
 	else if (ctx->token[ctx->i + 1])
-		ctx->new_token = is_expandable(ctx);
+	{
+		if (!ft_isalnum(next) && next != '_' && !ft_isspace(next))
+			ctx->new_token = merge_str(ctx);
+		else
+			ctx->new_token = env_expander(ctx->token, ctx->merge, ctx->envp,
+					ctx->i);
+	}
 	else
 		return ;
 	free(ctx->token);

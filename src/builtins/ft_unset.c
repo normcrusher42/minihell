@@ -30,7 +30,7 @@ static int	is_valid_identifier(const char *s)
 }
 
 // Unsets one or more environment variables from the passed arguments.
-int	ft_unset(char **av, char ***envp, t_shell *sh)
+int	ft_unset(char **av, char ***envp)
 {
 	int	i;
 
@@ -41,7 +41,7 @@ int	ft_unset(char **av, char ***envp, t_shell *sh)
 	{
 		if (!is_valid_identifier(av[i]))
 			continue ;
-		(*envp) = unset_env_value((*envp), av[i], sh);
+		(*envp) = unset_env_value((*envp), av[i]);
 	}
 	return (0);
 }

@@ -12,6 +12,20 @@
 
 #include "minishell.h"
 
+int	parse_sign(const char *str, int *sign)
+{
+	int	i;
+
+	i = 0;
+	if (str[i] == '+' || str[i] == '-')
+	{
+		if (str[i] == '-')
+			*sign = -1;
+		i++;
+	}
+	return (i);
+}
+
 // Self-explanatory. But with long long max.
 int	ft_atoll(const char *str, long long *code)
 {
@@ -24,22 +38,18 @@ int	ft_atoll(const char *str, long long *code)
 	result = 0;
 	while (ft_isspace(str[i]))
 		i++;
-	if (str[i] == '+' || str[i] == '-')
-	{
-		if (str[i] == '-')
-			sign *= -1;
-		i++;
-	}
+	i += parse_sign(str + i, &sign);
 	while (ft_isdigit(str[i]))
 	{
-		if (result > ((unsigned long long)LLONG_MAX / 10) || (result == \
-					(unsigned long long)LLONG_MAX / 10
+		if (result > ((unsigned long long)LLONG_MAX / 10) || (result
+				== (unsigned long long)LLONG_MAX / 10
 				&& (unsigned long long)(str[i] - '0')
 			> (unsigned long long)(LLONG_MAX % 10) + (sign == -1)))
 			return (0);
 		result = (result * 10) + (str[i++] - '0');
 	}
-	return (*code = (long long)(sign * result), 1);
+	*code = (long long)(sign * result);
+	return (1);
 }
 
 // A kinda-simple remake of 'exit'. Exits the program with an exit code.
@@ -49,7 +59,10 @@ int	ft_exit(char **av, t_shell *sh)
 
 	ft_putendl_fd("exit", 1);
 	if (ft_arrlen(av) > 2)
-		return (ft_putendl_fd("mOdy: exit: too many arguments", 2), 1);
+	{
+		ft_putendl_fd("mOdy: exit: too many arguments", 2);
+		return (1);
+	}
 	else if (ft_arrlen(av) < 2)
 	{
 		call_janitor(sh);
