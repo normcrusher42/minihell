@@ -14,21 +14,6 @@
 
 int	g_last_status = 0;
 
-// strncmp except it actually compares full string lengths cs it aint in libft??
-int	ft_strcmp(const char *s1, const char *s2)
-{
-	size_t	i;
-
-	i = 0;
-	while ((s1[i] || s2[i]))
-	{
-		if (s1[i] != s2[i])
-			return ((unsigned char) s1[i] - (unsigned char) s2[i]);
-		i++;
-	}
-	return (0);
-}
-
 // A checker if the argument is a built-in.
 int	is_builtin(char *cmd)
 {
@@ -69,31 +54,6 @@ int	exec_builtin(char **av, char ***envp, t_shell *sh)
 	if (!ft_strcmp(av[0], "cd"))
 		return (ft_cd(av, envp));
 	return (1);
-}
-
-static void	print_exec_error(char *cmd, t_shell *sh)
-{
-	struct stat	st;
-
-	ft_putstr_fd("miniOdy: ", 2);
-	if (stat(cmd, &st) == 0 && S_ISDIR(st.st_mode))
-	{
-		ft_putstr_fd(cmd, 2);
-		ft_putendl_fd(": Is a directory", 2);
-		call_janitor(sh);
-		exit(126);
-	}
-	perror(cmd);
-	call_janitor(sh);
-	if (errno == EACCES)
-		exit(126);
-	exit(127);
-}
-
-static void	try_direct_exec(char **av, char ***env, t_shell *sh)
-{
-	execve(av[0], av, *env);
-	print_exec_error(av[0], sh);
 }
 
 // Try executing a command directly or via PATH
@@ -142,9 +102,9 @@ int	execute_command(char ***env, t_shell *sh)
 	int		status;
 
 	if (!sh->cmds->av || !sh->cmds->av[0])
-		return (g_last_status = 0);
+		return (0);
 	if (is_builtin(sh->cmds->av[0]))
-		return (g_last_status = exec_builtin(sh->cmds->av, env, sh));
+		return (exec_builtin(sh->cmds->av, env, sh));
 	pid = fork();
 	if (pid == 0)
 		handle_execution(sh, env);
@@ -154,10 +114,10 @@ int	execute_command(char ***env, t_shell *sh)
 		waitpid(pid, &status, 0);
 		init_signals();
 		if (WIFEXITED(status))
-			return (g_last_status = WEXITSTATUS(status));
+			return (WEXITSTATUS(status));
 		else if (WIFSIGNALED(status))
-			return (g_last_status = 128 + WTERMSIG(status));
+			return (128 + WTERMSIG(status));
 	}
 	perror(RED "Well well, how did we get here? That's embarassing." RESET);
-	return (g_last_status = 2);
+	return (2);
 }

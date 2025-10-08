@@ -163,6 +163,7 @@ typedef struct s_shell
 	char	*input;              /* readline buffer */
 	char	**envp;              /* environment array */
 	t_token	*token;
+    int     ex_st;              /* exit status of last command */
 	t_cmd	*cmds;
 	int		ncmd;
 }	t_shell;
@@ -213,6 +214,8 @@ int	ft_echo(char **av);
 void	update_shlvl(char ***envp);
 char	*remove_quotes(const char *str);
 int		ft_strcmp(const char *s1, const char *s2);
+void	try_direct_exec(char **av, char ***env, t_shell *sh);
+
 
 /* signals.c */
 void	init_signals(void);

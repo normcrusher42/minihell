@@ -100,7 +100,7 @@ static void	process_line_tokens(t_shell *sh)
 	{
 		if (should_debug_parse())
 			print_cmd_table(sh);
-		execute_job(sh);
+		g_last_status = execute_job(sh);
 		free_cmd_table(sh);
 	}
 	free_tokens(sh);
