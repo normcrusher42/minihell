@@ -27,8 +27,9 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
-#include <termios.h>
+# include <termios.h>
 # include <sys/stat.h>
+# include <fcntl.h>
 
 /* Colors ✨ */
 /* Pls use appropriately */
@@ -215,6 +216,7 @@ void	update_shlvl(char ***envp);
 char	*remove_quotes(const char *str);
 int		ft_strcmp(const char *s1, const char *s2);
 void	try_direct_exec(char **av, char ***env, t_shell *sh);
+int		apply_redirections(t_cmd *cmd, t_shell *sh);
 
 
 /* signals.c */

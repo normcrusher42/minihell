@@ -10,7 +10,8 @@ LIBFT = $(LIBFT_PATH)libft.a
 
 # Program sauce files
 SRC = ./src/main.c src/env_utils.c src/utils.c src/executor.c src/expander.c src/signals.c src/tokenizer.c \
-src/token_process.c src/cmd_table.c src/cleanup.c src/driver.c src/exec_utils.c src/malloc_tools.c
+src/token_process.c src/cmd_table.c src/cleanup.c src/driver.c src/exec_utils.c src/malloc_tools.c src/apply_redir.c
+
 SRC2 = ./$(BUILTINS)ft_cd.c $(BUILTINS)ft_echo.c $(BUILTINS)ft_env.c $(BUILTINS)ft_exit.c \
 $(BUILTINS)ft_export.c $(BUILTINS)ft_pwd.c $(BUILTINS)ft_unset.c
 
