@@ -92,12 +92,7 @@ static void	handle_execution(t_shell *sh, char ***env)
 	
 	if (is_builtin(sh->cmds->av[0]))
 		exit(exec_builtin(sh->cmds->av, env, sh));
-	else
-	{
-		if (sh->cmds->redir_count > 0)
-			apply_redirections(sh->cmds, sh);
-		exec_external(sh, sh->cmds->av, env);
-	}
+	exec_external(sh, sh->cmds->av, env);
 }
 
 // Runs a single cmd passed and checks if its a builtin or a program

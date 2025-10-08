@@ -11,11 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-int	apply_redirections(t_cmd *cmd)
-{
-    (void)cmd;
-    return (0);
-}
 
 static char	*join_path(const char *dir, const char *cmd)
 {
@@ -90,7 +85,7 @@ static void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p)
 		close(p->pipefd[1]);
 	}
 	if (cmd->redir_count > 0)
-		apply_redirections(cmd);
+		apply_redirections(cmd, sh);
 	if (is_builtin(cmd->av[0]))
 		exit(exec_builtin(cmd->av, &sh->envp, sh));
 	exec_cmd(cmd, sh);
@@ -136,9 +131,9 @@ int	run_pipeline(t_cmd *cmds, int n, t_shell *sh)
 }
 
 /* Match minishell.h signature */
-int	execute_job(t_cmd *cmds, int n, t_shell *sh)
+int	execute_job(t_shell *sh)
 {
-	if (n == 1)
+	if (sh->ncmd == 1)
 		return (execute_command(&sh->envp, sh));
-	return (run_pipeline(cmds, n, sh));
+	return (run_pipeline(sh->cmds, sh->ncmd, sh));
 }

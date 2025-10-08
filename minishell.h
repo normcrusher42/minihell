@@ -205,7 +205,7 @@ char	*ft_strjoin3(const char *key, const char *input, const char *value);
 
 /* utils.c */
 int		ft_isspace(int c);
-int		execute_job(t_cmd *cmds, int n, t_shell *sh);
+int		execute_job(t_shell *sh);
 int		is_builtin(char *cmd);
 int		exec_builtin(char **av, char ***envp, t_shell *sh);
 char	**realloc_env(char **envp, int extra);
