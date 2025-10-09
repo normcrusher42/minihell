@@ -66,17 +66,22 @@ static void	handle_dollar(t_expander_ctx *ctx)
 		ctx->new_token = merge_str(ctx);
 	else if (ctx->token[ctx->i + 1])
 	{
-		if (!ft_isalnum(next) && next != '_' && !ft_isspace(next))
+		if (!ft_isalnum(next) && next != '_' && !ft_isspace(next)
+			&& next != '\'' && next != '"')
 			ctx->new_token = merge_str(ctx);
-		else
+		else if (next != '\'' && next != '"')
 			ctx->new_token = env_expander(ctx->token, ctx->merge, ctx->envp,
 					ctx->i);
+		else
+			return ;
 	}
 	else
 		return ;
 	free(ctx->token);
 	ctx->token = ctx->new_token;
 	ctx->i = -1;
+	ctx->in_single = 0;
+	ctx->in_double = 0;
 }
 
 // The '$' condition scanner for $VAR, $?, & $$.
