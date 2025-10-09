@@ -20,23 +20,6 @@ static void	export_error(char *arg)
 	ft_putendl_fd("': not a valid identifier", 2);
 }
 
-// Validity identifier for the first character of the key.
-static int	is_valid_identifier(const char *s)
-{
-	int	i;
-
-	if (!s || (!ft_isalpha(s[0]) && s[0] != '_'))
-		return (0);
-	i = 1;
-	while (s[i] && s[i] != '=')
-	{
-		if (!ft_isalnum(s[i]) && s[i] != '_')
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
 // Bubble sort for environment variable array.
 static void	sort_env(char **envp)
 {

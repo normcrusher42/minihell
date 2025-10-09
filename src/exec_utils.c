@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 20:04:32 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/08 20:51:12 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/09 23:31:29 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,20 @@ void	try_direct_exec(char **av, char ***env, t_shell *sh)
 	if (errno == EACCES)
 		exit(126);
 	exit(127);
+}
+
+int	init_and_exec_builtins(char **av, char ***env, t_shell *sh)
+{
+	int	saved_stdin;
+	int	saved_stdout;
+
+	saved_stdin = dup(STDIN_FILENO);
+	saved_stdout = dup(STDOUT_FILENO);
+	if (!apply_redirections(sh->cmds, sh))
+		sh->ex_st = exec_builtin(av, env, sh);
+	dup2(saved_stdin, STDIN_FILENO);
+	dup2(saved_stdout, STDOUT_FILENO);
+	close(saved_stdin);
+	close(saved_stdout);
+	return (sh->ex_st);
 }

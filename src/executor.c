@@ -89,6 +89,7 @@ static void	handle_execution(t_shell *sh, char ***env)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
+	sh->is_child = YES;
 	if (apply_redirections(sh->cmds, sh))
 		exit(1);
 	if (is_builtin(sh->cmds->av[0]))
@@ -105,7 +106,7 @@ int	execute_command(char ***env, t_shell *sh)
 	if (!sh->cmds->av || !sh->cmds->av[0])
 		return (0);
 	if (is_builtin(sh->cmds->av[0]))
-		return (exec_builtin(sh->cmds->av, env, sh));
+		return (init_and_exec_builtins(sh->cmds->av, env, sh));
 	pid = fork();
 	if (pid == 0)
 		handle_execution(sh, env);
@@ -113,6 +114,7 @@ int	execute_command(char ***env, t_shell *sh)
 	{
 		signal(SIGINT, SIG_IGN);
 		waitpid(pid, &status, 0);
+		sh->is_child = NO;
 		init_signals();
 		if (WIFEXITED(status))
 			return (WEXITSTATUS(status));

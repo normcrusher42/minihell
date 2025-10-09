@@ -13,7 +13,7 @@
 #include "minishell.h"
 
 // Validity identifier for the first character of the key.
-static int	is_valid_identifier(const char *s)
+int	is_valid_identifier(const char *s)
 {
 	int	i;
 

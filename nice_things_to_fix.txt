@@ -1,7 +1,9 @@
-fix global variable exit status not updating when running into an unclosed quote. ❌
-fix blank newline on unclosed quote (a 3rd error msg can appear that needs its own condition) ❌
-fix export not printing alphabetically as it should ❌
-fix env displaying uninitialized vars when it shouldn't ✅
+fix list is sorted from very minor to minor, mild, concerning, ragebaiting, and fuck my life (lets hope it doesn't get worse than this 🙏)
 
+very minor - fix env displaying uninitialized vars when it shouldn't ✅
+minor - fix global variable exit status not updating when running into an unclosed quote. ❌
+minor - fix blank newline on unclosed quote (a 3rd error msg can appear that needs its own condition) ❌
+minor - fix export not printing alphabetically as it should ✅
+concerning - fix weird quote behavior when trying to expand $" (at the end of the string too) and export print still running anyways despite EoF error ❌
 
-change the fork error thing in the executor cs it shouldn't be there ❌
+just what - change the fork error thing in the executor cs it shouldn't be there ❔

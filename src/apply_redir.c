@@ -37,8 +37,10 @@ static int	apply_single_redirection(t_redir *redir, t_shell *sh)
 	{
 		ft_putstr_fd("minishell: ", 2);
 		perror(redir->arg);
+		if (!sh->is_child)
+			return (1);
 		call_janitor(sh);
-		_exit(1);
+		exit(1);
 	}
 	if (redir->type == R_IN)
 		dup2(fd, STDIN_FILENO);

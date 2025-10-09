@@ -169,12 +169,13 @@ typedef struct s_exec_vars
 
 typedef struct s_shell
 {
-	char	*input;              /* readline buffer */
-	char	**envp;              /* environment array */
+	char	*input; // readline buffer
+	char	**envp; // environment array
 	t_token	*token;
-    int     ex_st;              /* exit status of last command */
+    int     ex_st; // exit status of last command
 	t_cmd	*cmds;
 	int		ncmd;
+	bool	is_child; // bool to make redir funct safer without exiting parent
 }	t_shell;
 
 typedef enum e_token_type
@@ -225,6 +226,8 @@ char	*remove_quotes(const char *str);
 int		ft_strcmp(const char *s1, const char *s2);
 void	try_direct_exec(char **av, char ***env, t_shell *sh);
 int		apply_redirections(t_cmd *cmd, t_shell *sh);
+int		init_and_exec_builtins(char **av, char ***env, t_shell *sh);
+int		is_valid_identifier(const char *s);
 
 
 /* signals.c */
