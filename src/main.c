@@ -36,23 +36,6 @@ void	update_shlvl(char ***envp)
 	free(new_val);
 }
 
-// Duplicates the passed environment variables into the shell struct.
-char	**dup_env(char **envp)
-{
-	char	**new_envp;
-	int		count;
-
-	count = ft_arrlen(envp);
-	new_envp = malloc(sizeof(char *) * (count + 1));
-	if (!new_envp)
-		return (NULL);
-	count = -1;
-	while (envp[++count])
-		new_envp[count] = ft_strdup(envp[count]);
-	new_envp[count] = NULL;
-	return (new_envp);
-}
-
 // Prepares shell environment variables by copying them (otherwise, create one).
 static void	init_shell(char **envp, t_shell *shell)
 {
@@ -133,6 +116,6 @@ int	main(int ac, char **av, char **envp)
 	}
 	clear_history();
 	free_arr(&shell.envp, NO);
-	ft_printf("\nexit\n");
+	ft_printf("exit\n");
 	return (g_last_status);
 }

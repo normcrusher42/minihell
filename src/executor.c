@@ -89,7 +89,8 @@ static void	handle_execution(t_shell *sh, char ***env)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-	
+	if (apply_redirections(sh->cmds, sh))
+		exit(1);
 	if (is_builtin(sh->cmds->av[0]))
 		exit(exec_builtin(sh->cmds->av, env, sh));
 	exec_external(sh, sh->cmds->av, env);

@@ -37,26 +37,58 @@ static int	is_valid_identifier(const char *s)
 	return (1);
 }
 
-// Prints all environment variables with "declare -x" prepended.
+// Bubble sort for environment variable array.
+static void	sort_env(char **envp)
+{
+	int		n;
+	int		i;
+	int		j;
+	char	*tmp;
+
+	n = ft_arrlen(envp);
+	i = 0;
+	while (i < n - 1)
+	{
+		j = 0;
+		while (j < n - i - 1)
+		{
+			if (ft_strcmp(envp[j], envp[j + 1]) > 0)
+			{
+				tmp = envp[j];
+				envp[j] = envp[j + 1];
+				envp[j + 1] = tmp;
+			}
+			j++;
+		}
+		i++;
+	}
+}
+
+// Prints all environment variables with "declare -x" prepended in alpha order.
 int	ft_export_print(char **envp)
 {
 	int		i;
 	char	*equal;
+	char	**envp_copy;
 
-	i = 0;
-	while (envp[i])
+	envp_copy = dup_env(envp);
+	if (!envp_copy)
+		return (1);
+	sort_env(envp_copy);
+	i = -1;
+	while (envp_copy[++i])
 	{
-		equal = ft_strchr(envp[i], '=');
+		equal = ft_strchr(envp_copy[i], '=');
 		if (equal)
 		{
 			*equal = '\0';
-			ft_printf("declare -x %s=\"%s\"\n", envp[i], equal + 1);
+			ft_printf("declare -x %s=\"%s\"\n", envp_copy[i], equal + 1);
 			*equal = '=';
 		}
 		else
-			ft_printf("declare -x %s\n", envp[i]);
-		i++;
+			ft_printf("declare -x %s\n", envp_copy[i]);
 	}
+	free_arr(&envp_copy, NO);
 	return (0);
 }
 

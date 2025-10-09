@@ -19,6 +19,10 @@ int	ft_env(char **envp)
 
 	i = 0;
 	while (envp[i])
-		ft_putendl_fd(envp[i++], 1);
+	{
+		if (ft_strchr(envp[i], '='))
+			ft_putendl_fd(envp[i], 1);
+		i++;
+	}
 	return (0);
 }

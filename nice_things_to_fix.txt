@@ -1,6 +1,7 @@
-fix global variable exit status not updating when running into an unclosed quote.
-fix blank newline on unclosed quote (a 3rd error msg can appear that needs its own condition)
-fix export not printing alphabetically as it should
+fix global variable exit status not updating when running into an unclosed quote. ❌
+fix blank newline on unclosed quote (a 3rd error msg can appear that needs its own condition) ❌
+fix export not printing alphabetically as it should ❌
+fix env displaying uninitialized vars when it shouldn't ✅
 
 
-change the fork error thing in the executor cs it shouldn't be there
+change the fork error thing in the executor cs it shouldn't be there ❌

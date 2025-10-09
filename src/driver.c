@@ -52,6 +52,7 @@ char	*resolve_path(char *cmd, char **envp)
 	free_arr(&paths, NO);
 	return (NULL);
 }
+
 static void	exec_cmd(t_cmd *cmd, t_shell *sh)
 {
 	char	*path;
@@ -123,10 +124,12 @@ int	run_pipeline(t_cmd *cmds, int n, t_shell *sh)
 		handle_parent(&p);
 	}
 	while (wait(&status) > 0)
+	{
 		if (WIFEXITED(status))
 			g_last_status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
 			g_last_status = 128 + WTERMSIG(status);
+	}
 	return (g_last_status);
 }
 
