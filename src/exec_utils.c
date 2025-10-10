@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42abudhabi.a    +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/06 20:04:32 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/09 23:31:29 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/10 15:56:42 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/10 16:06:23 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return (0);
 }
 
+// Tries to execute a command directly, handling errors appropriately.
 void	try_direct_exec(char **av, char ***env, t_shell *sh)
 {
 	struct stat	st;
@@ -48,6 +49,7 @@ void	try_direct_exec(char **av, char ***env, t_shell *sh)
 	exit(127);
 }
 
+// Initializes and executes built-in commands with redirections.
 int	init_and_exec_builtins(char **av, char ***env, t_shell *sh)
 {
 	int	saved_stdin;

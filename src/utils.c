@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.ae>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/29 04:42:51 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/29 04:42:51 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/10 15:57:22 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/10 15:57:22 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,14 @@ char	*ft_strjoin3(const char *key, const char *input, const char *value)
 }
 
 // Self-explanatory.
+// Checks if the character is a whitespace character.
 int	ft_isspace(int c)
 {
 	return ((c >= 9 && c <= 13) || c == ' ');
 }
 
-// Self-explanatory. But Nasser's dumbass forgot we could do that with strlen 🗿
+// Self-explanatory.
+// But Nasser's dumbass forgot we could do that with strlen 🗿
 int	ft_arrlen(char **arr)
 {
 	int	i;

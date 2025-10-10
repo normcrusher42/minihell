@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.ae>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/29 04:40:45 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/29 04:40:45 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/10 15:56:34 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/10 15:56:34 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ char	*get_env_value(char **envp, const char *key)
 	return (NULL);
 }
 
+// Helper to replace an existing environment variable's value.
 static void	replace_env_value(char **slot, const char *key, const char *val)
 {
 	free(*slot);

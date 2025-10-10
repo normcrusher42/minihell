@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+// Checks if the string is numeric (with optional leading + or -).
 int	parse_sign(const char *str, int *sign)
 {
 	int	i;

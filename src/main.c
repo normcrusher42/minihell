@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+// Increases or initializes the SHLVL environment variable.
 void	update_shlvl(char ***envp)
 {
 	char	*val;

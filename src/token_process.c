@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   token_process.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.ae>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 22:06:23 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/04 22:06:23 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/10 15:57:13 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/10 15:57:13 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// Counts the length of the string without quotes and checks for errors.
 static int	count_without_quotes(const char *s, int *err)
 {
 	int	i;
@@ -41,6 +42,8 @@ static int	count_without_quotes(const char *s, int *err)
 	return (len);
 }
 
+// Removes quotes from a given string and returns a new allocated string.
+// Returns NULL on allocation failure or syntax error.
 char	*remove_quotes(const char *s)
 {
 	t_quote_vars	qv;
@@ -69,6 +72,8 @@ char	*remove_quotes(const char *s)
 	return (qv.res);
 }
 
+// Processes all tokens in the shell struct: 
+// expands variables and removes quotes.
 void	process_all_tokens(t_shell *sh, char **envp)
 {
 	char	**expanded_tokens;

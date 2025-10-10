@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   driver.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.ae>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/29 04:40:52 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/29 04:40:52 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/10 15:56:28 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/10 15:56:28 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// Increases or initializes the SHLVL environment variable.
 static char	*join_path(const char *dir, const char *cmd)
 {
 	char	*tmp;
@@ -25,7 +26,7 @@ static char	*join_path(const char *dir, const char *cmd)
 	return (path);
 }
 
-/* Searches PATH env variable for the given command */
+// Resolves the full path of a command using the PATH environment variable.
 char	*resolve_path(char *cmd, char **envp)
 {
 	char	*path_env;
@@ -53,6 +54,7 @@ char	*resolve_path(char *cmd, char **envp)
 	return (NULL);
 }
 
+// Executes an external command using execve.
 static void	exec_cmd(t_cmd *cmd, t_shell *sh)
 {
 	char	*path;
@@ -72,6 +74,7 @@ static void	exec_cmd(t_cmd *cmd, t_shell *sh)
 	exit(127);
 }
 
+// The child process logic for executing a command in a pipeline.
 static void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p)
 {
 	if (p->prev_fd != -1)
@@ -92,6 +95,7 @@ static void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p)
 	exec_cmd(cmd, sh);
 }
 
+// Handles parent-side pipe and file descriptor management.
 static void	handle_parent(t_pipeinfo *p)
 {
 	if (p->prev_fd != -1)
@@ -103,6 +107,7 @@ static void	handle_parent(t_pipeinfo *p)
 	}
 }
 
+// Manages the entire pipeline execution with forking and piping.
 int	run_pipeline(t_cmd *cmds, int n, t_shell *sh)
 {
 	t_pipeinfo	p;
@@ -133,7 +138,7 @@ int	run_pipeline(t_cmd *cmds, int n, t_shell *sh)
 	return (g_last_status);
 }
 
-/* Match minishell.h signature */
+// Executes the entire job, either a single command or a pipeline.
 int	execute_job(t_shell *sh)
 {
 	if (sh->ncmd == 1)

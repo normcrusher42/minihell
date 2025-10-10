@@ -12,11 +12,14 @@
 
 #include "minishell.h"
 
+// Checks if the character is an operator.
 static int	is_operator(char c)
 {
 	return (c == '|' || c == '<' || c == '>');
 }
 
+// Skips over quoted sections in the string
+// and returns the number of characters skipped.
 static int	skip_quotes(char *s, char quote)
 {
 	int	i;
@@ -29,6 +32,7 @@ static int	skip_quotes(char *s, char quote)
 	return (i);
 }
 
+// Expands the token array to accommodate a new token.
 static void	expand_token_arrays(t_token *tok, int count)
 {
 	char	**new_tokens;
@@ -46,6 +50,7 @@ static void	expand_token_arrays(t_token *tok, int count)
 	tok->tokens = new_tokens;
 }
 
+// Stores a new token in the token struct.
 static void	store_token_struct(t_token *tok, char *value)
 {
 	int	count;
@@ -60,12 +65,14 @@ static void	store_token_struct(t_token *tok, char *value)
 	tok->tokens[count + 1] = NULL;
 }
 
+// Consumes spaces and tabs in the input string.
 static void	consume_spaces(char *s, int *i)
 {
 	while (s[*i] == ' ' || s[*i] == '\t')
 		(*i)++;
 }
 
+// Skips spaces and operators, storing operators as tokens.
 static void	skip_spaces_operators(char *s, int *i, t_token *tok)
 {
 	int	len;
@@ -82,6 +89,7 @@ static void	skip_spaces_operators(char *s, int *i, t_token *tok)
 	}
 }
 
+// Reads a word token, handling quoted sections properly.
 static void	read_word(char *s, int *i)
 {
 	while (s[*i] && !is_operator(s[*i]) && s[*i] != ' ' && s[*i] != '\t')
@@ -93,6 +101,7 @@ static void	read_word(char *s, int *i)
 	}
 }
 
+// Tokenizes the input string and stores tokens in the shell struct.
 void	tokenize(char *s, t_shell *sh)
 {
 	int		i;

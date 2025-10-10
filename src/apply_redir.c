@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   apply_redir.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42abudhabi.a    +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/09 19:44:19 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/09 19:44:19 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/10 15:56:10 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/10 15:56:10 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

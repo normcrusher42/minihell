@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.ae>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/29 04:40:27 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/29 04:40:27 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/10 15:56:58 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/10 15:56:58 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

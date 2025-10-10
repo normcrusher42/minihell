@@ -17,6 +17,7 @@
 #include <signal.h>
 #include "minishell.h"
 
+// Handles SIGINT (Ctrl+C) by printing a new prompt line.
 void	handle_sigint(int sig)
 {
 	(void)sig;
@@ -26,6 +27,7 @@ void	handle_sigint(int sig)
 	rl_redisplay();
 }
 
+// Handles SIGQUIT (Ctrl+\) by erasing the ^\ from the terminal.
 void	handle_sigquit(int sig)
 {
 	(void)sig;
@@ -34,6 +36,7 @@ void	handle_sigquit(int sig)
 	rl_redisplay();
 }
 
+// Disables echoing of control characters like ^C and ^\ in the terminal.
 void	disable_echoctl(void)
 {
 	struct termios	term;
@@ -45,6 +48,7 @@ void	disable_echoctl(void)
 		return ;
 }
 
+// Initializes signal handlers for SIGINT and SIGQUIT.
 void	init_signals(void)
 {
 	struct sigaction	sa_int;

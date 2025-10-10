@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.ae>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/29 04:40:39 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/29 04:40:39 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/10 15:56:47 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/10 15:56:47 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,10 @@ static void	handle_execution(t_shell *sh, char ***env)
 	signal(SIGQUIT, SIG_DFL);
 	sh->is_child = YES;
 	if (apply_redirections(sh->cmds, sh))
+	{
+		call_janitor(sh);
 		exit(1);
+	}
 	if (is_builtin(sh->cmds->av[0]))
 		exit(exec_builtin(sh->cmds->av, env, sh));
 	exec_external(sh, sh->cmds->av, env);

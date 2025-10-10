@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   malloc_tools.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.ae>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/07 20:38:44 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/09 19:30:56 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/10 15:57:06 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/10 15:57:07 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

@@ -62,15 +62,15 @@ typedef enum e_redirtype
 
 typedef struct s_token
 {
-	char			**tokens; /* tokens parsed */
+	char			**tokens; // tokens parsed
 }	t_token;
 
 /* One redirection entry */
 typedef struct s_redir
 {
 	t_redirtype	type;
-	char		*arg;       /* file or heredoc delimiter */
-	int			is_quoted;  /* heredoc delim quoted? 1/0  */
+	char		*arg; // file or heredoc delimiter
+	int			is_quoted; // heredoc delim quoted? 1/0
 }	t_redir;
 
 typedef struct s_cmd
@@ -126,7 +126,6 @@ typedef struct s_envctx
 	bool	exist;
 }	t_envctx;
 
-
 // Variables for the expander
 typedef struct s_expander_ctx
 {
@@ -172,7 +171,7 @@ typedef struct s_shell
 	char	*input; // readline buffer
 	char	**envp; // environment array
 	t_token	*token;
-    int     ex_st; // exit status of last command
+	int		ex_st; // exit status of last command
 	t_cmd	*cmds;
 	int		ncmd;
 	bool	is_child; // bool to make redir funct safer without exiting parent
@@ -197,7 +196,8 @@ void	print_cmd_table(t_shell *sh);
 
 /* env_utils.c */
 char	*get_env_value(char **envp, const char *key);
-void	set_env_value(char ***envp, const char *key, const char *val, int exist);
+void	set_env_value(char ***envp, const char *key, const char *val,
+			int exist);
 char	**unset_env_value(char **envp, const char *key);
 int		ft_arrlen(char **arr);
 void	free_arr(char ***arr, bool reuse);
@@ -212,15 +212,15 @@ int		exec_builtin(char **av, char ***envp, t_shell *sh);
 char	**realloc_env(char **envp, int extra);
 int		is_numeric(const char *str);
 int		ft_atoll(const char *str, long long *code);
-int	is_key_match(const char *env, const char *key);
-int	ft_export_print(char **envp);
-int	ft_env(char **envp);
-int	ft_cd(char **av, char ***envp);
-int	ft_export(char **av, char ***envp);
-int	ft_unset(char **av, char ***envp);
-int	ft_exit(char **av, t_shell *sh);
-int	ft_pwd(void);
-int	ft_echo(char **av);
+int		is_key_match(const char *env, const char *key);
+int		ft_export_print(char **envp);
+int		ft_env(char **envp);
+int		ft_cd(char **av, char ***envp);
+int		ft_export(char **av, char ***envp);
+int		ft_unset(char **av, char ***envp);
+int		ft_exit(char **av, t_shell *sh);
+int		ft_pwd(void);
+int		ft_echo(char **av);
 void	update_shlvl(char ***envp);
 char	*remove_quotes(const char *str);
 int		ft_strcmp(const char *s1, const char *s2);
@@ -228,7 +228,6 @@ void	try_direct_exec(char **av, char ***env, t_shell *sh);
 int		apply_redirections(t_cmd *cmd, t_shell *sh);
 int		init_and_exec_builtins(char **av, char ***env, t_shell *sh);
 int		is_valid_identifier(const char *s);
-
 
 /* signals.c */
 void	init_signals(void);
@@ -239,7 +238,6 @@ void	handle_sigquit(int sig);
 /* tokenizer.c */
 void	tokenize(char *s, t_shell *sh);
 void	free_tokens(t_shell *sh);
-
 
 /* expander.c + token_process.c */
 char	**expand_token(t_shell *sh, char **envp);
@@ -252,4 +250,5 @@ char	**dup_env(char **envp);
 void	butter_free_input(t_shell *shell);
 void	call_janitor(t_shell *sh);
 void	disable_echoctl(void);
+
 #endif
