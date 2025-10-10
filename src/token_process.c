@@ -13,16 +13,16 @@
 #include "minishell.h"
 
 // Counts the length of the string without quotes and checks for errors.
-static int	count_without_quotes(const char *s, int *err)
+static int	count_without_quotes(const char *s, t_shell *sh)
 {
 	int	i;
 	int	len;
 	int	in_quote;
 
-	i = 0;
+	i = -1;
 	len = 0;
 	in_quote = 0;
-	while (s[i])
+	while (s[++i])
 	{
 		if (!in_quote && (s[i] == '\'' || s[i] == '"'))
 			in_quote = s[i];
@@ -30,13 +30,13 @@ static int	count_without_quotes(const char *s, int *err)
 			in_quote = 0;
 		else
 			len++;
-		i++;
 	}
 	if (in_quote)
 	{
 		ft_putendl_fd(UNEXPECTED_EOF, 2);
 		ft_putendl_fd(SYNTAX_ERROR, 2);
-		*err = 2;
+		sh->ex_st = 2;
+        sh->err = YES;
 		return (-1);
 	}
 	return (len);
@@ -44,7 +44,7 @@ static int	count_without_quotes(const char *s, int *err)
 
 // Removes quotes from a given string and returns a new allocated string.
 // Returns NULL on allocation failure or syntax error.
-char	*remove_quotes(const char *s)
+char	*remove_quotes(const char *s, t_shell *sh)
 {
 	t_quote_vars	qv;
 	int				len;
@@ -52,7 +52,7 @@ char	*remove_quotes(const char *s)
 	qv = (t_quote_vars){0};
 	if (!s)
 		return (NULL);
-	len = count_without_quotes(s, &qv.error);
+	len = count_without_quotes(s, sh);
 	if (len < 0)
 		return (NULL);
 	qv.res = malloc(len + 1);
@@ -90,7 +90,9 @@ void	process_all_tokens(t_shell *sh, char **envp)
 	i = 0;
 	while (sh->token->tokens[i])
 	{
-		cleaned = remove_quotes(sh->token->tokens[i]);
+		cleaned = remove_quotes(sh->token->tokens[i], sh);
+        if (!cleaned)
+            return ;
 		free(sh->token->tokens[i]);
 		sh->token->tokens[i] = cleaned;
 		i++;

@@ -175,6 +175,7 @@ typedef struct s_shell
 	t_cmd	*cmds;
 	int		ncmd;
 	bool	is_child; // bool to make redir funct safer without exiting parent
+    bool    err;
 }	t_shell;
 
 typedef enum e_token_type
@@ -222,7 +223,7 @@ int		ft_exit(char **av, t_shell *sh);
 int		ft_pwd(void);
 int		ft_echo(char **av);
 void	update_shlvl(char ***envp);
-char	*remove_quotes(const char *str);
+char	*remove_quotes(const char *str, t_shell *sh);
 int		ft_strcmp(const char *s1, const char *s2);
 void	try_direct_exec(char **av, char ***env, t_shell *sh);
 int		apply_redirections(t_cmd *cmd, t_shell *sh);

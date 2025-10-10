@@ -79,14 +79,18 @@ static void	process_line_tokens(t_shell *sh)
 
 	tokenize(sh->input, sh);
 	process_all_tokens(sh, sh->envp);
-	ok = parse_command_table(sh, &g_last_status);
-	if (ok)
-	{
-		if (should_debug_parse())
-			print_cmd_table(sh);
-		g_last_status = execute_job(sh);
-		free_cmd_table(sh);
-	}
+    g_last_status = sh->ex_st;
+    if (sh->err == NO)
+    {
+        ok = parse_command_table(sh, &g_last_status);
+	    if (ok)
+	    {
+	    	if (should_debug_parse())
+	    		print_cmd_table(sh);
+	    	g_last_status = execute_job(sh);
+	    	free_cmd_table(sh);
+	    }
+    }
 	free_tokens(sh);
 }
 
@@ -114,6 +118,7 @@ int	main(int ac, char **av, char **envp)
 		if (*shell.input)
 			process_line_tokens(&shell);
 		butter_free_input(&shell);
+        shell.err = NO;
 	}
 	clear_history();
 	free_arr(&shell.envp, NO);
