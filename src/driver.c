@@ -88,6 +88,11 @@ static void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p)
 		dup2(p->pipefd[1], STDOUT_FILENO);
 		close(p->pipefd[1]);
 	}
+	// if (cmd->has_heredoc && cmd->heredoc_fd != -1)
+	// {
+	// 	dup2(cmd->heredoc_fd, STDIN_FILENO);
+	// 	close(cmd->heredoc_fd);
+	// }
 	if (cmd->redir_count > 0)
 		apply_redirections(cmd, sh);
 	if (is_builtin(cmd->av[0]))
@@ -148,6 +153,7 @@ int	execute_job(t_shell *sh)
         status = execute_command(&sh->envp, sh);
         init_signals();
     }
-	status = run_pipeline(sh->cmds, sh->ncmd, sh);
+	else
+		status = run_pipeline(sh->cmds, sh->ncmd, sh);
     return (status);
 }
