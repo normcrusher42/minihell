@@ -79,15 +79,14 @@ static void	process_line_tokens(t_shell *sh)
 
 	tokenize(sh->input, sh);
 	process_all_tokens(sh, sh->envp);
-    g_last_status = sh->ex_st;
     if (sh->err == NO)
     {
-        ok = parse_command_table(sh, &g_last_status);
+        ok = parse_command_table(sh, &sh->ex_st);
 	    if (ok)
 	    {
 	    	if (should_debug_parse())
 	    		print_cmd_table(sh);
-	    	g_last_status = execute_job(sh);
+	    	sh->ex_st = execute_job(sh);
 		    init_signals();
 	    	free_cmd_table(sh);
 	    }
@@ -124,5 +123,5 @@ int	main(int ac, char **av, char **envp)
 	clear_history();
 	free_arr(&shell.envp, NO);
 	ft_printf("exit\n");
-	return (g_last_status);
+	return (shell.ex_st);
 }
