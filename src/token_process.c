@@ -35,7 +35,7 @@ static int	count_without_quotes(const char *s, t_shell *sh)
 	{
 		ft_putendl_fd(UNEXPECTED_EOF, 2);
 		ft_putendl_fd(SYNTAX_ERROR, 2);
-		sh->ex_st = 2;
+		sh->ex_st = 258;
         sh->err = YES;
 		return (-1);
 	}
