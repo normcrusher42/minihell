@@ -59,7 +59,11 @@ int	apply_redirections(t_cmd *cmd, t_shell *sh)
 	while (++i < cmd->redir_count)
 	{
 		if (cmd->redirs[i].type == R_HEREDOC)
+		{
+			dup2(cmd->redirs[i].fd, STDIN_FILENO);
+			close(cmd->redirs[i].fd);
 			continue ;
+		}
 		if (apply_single_redirection(&cmd->redirs[i], sh))
 			return (1);
 	}

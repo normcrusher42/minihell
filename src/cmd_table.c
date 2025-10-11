@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_table.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42adbudhabi.ae> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 15:44:42 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/10/10 16:08:33 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/11 19:35:52 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ static int	syntax_err(const char *tok, int *st)
 		ft_putstr_fd("newline", 2);
 	ft_putstr_fd("'\n", 2);
 	if (st)
-		*st = 127;
+		*st = 258;
 	return (0);
 }
 

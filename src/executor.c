@@ -108,6 +108,15 @@ int	execute_command(char ***env, t_shell *sh)
 		return (0);
 	if (is_builtin(sh->cmds->av[0]))
 		return (init_and_exec_builtins(sh->cmds->av, env, sh));
+	int i;
+
+	i = -1;
+	while (++i < sh->cmds->redir_count)
+	{
+		if (sh->cmds->redirs[i].type == R_HEREDOC)
+			if (handle_heredoc(&sh->cmds->redirs[i], sh) == -1)
+				return (130);
+	}
 	pid = fork();
 	if (pid == 0)
 		handle_execution(sh, env);
