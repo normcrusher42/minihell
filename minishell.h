@@ -69,6 +69,7 @@ typedef struct s_redir
 	t_redirtype	type;
 	char		*arg; // file or heredoc delimiter
 	int			is_quoted; // heredoc delim quoted? 1/0
+	int			fd;
 }	t_redir;
 
 typedef struct s_cmd
@@ -241,6 +242,9 @@ void	free_tokens(t_shell *sh);
 /* expander.c + token_process.c */
 char	**expand_token(t_shell *sh, char **envp);
 void	process_all_tokens(t_shell *sh, char **envp);
+char	*dollar_expander(char *token, char **envp, t_shell *sh);
+
+int		handle_heredoc(t_redir *redir, t_shell *sh);
 
 /* janitor functions */
 /* aka cleanup for u boomers */

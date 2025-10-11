@@ -85,7 +85,7 @@ static void	handle_dollar(t_expander_ctx *ctx, t_shell *sh)
 }
 
 // The '$' condition scanner for $VAR, $?, & $$.
-static char	*dollar_expander(char *token, char **envp, t_shell *sh)
+char	*dollar_expander(char *token, char **envp, t_shell *sh)
 {
 	t_expander_ctx	ctx;
 

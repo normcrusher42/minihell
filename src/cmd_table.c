@@ -6,7 +6,7 @@
 /*   By: lsahloul <lsahloul@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 15:44:42 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/10/11 19:59:55 by lsahloul         ###   ########.fr       */
+/*   Updated: 2025/10/11 20:12:45 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,7 @@ static int	syntax_err(const char *tok, int *st)
 		ft_putstr_fd("newline", 2);
 	ft_putstr_fd("'\n", 2);
 	if (st)
+		*st = 258;
 		*st = 258;
 	return (0);
 }
