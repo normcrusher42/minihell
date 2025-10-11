@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_table.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42adbudhabi.ae> +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 15:44:42 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/10/11 19:35:52 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/12 03:00:44 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 // Initializes a command struct to default values.
-static void	init_cmd(t_cmd *c)
+void	init_cmd(t_cmd *c)
 {
 	c->av = NULL;
 	c->ac = 0;
@@ -89,38 +89,6 @@ static int	push_redir(t_cmd *c, t_redirtype t, const char *arg)
 	return (1);
 }
 
-// Helper for freeing a single command struct.
-static void	free_one_cmd(t_cmd *c)
-{
-	int	i;
-
-	if (!c)
-		return ;
-	i = -1;
-	while (++i < c->ac)
-		free(c->av[i]);
-	free(c->av);
-	i = -1;
-	while (++i < c->redir_count)
-		free(c->redirs[i].arg);
-	free(c->redirs);
-	init_cmd(c);
-}
-
-// Handles syntax errors by printing a message and setting the status.
-static int	syntax_err(const char *tok, int *st)
-{
-	ft_putstr_fd("miniOdy: syntax error near `", 2);
-	if (tok)
-		ft_putstr_fd((char *)tok, 2);
-	else
-		ft_putstr_fd("newline", 2);
-	ft_putstr_fd("'\n", 2);
-	if (st)
-		*st = 258;
-	return (0);
-}
-
 // Finalizes the current command segment and adds it to the command array.
 static int	finalize_segment(t_cmd **arr, int *n, t_cmd *cur)
 {
@@ -153,7 +121,7 @@ static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, int *st)
 	{
 		if (!tk->tokens[i + 1] || is_pipe(tk->tokens[i + 1])
 			|| redir_kind(tk->tokens[i + 1]) >= 0)
-			return (syntax_err(tk->tokens[i + 1], st));
+			return (syntax_err(tk->tokens[i + 1], st, NULL));
 		if (!push_redir(cur, k, tk->tokens[i + 1]))
 			return (0);
 		return (2);
@@ -173,21 +141,8 @@ static int	init_parse_ctx(t_parse_ctx *p)
 	if (!p->tk || !p->tk->tokens)
 		return (0);
 	if (p->tk->tokens[0] && is_pipe(p->tk->tokens[0]))
-		return (syntax_err(p->tk->tokens[0], p->st));
+		return (syntax_err(p->tk->tokens[0], p->st, NULL));
 	return (1);
-}
-
-// Helper for freeing a temporary cmd table
-static void	free_cmd_table_ctx(t_cmd *cmds, int n)
-{
-	int	i;
-
-	i = 0;
-	if (!cmds)
-		return ;
-	while (i < n)
-		free_one_cmd(&cmds[i++]);
-	free(cmds);
 }
 
 // Handles a single token during parsing, updating the context.
@@ -198,7 +153,7 @@ static int	handle_token(t_parse_ctx *p)
 	if (is_pipe(p->tk->tokens[p->i]))
 	{
 		if (!finalize_segment(&p->arr, &p->n, &p->cur))
-			return (syntax_err(p->tk->tokens[p->i], p->st));
+			return (syntax_err(p->tk->tokens[p->i], p->st, p));
 	}
 	else
 	{
@@ -230,26 +185,11 @@ int	parse_command_table(t_shell *sh, int *st)
 	{
 		free_cmd_table(sh);
 		free_one_cmd(&p.cur);
-		return (syntax_err(NULL, p.st));
+		return (syntax_err(NULL, p.st, NULL));
 	}
 	sh->cmds = p.arr;
 	sh->ncmd = p.n;
 	return (1);
-}
-
-// Frees the entire command table in the shell struct.
-void	free_cmd_table(t_shell *sh)
-{
-	int	i;
-
-	if (!sh->cmds)
-		return ;
-	i = -1;
-	while (++i < sh->ncmd)
-		free_one_cmd(&sh->cmds[i]);
-	free(sh->cmds);
-	sh->cmds = NULL;
-	sh->ncmd = 0;
 }
 
 /*							remove this later if done						  */

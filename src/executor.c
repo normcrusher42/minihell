@@ -85,6 +85,8 @@ static void	exec_external(t_shell *sh, char **av, char ***env)
 // Runs inside the child process
 static void	handle_execution(t_shell *sh, char ***env)
 {
+	int	status;
+
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	sh->is_child = YES;
@@ -94,7 +96,11 @@ static void	handle_execution(t_shell *sh, char ***env)
 		exit(1);
 	}
 	if (is_builtin(sh->cmds->av[0]))
-		exit(exec_builtin(sh->cmds->av, env, sh));
+	{
+		status = exec_builtin(sh->cmds->av, &sh->envp, sh);
+		call_janitor(sh);
+		exit(status);
+	}
 	exec_external(sh, sh->cmds->av, env);
 }
 

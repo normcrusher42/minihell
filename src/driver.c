@@ -77,6 +77,8 @@ static void	exec_cmd(t_cmd *cmd, t_shell *sh)
 // The child process logic for executing a command in a pipeline.
 static void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p)
 {
+	int	status;
+
 	if (p->prev_fd != -1)
 	{
 		dup2(p->prev_fd, STDIN_FILENO);
@@ -88,10 +90,19 @@ static void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p)
 		dup2(p->pipefd[1], STDOUT_FILENO);
 		close(p->pipefd[1]);
 	}
+	// if (cmd->has_heredoc && cmd->heredoc_fd != -1)
+	// {
+	// 	dup2(cmd->heredoc_fd, STDIN_FILENO);
+	// 	close(cmd->heredoc_fd);
+	// }
 	if (cmd->redir_count > 0)
 		apply_redirections(cmd, sh);
 	if (is_builtin(cmd->av[0]))
-		exit(exec_builtin(cmd->av, &sh->envp, sh));
+	{
+		status = exec_builtin(cmd->av, &sh->envp, sh);
+		call_janitor(sh);
+		exit(status);
+	}
 	exec_cmd(cmd, sh);
 }
 

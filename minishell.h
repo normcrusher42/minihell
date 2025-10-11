@@ -191,6 +191,10 @@ typedef enum e_token_type
 int		parse_command_table(t_shell *sh, int *st);
 void	free_cmd_table(t_shell *sh);
 void	print_cmd_table(t_shell *sh);
+void	free_one_cmd(t_cmd *c);
+void	free_cmd_table_ctx(t_cmd *cmds, int n);
+int		syntax_err(const char *tok, int *st, t_parse_ctx *p);
+void	init_cmd(t_cmd *c);
 
 /* ===================== */
 

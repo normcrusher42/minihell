@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 15:56:42 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/10 16:06:23 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/11 23:41:51 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
