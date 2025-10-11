@@ -31,9 +31,6 @@ void	handle_sigint(int sig)
 void	handle_sigquit(int sig)
 {
 	(void)sig;
-	write(STDOUT_FILENO, "\b\b  \b\b", 6);
-	rl_on_new_line();
-	rl_redisplay();
 }
 
 // Disables echoing of control characters like ^C and ^\ in the terminal.

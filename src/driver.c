@@ -141,7 +141,13 @@ int	run_pipeline(t_cmd *cmds, int n, t_shell *sh)
 // Executes the entire job, either a single command or a pipeline.
 int	execute_job(t_shell *sh)
 {
+    int status;
+
 	if (sh->ncmd == 1)
-		return (execute_command(&sh->envp, sh));
-	return (run_pipeline(sh->cmds, sh->ncmd, sh));
+    {
+        status = execute_command(&sh->envp, sh);
+        init_signals();
+    }
+	status = run_pipeline(sh->cmds, sh->ncmd, sh);
+    return (status);
 }

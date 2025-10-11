@@ -118,7 +118,6 @@ int	execute_command(char ***env, t_shell *sh)
 		signal(SIGINT, SIG_IGN);
 		waitpid(pid, &status, 0);
 		sh->is_child = NO;
-		init_signals();
 		if (WIFEXITED(status))
 			return (WEXITSTATUS(status));
 		else if (WIFSIGNALED(status))

@@ -88,6 +88,7 @@ static void	process_line_tokens(t_shell *sh)
 	    	if (should_debug_parse())
 	    		print_cmd_table(sh);
 	    	g_last_status = execute_job(sh);
+		    init_signals();
 	    	free_cmd_table(sh);
 	    }
     }
