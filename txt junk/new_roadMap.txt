@@ -214,7 +214,7 @@
   * `cat < in`
   * `echo hi > out`
   * `echo hi >> out`
-* ✅ Exit codes bubble into `g_last_status`.
+* ✅ Exit codes bubble into `sh->ex_st`.
 
 ---
 

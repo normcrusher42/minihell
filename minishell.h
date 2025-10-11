@@ -45,8 +45,6 @@
 e"
 # define SYNTAX_ERROR "miniOdy: syntax error: unexpected end of file"
 
-extern int	g_last_status; // last exit return value
-
 /* ===================== */
 /* === cmd_table part ===*/
 /* ===================== */

@@ -120,10 +120,10 @@ int	run_pipeline(t_cmd *cmds, int n, t_shell *sh)
 	while (++p.i < n)
 	{
 		if (p.i < n - 1 && pipe(p.pipefd) == -1)
-			return (perror("pipe"), g_last_status = 1);
+			return (perror("pipe"), sh->ex_st = 1);
 		pid = fork();
 		if (pid == -1)
-			return (perror("fork"), g_last_status = 1);
+			return (perror("fork"), sh->ex_st = 1);
 		if (pid == 0)
 			run_child(&cmds[p.i], sh, &p);
 		handle_parent(&p);
@@ -131,11 +131,11 @@ int	run_pipeline(t_cmd *cmds, int n, t_shell *sh)
 	while (wait(&status) > 0)
 	{
 		if (WIFEXITED(status))
-			g_last_status = WEXITSTATUS(status);
+			sh->ex_st = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
-			g_last_status = 128 + WTERMSIG(status);
+			sh->ex_st = 128 + WTERMSIG(status);
 	}
-	return (g_last_status);
+	return (sh->ex_st);
 }
 
 // Executes the entire job, either a single command or a pipeline.
@@ -148,6 +148,7 @@ int	execute_job(t_shell *sh)
         status = execute_command(&sh->envp, sh);
         init_signals();
     }
-	status = run_pipeline(sh->cmds, sh->ncmd, sh);
+	else
+		status = run_pipeline(sh->cmds, sh->ncmd, sh);
     return (status);
 }

@@ -43,32 +43,32 @@ char	*env_expander(char *token, char **merge, char **envp, int i)
 }
 
 // Straight forward merging for cases like special characters or $$ & $?.
-static char	*merge_str(t_expander_ctx *ctx)
+static char	*merge_str(t_expander_ctx *ctx, t_shell *sh)
 {
 	ctx->merge[0] = ft_substr(ctx->token, 0, ctx->i);
 	if (ctx->token[ctx->i + 1] == '$')
 		ctx->merge[1] = ft_substr("miniOdy", 0, 8);
 	else
-		ctx->merge[1] = ft_itoa(g_last_status);
+		ctx->merge[1] = ft_itoa(sh->ex_st);
 	ctx->merge[2] = ft_substr(ctx->token, ctx->i + 2, ft_strlen(ctx->token));
 	return (ft_strjoin3(ctx->merge[0], ctx->merge[1], ctx->merge[2]));
 }
 
 // Scans for special characters (including unicode) and decides if expandable.
 // Handles the '$' expansion cases
-static void	handle_dollar(t_expander_ctx *ctx)
+static void	handle_dollar(t_expander_ctx *ctx, t_shell *sh)
 {
 	unsigned char	next;
 
 	free_arr(&ctx->merge, YES);
 	next = (unsigned char)ctx->token[ctx->i + 1];
 	if (ctx->token[ctx->i + 1] == '$' || ctx->token[ctx->i + 1] == '?')
-		ctx->new_token = merge_str(ctx);
+		ctx->new_token = merge_str(ctx, sh);
 	else if (ctx->token[ctx->i + 1])
 	{
 		if (!ft_isalnum(next) && next != '_' && !ft_isspace(next)
 			&& next != '\'' && next != '"')
-			ctx->new_token = merge_str(ctx);
+			ctx->new_token = merge_str(ctx, sh);
 		else if (next != '\'' && next != '"')
 			ctx->new_token = env_expander(ctx->token, ctx->merge, ctx->envp,
 					ctx->i);
@@ -85,7 +85,7 @@ static void	handle_dollar(t_expander_ctx *ctx)
 }
 
 // The '$' condition scanner for $VAR, $?, & $$.
-static char	*dollar_expander(char *token, char **envp)
+static char	*dollar_expander(char *token, char **envp, t_shell *sh)
 {
 	t_expander_ctx	ctx;
 
@@ -103,7 +103,7 @@ static char	*dollar_expander(char *token, char **envp)
 		else if (ctx.token[ctx.i] == '"' && !ctx.in_single)
 			ctx.in_double = !ctx.in_double;
 		else if (!ctx.in_single && ctx.token[ctx.i] == '$')
-			handle_dollar(&ctx);
+			handle_dollar(&ctx, sh);
 	}
 	free_arr(&ctx.merge, NO);
 	return (ctx.token);
@@ -121,7 +121,7 @@ char	**expand_token(t_shell *sh, char **envp)
 	while (sh->token->tokens[ctx.i])
 	{
 		if (ft_strchr(sh->token->tokens[ctx.i], '$'))
-			ctx.result[ctx.i] = dollar_expander(sh->token->tokens[ctx.i], envp);
+			ctx.result[ctx.i] = dollar_expander(sh->token->tokens[ctx.i], envp, sh);
 		else
 		{
 			ctx.result[ctx.i] = ft_strdup(sh->token->tokens[ctx.i]);

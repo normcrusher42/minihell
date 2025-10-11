@@ -12,8 +12,6 @@
 
 #include "minishell.h"
 
-int	g_last_status = 0;
-
 // A checker if the argument is a built-in.
 int	is_builtin(char *cmd)
 {

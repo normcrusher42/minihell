@@ -67,7 +67,7 @@ int	ft_exit(char **av, t_shell *sh)
 	else if (ft_arrlen(av) < 2)
 	{
 		call_janitor(sh);
-		exit(g_last_status);
+		exit(sh->ex_st);
 	}
 	if (!is_numeric(av[1]) || !ft_atoll(av[1], &code))
 	{
