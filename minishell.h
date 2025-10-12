@@ -68,7 +68,7 @@ typedef struct s_redir
 {
 	t_redirtype	type;
 	char		*arg; // file or heredoc delimiter
-	int			is_quoted; // heredoc delim quoted? 1/0
+	bool	is_quoted; // REMOVE THIS BEFORE SUBMITTING ///////////////////////////////////////////////////
 	int			fd;
 }	t_redir;
 
@@ -102,6 +102,7 @@ typedef struct s_parse_ctx
 	int		n;
 	int		i;
 	int		*st;
+	bool	is_quoted;
 }	t_parse_ctx;
 
 // Stores key and value, and a bool check if it has an equal.
@@ -172,8 +173,9 @@ typedef struct s_shell
 	t_token	*token;
 	int		ex_st; // exit status of last command
 	t_cmd	*cmds;
-	int		ncmd;
+	int		ncmd; // num of cmds
 	bool	is_child; // bool to make redir funct safer without exiting parent
+	bool	is_quoted; // heredoc delim quoted? 1/0
     bool    err;
 }	t_shell;
 

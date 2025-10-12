@@ -157,7 +157,8 @@ int	execute_job(t_shell *sh)
 	if (sh->ncmd == 1)
     {
         status = execute_command(&sh->envp, sh);
-        init_signals();
+        signal(SIGINT, handle_sigint);
+        signal(SIGQUIT, handle_sigquit);
     }
 	else
 		status = run_pipeline(sh->cmds, sh->ncmd, sh);

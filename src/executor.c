@@ -123,13 +123,17 @@ int	execute_command(char ***env, t_shell *sh)
 			if (handle_heredoc(&sh->cmds->redirs[i], sh) == -1)
 				return (130);
 	}
+	signal(SIGINT, SIG_IGN);
 	pid = fork();
 	if (pid == 0)
 		handle_execution(sh, env);
 	else if (pid > 0)
 	{
-		signal(SIGINT, SIG_IGN);
 		waitpid(pid, &status, 0);
+		int i = -1;
+		while (++i < sh->cmds->redir_count)
+				if (sh->cmds->redirs[i].type == R_HEREDOC)
+					close(sh->cmds->redirs[i].fd);
 		sh->is_child = NO;
 		if (WIFEXITED(status))
 			return (WEXITSTATUS(status));

@@ -82,7 +82,7 @@ static void	process_line_tokens(t_shell *sh)
     if (sh->err == NO)
     {
         ok = parse_command_table(sh, &sh->ex_st);
-	    if (ok)
+	    if (ok && sh->err == NO)
 	    {
 	    	if (should_debug_parse())
 	    		print_cmd_table(sh);

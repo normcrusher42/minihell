@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_table.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42abudhabi.a    +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 15:44:42 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/10/12 03:00:44 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/13 02:39:02 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,17 +111,40 @@ static int	finalize_segment(t_cmd **arr, int *n, t_cmd *cur)
 	return (1);
 }
 
-// Parses a single token, updating the command struct accordingly.
-static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, int *st)
+int	is_quoted_token(const char *s)
 {
-	int	k;
+	size_t	len;
+
+	if (!s)
+		return (0);
+	len = ft_strlen(s);
+	if (len >= 2 && (s[0] == '\'' && s[len - 1] == '\''))
+		return (1);
+	return (0);
+}
+
+// Parses a single token, updating the command struct accordingly.
+static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, t_parse_ctx *p)
+{
+	int		k;
+	char	*delim;
 
 	k = redir_kind(tk->tokens[i]);
 	if (k >= 0)
 	{
 		if (!tk->tokens[i + 1] || is_pipe(tk->tokens[i + 1])
 			|| redir_kind(tk->tokens[i + 1]) >= 0)
-			return (syntax_err(tk->tokens[i + 1], st, NULL));
+			return (syntax_err(tk->tokens[i + 1], p->st, NULL));
+		if (k == R_HEREDOC)
+		{
+			printf("ishere 1\n");
+			delim = remove_quotes(tk->tokens[i + 1], NULL);
+			if (!delim)
+				return (syntax_err(tk->tokens[i + 1], p->st, NULL));
+			printf("ishere 2\n");
+			p->is_quoted = is_quoted_token(tk->tokens[i + 1]);
+			free(delim);
+		}
 		if (!push_redir(cur, k, tk->tokens[i + 1]))
 			return (0);
 		return (2);
@@ -157,7 +180,7 @@ static int	handle_token(t_parse_ctx *p)
 	}
 	else
 	{
-		step = parse_segment_token(&p->cur, p->tk, p->i, p->st);
+		step = parse_segment_token(&p->cur, p->tk, p->i, p);
 		if (step == 0)
 		{
 			free_one_cmd(&p->cur);
@@ -176,6 +199,7 @@ int	parse_command_table(t_shell *sh, int *st)
 
 	p.tk = sh->token;
 	p.st = st;
+	p.is_quoted = NO;
 	if (!init_parse_ctx(&p))
 		return (0);
 	while (p.tk->tokens[++p.i])
@@ -189,6 +213,7 @@ int	parse_command_table(t_shell *sh, int *st)
 	}
 	sh->cmds = p.arr;
 	sh->ncmd = p.n;
+	sh->is_quoted = p.is_quoted;
 	return (1);
 }
 
