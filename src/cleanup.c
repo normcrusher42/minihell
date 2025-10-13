@@ -51,6 +51,11 @@ void	free_tokens(t_shell *sh)
 		free_arr(&sh->token->tokens, NO);
 	if (sh->token)
 	{
+		if (sh->token->quoted)
+		{
+			free(sh->token->quoted);
+			sh->token->quoted = NULL;
+		}
 		free(sh->token);
 		sh->token = NULL;
 	}

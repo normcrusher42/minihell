@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 15:44:42 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/10/13 02:39:02 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/13 23:03:41 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,23 +111,10 @@ static int	finalize_segment(t_cmd **arr, int *n, t_cmd *cur)
 	return (1);
 }
 
-int	is_quoted_token(const char *s)
-{
-	size_t	len;
-
-	if (!s)
-		return (0);
-	len = ft_strlen(s);
-	if (len >= 2 && (s[0] == '\'' && s[len - 1] == '\''))
-		return (1);
-	return (0);
-}
-
 // Parses a single token, updating the command struct accordingly.
 static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, t_parse_ctx *p)
 {
 	int		k;
-	char	*delim;
 
 	k = redir_kind(tk->tokens[i]);
 	if (k >= 0)
@@ -136,15 +123,7 @@ static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, t_parse_ctx *p)
 			|| redir_kind(tk->tokens[i + 1]) >= 0)
 			return (syntax_err(tk->tokens[i + 1], p->st, NULL));
 		if (k == R_HEREDOC)
-		{
-			printf("ishere 1\n");
-			delim = remove_quotes(tk->tokens[i + 1], NULL);
-			if (!delim)
-				return (syntax_err(tk->tokens[i + 1], p->st, NULL));
-			printf("ishere 2\n");
-			p->is_quoted = is_quoted_token(tk->tokens[i + 1]);
-			free(delim);
-		}
+			p->is_quoted = tk->quoted[i + 1];
 		if (!push_redir(cur, k, tk->tokens[i + 1]))
 			return (0);
 		return (2);

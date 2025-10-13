@@ -60,7 +60,8 @@ typedef enum e_redirtype
 
 typedef struct s_token
 {
-	char			**tokens; // tokens parsed
+	char	**tokens; // tokens parsed
+	int		*quoted;
 }	t_token;
 
 /* One redirection entry */
@@ -83,6 +84,7 @@ typedef struct s_cmd
 	int		pipe_in; // 1 if stdin comes from a previous pipe
 	int		pipe_out; // 1 if stdout goes to next pipe
 	int		is_builtin;
+	int		*quoted;
 	t_redir	*redirs;
 }	t_cmd;
 
@@ -102,7 +104,7 @@ typedef struct s_parse_ctx
 	int		n;
 	int		i;
 	int		*st;
-	bool	is_quoted;
+	int		is_quoted;
 }	t_parse_ctx;
 
 // Stores key and value, and a bool check if it has an equal.
@@ -175,8 +177,9 @@ typedef struct s_shell
 	t_cmd	*cmds;
 	int		ncmd; // num of cmds
 	bool	is_child; // bool to make redir funct safer without exiting parent
-	bool	is_quoted; // heredoc delim quoted? 1/0
-    bool    err;
+	int		is_quoted; // heredoc delim quoted? 1/0
+	bool	in_heredoc;
+    bool    err; // early syntax error flag check to avoid resuming cmd parsing
 }	t_shell;
 
 typedef enum e_token_type
@@ -234,6 +237,7 @@ void	try_direct_exec(char **av, char ***env, t_shell *sh);
 int		apply_redirections(t_cmd *cmd, t_shell *sh);
 int		init_and_exec_builtins(char **av, char ***env, t_shell *sh);
 int		is_valid_identifier(const char *s);
+int		is_quoted_token(const char *s);
 
 /* signals.c */
 void	init_signals(void);

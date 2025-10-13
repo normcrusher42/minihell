@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 01:15:32 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/13 02:13:06 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/14 00:02:18 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,12 @@ static void	write_heredoc_line(int fd, char *line, t_shell *sh)
 	char	*expanded;
 
 	expanded = NULL;
-	printf("%d\n", sh->is_quoted);
 	if (sh->is_quoted)
 		expanded = ft_strdup(line);
 	else
 		expanded = dollar_expander(line, sh->envp, sh);
 	ft_putendl_fd(expanded, fd);
-	if (expanded && expanded != line)
+	if (expanded)
         free(expanded);
 }
 
@@ -37,6 +36,7 @@ int	handle_heredoc(t_redir *redir, t_shell *sh)
 		perror("minishell: pipe");
 		return (-1);
 	}
+	sh->in_heredoc = YES;
 	while (1)
 	{
 		line = readline("> ");
@@ -51,9 +51,9 @@ int	handle_heredoc(t_redir *redir, t_shell *sh)
 			break ;
 		}
 		write_heredoc_line(fd[1], line, sh);
-		free(line);
 	}
 	close(fd[1]);
 	redir->fd = fd[0];
+	sh->in_heredoc = NO;
 	return (0);
 }

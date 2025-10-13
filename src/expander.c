@@ -13,7 +13,7 @@
 #include "minishell.h"
 
 // The holy grail of expanding valid $ input if the other cases weren't met.
-char	*env_expander(char *token, char **merge, char **envp, int i)
+static char	*env_expander(char *token, char **merge, char **envp, int i)
 {
 	t_expander_ctx	q;
 
@@ -43,7 +43,7 @@ char	*env_expander(char *token, char **merge, char **envp, int i)
 }
 
 // Straight forward merging for cases like special characters or $$ & $?.
-static char	*merge_str(t_expander_ctx *ctx, t_shell *sh)
+char	*merge_str(t_expander_ctx *ctx, t_shell *sh)
 {
 	ctx->merge[0] = ft_substr(ctx->token, 0, ctx->i);
 	if (ctx->token[ctx->i + 1] == '$')
@@ -77,7 +77,8 @@ static void	handle_dollar(t_expander_ctx *ctx, t_shell *sh)
 	}
 	else
 		return ;
-	free(ctx->token);
+	if (ctx->token)
+		free(ctx->token);
 	ctx->token = ctx->new_token;
 	ctx->i = -1;
 	ctx->in_single = 0;
@@ -98,9 +99,9 @@ char	*dollar_expander(char *token, char **envp, t_shell *sh)
 	ctx.envp = envp;
 	while (ctx.token[++ctx.i])
 	{
-		if (ctx.token[ctx.i] == '\'' && !ctx.in_double)
+		if (!sh->in_heredoc && ctx.token[ctx.i] == '\'' && !ctx.in_double)
 			ctx.in_single = !ctx.in_single;
-		else if (ctx.token[ctx.i] == '"' && !ctx.in_single)
+		else if (!sh->in_heredoc && ctx.token[ctx.i] == '"' && !ctx.in_single)
 			ctx.in_double = !ctx.in_double;
 		else if (!ctx.in_single && ctx.token[ctx.i] == '$')
 			handle_dollar(&ctx, sh);

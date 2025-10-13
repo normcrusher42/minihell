@@ -10,6 +10,6 @@ minor - signal calls in both parent and child cause ctrl + C and \ kinda result 
 mild - leaks in pipes, possibly exiting before freeing anything ✅
 mild - bin functions not depending on PATH which it should incase PATH was unset. ❌
 concerning - weird quote behavior when trying to expand $" (at the end of the string too) ✅
-ragebaiting - heredoc not expanding envs and unclosed fds and unconditional jumps.. fuck me man passing the quote var gon be like the delicate flower quest from HK ❌
+ragebaiting - heredoc not expanding envs and unclosed fds and unconditional jumps.. fuck me man passing the quote var gon be like the delicate flower quest from HK ✅
 
 just what - change the fork error thing in the executor cs it shouldn't be there ❔
