@@ -1,6 +1,7 @@
 fix list is sorted from very minor to minor, mild, concerning, ragebaiting, and fuck my life (lets hope it doesn't get worse than this 🙏)
 
 very minor - env displaying uninitialized vars when it shouldn't ✅
+make pwd still print the current dir even the current dir is missing
 very minorish - syntax error never being reached despite having its criteria ✅ WAS NEVER AN ISSUE I JUST DIDNT DO RESEARCH
 minor - global variable exit status not updating when running into an unclosed quote. 
 minor - blank newline on unclosed quote (a 3rd error msg can appear that needs its own condition) ✅

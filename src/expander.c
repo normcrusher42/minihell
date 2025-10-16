@@ -20,8 +20,6 @@ static char	*env_expander(char *token, char **merge, char **envp, int i)
     q.env_values = ft_calloc(3, sizeof(char *));
     if (!q.env_values)
         return (NULL);
-    /* variable names must start with a letter or underscore;
-       digits are handled as a separate single-digit expansion */
     if (token[i] == '$' && (ft_isalpha(token[i + 1]) || token[i + 1] == '_'))
     {
         q.strt = i + 1;
@@ -70,16 +68,9 @@ static void	handle_dollar(t_expander_ctx *ctx, t_shell *sh)
         ctx->new_token = merge_str(ctx, sh);
     else if (ctx->token[ctx->i + 1])
     {
-        /* If the first char after $ is a digit, expand only that single digit
-         * (positional parameter). Replace the empty string below with your
-         * positional lookup if you have it (e.g. get_positional(sh, next - '0')).
-         * This avoids treating the digit as start of an identifier and prevents
-         * repeated self-appending / infinite re-expansion.
-         */
         if (ft_isdigit(next))
         {
             ctx->merge[0] = ft_substr(ctx->token, 0, ctx->i);
-            /* TODO: return real positional value for digit 'next' if available */
             ctx->merge[1] = ft_strdup("");
             ctx->merge[2] = ft_substr(ctx->token, ctx->i + 2, ft_strlen(ctx->token));
             ctx->new_token = ft_strjoin3(ctx->merge[0], ctx->merge[1], ctx->merge[2]);
