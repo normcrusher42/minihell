@@ -40,7 +40,7 @@ int	exec_builtin(char **av, char ***envp, t_shell *sh)
 	if (!ft_strcmp(av[0], "echo"))
 		return (ft_echo(av));
 	if (!ft_strcmp(av[0], "pwd"))
-		return (ft_pwd());
+		return (ft_pwd(sh));
 	if (!ft_strcmp(av[0], "env"))
 		return (ft_env(*envp));
 	if (!ft_strcmp(av[0], "export"))

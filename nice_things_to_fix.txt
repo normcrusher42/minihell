@@ -1,16 +1,23 @@
 fix list is sorted from very minor to minor, mild, concerning, ragebaiting, and fuck my life (lets hope it doesn't get worse than this 🙏)
 
 very minor - env displaying uninitialized vars when it shouldn't ✅
-make pwd still print the current dir even the current dir is missing
+very minor - make pwd still print the current dir even the current dir is missing ✅
 very minorish - syntax error never being reached despite having its criteria ✅ WAS NEVER AN ISSUE I JUST DIDNT DO RESEARCH
 minor - global variable exit status not updating when running into an unclosed quote. 
 minor - blank newline on unclosed quote (a 3rd error msg can appear that needs its own condition) ✅
 minor - export not printing alphabetically as it should ✅
-IMPORTANT minor - export print still running anyways despite EoF error ✅ (ignore export bug if no time since its a very harmless bug)
-minor - signal calls in both parent and child cause ctrl + C and \ kinda result in whack behavior (also quit core dump msg jst copy enoshan's approach) ❌
+minor - export print still running anyways despite EoF error ✅ (ignore export bug if no time since its a very harmless bug)
+IMPORTANT minor - signal calls in both parent and child cause ctrl + C and \ kinda result in whack behavior (also quit core dump msg jst copy enoshan's approach) ❌
 mild - leaks in pipes, possibly exiting before freeing anything ✅
 mild - bin functions not depending on PATH which it should incase PATH was unset. ✅
 concerning - weird quote behavior when trying to expand $" (at the end of the string too) ✅
+concerning - heredoc not running and only ever working as a redir (BTW THIS APPLIES TO EVERY OTHER REDIR TYPE THEY RETURN NOTHING WHEN SOME SHOULD SYNTAX ERROR) ❌
+concerning - heredoc is sometimes not first to run in pipes ionno what's going on exactly ❌ THIS NEEDS MORE TESTING 
 ragebaiting - heredoc not expanding envs and unclosed fds and unconditional jumps.. fuck me man passing the quote var gon be like the delicate flower quest from HK ✅
 
 just what - change the fork error thing in the executor cs it shouldn't be there ❔
+
+Emad's fix list for reference
+https://pastebin.com/sv2zWNAt
+https://pastebin.com/yZzvsNv0
+https://pastebin.com/raw/9XmkbNAj

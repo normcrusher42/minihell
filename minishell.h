@@ -228,7 +228,7 @@ int		ft_cd(char **av, char ***envp);
 int		ft_export(char **av, char ***envp);
 int		ft_unset(char **av, char ***envp);
 int		ft_exit(char **av, t_shell *sh);
-int		ft_pwd(void);
+int		ft_pwd(t_shell *sh);
 int		ft_echo(char **av);
 void	update_shlvl(char ***envp);
 char	*remove_quotes(const char *str, t_shell *sh);
