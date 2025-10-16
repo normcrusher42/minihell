@@ -20,13 +20,21 @@ void	free_one_cmd(t_cmd *c)
 	if (!c)
 		return ;
 	i = -1;
-	while (++i < c->ac)
-		free(c->av[i]);
-	free(c->av);
+	if (c->av)
+	{
+		while (++i < c->ac)
+			if (c->av[i])
+				free(c->av[i]);
+		free(c->av);
+	}
 	i = -1;
-	while (++i < c->redir_count)
-		free(c->redirs[i].arg);
-	free(c->redirs);
+	if (c->redirs)
+	{
+		while (++i < c->redir_count)
+			if (c->redirs[i].arg)
+				free(c->redirs[i].arg);
+		free(c->redirs);
+	}
 	init_cmd(c);
 }
 

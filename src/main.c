@@ -109,7 +109,7 @@ int	main(int ac, char **av, char **envp)
 	init_signals();
 	while (1)
 	{
-		shell.input = readline("miniOdy$ ");
+		shell.input = readline(BGREEN "mini\033[1;34mOdy\033[0m$ ");
 		if (!shell.input)
 			break ;
 		if (*shell.input)

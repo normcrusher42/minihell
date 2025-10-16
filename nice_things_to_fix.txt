@@ -21,3 +21,11 @@ Emad's fix list for reference
 https://pastebin.com/sv2zWNAt
 https://pastebin.com/yZzvsNv0
 https://pastebin.com/raw/9XmkbNAj
+
+list of things to not forget to fix/change later b4 submitting: 
+DON'T FORGET TO HANDLE SIGNALS IN HEREDOC ❌
+remove or comment out cmd table debugger before submitting (probably better to remove) ❌
+change fork error message? bro idfk what to do with it what does bash even say in that case 😭
+throw builtins into their own dedicated header file
+make sure all functions have comment describing what it does
+add colors to the terminal hehe

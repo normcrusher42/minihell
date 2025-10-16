@@ -64,6 +64,8 @@ static void	handle_dollar(t_expander_ctx *ctx, t_shell *sh)
 
     free_arr(&ctx->merge, YES);
     next = (unsigned char)ctx->token[ctx->i + 1];
+	if (!ft_isascii(next) || !ft_isprint(next))
+    	return ;
     if (ctx->token[ctx->i + 1] == '$' || ctx->token[ctx->i + 1] == '?')
         ctx->new_token = merge_str(ctx, sh);
     else if (ctx->token[ctx->i + 1])

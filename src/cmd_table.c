@@ -103,6 +103,12 @@ static int	finalize_segment(t_cmd **arr, int *n, t_cmd *cur)
 	i = -1;
 	while (++i < *n)
 		nv[i] = (*arr)[i];
+	init_cmd(&nv[i]);  // Initialize the new command
+	if (!nv)
+		return (0);
+	i = -1;
+	while (++i < *n)
+		nv[i] = (*arr)[i];
 	nv[i] = *cur;
 	free(*arr);
 	*arr = nv;
