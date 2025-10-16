@@ -5,10 +5,10 @@ very minorish - syntax error never being reached despite having its criteria ✅
 minor - global variable exit status not updating when running into an unclosed quote. 
 minor - blank newline on unclosed quote (a 3rd error msg can appear that needs its own condition) ✅
 minor - export not printing alphabetically as it should ✅
-minor - export print still running anyways despite EoF error ✅ (ignore export bug if no time since its a very harmless bug)
+IMPORTANT minor - export print still running anyways despite EoF error ✅ (ignore export bug if no time since its a very harmless bug)
 minor - signal calls in both parent and child cause ctrl + C and \ kinda result in whack behavior (also quit core dump msg jst copy enoshan's approach) ❌
 mild - leaks in pipes, possibly exiting before freeing anything ✅
-mild - bin functions not depending on PATH which it should incase PATH was unset. ❌
+mild - bin functions not depending on PATH which it should incase PATH was unset. ✅
 concerning - weird quote behavior when trying to expand $" (at the end of the string too) ✅
 ragebaiting - heredoc not expanding envs and unclosed fds and unconditional jumps.. fuck me man passing the quote var gon be like the delicate flower quest from HK ✅
 

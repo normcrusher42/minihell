@@ -64,17 +64,18 @@ static void	exec_external(t_shell *sh, char **av, char ***env)
 	else
 	{
 		vars.path_env = get_env_value(*env, "PATH");
-		if (!vars.path_env)
-			vars.path_env = "/bin:/usr/bin";
-		vars.paths = ft_split(vars.path_env, ':');
-		vars.i = -1;
-		while (vars.paths && vars.paths[++vars.i])
+		if (vars.path_env)
 		{
-			vars.full = ft_strjoin3(vars.paths[vars.i], "/", av[0]);
-			execve(vars.full, av, *env);
-			free(vars.full);
-		}
-		free_arr(&vars.paths, NO);
+            vars.paths = ft_split(vars.path_env, ':');
+		    vars.i = -1;
+		    while (vars.paths && vars.paths[++vars.i])
+		    {
+		    	vars.full = ft_strjoin3(vars.paths[vars.i], "/", av[0]);
+		    	execve(vars.full, av, *env);
+		    	free(vars.full);
+		    }
+        }
+        free_arr(&vars.paths, NO);
 		ft_putstr_fd(av[0], 2);
 		ft_putendl_fd(": command not found", 2);
 		call_janitor(sh);
@@ -141,5 +142,7 @@ int	execute_command(char ***env, t_shell *sh)
 			return (128 + WTERMSIG(status));
 	}
 	perror(RED "Well well, how did we get here? That's embarassing." RESET);
+    call_janitor(sh);
+    exit(2);
 	return (2);
 }
