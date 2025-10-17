@@ -35,7 +35,7 @@ static int	apply_single_redirection(t_redir *redir, t_shell *sh)
 	fd = open_redirection(redir);
 	if (fd < 0)
 	{
-		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd("miniOdy: ", 2);
 		perror(redir->arg);
 		if (!sh->is_child)
 			return (1);

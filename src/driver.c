@@ -90,8 +90,11 @@ static void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p)
 		dup2(p->pipefd[1], STDOUT_FILENO);
 		close(p->pipefd[1]);
 	}
-	if (cmd->redir_count > 0)
-		apply_redirections(cmd, sh);
+	if (apply_redirections(cmd, sh))
+	{
+		call_janitor(sh);
+		exit(1);
+	}
 	if (is_builtin(cmd->av[0]))
 	{
 		status = exec_builtin(cmd->av, &sh->envp, sh);
@@ -124,7 +127,6 @@ int	run_pipeline(t_cmd *cmds, int n, t_shell *sh)
 
     signal(SIGINT, SIG_IGN);
     signal(SIGQUIT, SIG_IGN);
-
     // Handle all heredocs first
     cmd_i = -1;
     while (++cmd_i < n)

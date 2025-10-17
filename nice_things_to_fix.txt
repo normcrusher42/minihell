@@ -2,30 +2,32 @@ fix list is sorted from very minor to minor, mild, concerning, ragebaiting, and 
 
 very minor - env displaying uninitialized vars when it shouldn't ✅
 very minor - make pwd still print the current dir even the current dir is missing ✅
+very minor - make unset print an error too similar to export for consistency sake ig ❌
+very minor - make signals work properly in pipes too ❌
 very minorish - syntax error never being reached despite having its criteria ✅ WAS NEVER AN ISSUE I JUST DIDNT DO RESEARCH
 minor - global variable exit status not updating when running into an unclosed quote. 
 minor - blank newline on unclosed quote (a 3rd error msg can appear that needs its own condition) ✅
 minor - export not printing alphabetically as it should ✅
 minor - export print still running anyways despite EoF error ✅ (ignore export bug if no time since its a very harmless bug)
-IMPORTANT minor - signal calls in both parent and child cause ctrl + C and \ kinda result in whack behavior (also quit core dump msg jst copy enoshan's approach) ❌
+IMPORTANT minor - signal calls in both parent and child cause ctrl + C and \ kinda result in whack behavior (claude aint a fraud after all) ✅
 mild - leaks in pipes, possibly exiting before freeing anything ✅
 mild - bin functions not depending on PATH which it should incase PATH was unset. ✅
 concerning - weird quote behavior when trying to expand $" (at the end of the string too) ✅
-concerning - heredoc not running and only ever working as a redir (BTW THIS APPLIES TO EVERY OTHER REDIR TYPE THEY RETURN NOTHING WHEN SOME SHOULD SYNTAX ERROR) ❌
-concerning - heredoc is sometimes not first to run in pipes ionno what's going on exactly ❌ THIS NEEDS MORE TESTING 
+concerning - heredoc not running and only ever working as a redir (BTW THIS APPLIES TO EVERY OTHER REDIR TYPE THEY RETURN NOTHING WHEN SOME SHOULD SYNTAX ERROR) ✅
+concerning - heredoc is sometimes not first to run in pipes ionno what's going on exactly ✅
 ragebaiting - heredoc not expanding envs and unclosed fds and unconditional jumps.. fuck me man passing the quote var gon be like the delicate flower quest from HK ✅
 
 just what - change the fork error thing in the executor cs it shouldn't be there ❔
 
 Emad's fix list for reference
-https://pastebin.com/sv2zWNAt
+https://pastebin.com/sv2zWNAt ✅
 https://pastebin.com/yZzvsNv0
 https://pastebin.com/raw/9XmkbNAj
 
 list of things to not forget to fix/change later b4 submitting: 
 DON'T FORGET TO HANDLE SIGNALS IN HEREDOC ❌
 remove or comment out cmd table debugger before submitting (probably better to remove) ❌
-change fork error message? bro idfk what to do with it what does bash even say in that case 😭
-throw builtins into their own dedicated header file
-make sure all functions have comment describing what it does
+change fork error message? bro idfk what to do with it what does bash even say in that case 😭 ❌
+throw builtins into their own dedicated header file ❌
+make sure all functions have comment describing what it does ❌
 add colors to the terminal hehe

@@ -192,6 +192,16 @@ int	parse_command_table(t_shell *sh, int *st)
 			return (0);
 	if (!finalize_segment(&p.arr, &p.n, &p.cur))
 	{
+		/* If no segments were produced and current command is empty,
+		   treat this as no-op (e.g. all tokens expanded to empty) and
+		   return success with no commands. */
+		if (p.n == 0)
+		{
+			sh->cmds = NULL;
+			sh->ncmd = 0;
+			sh->is_quoted = p.is_quoted;
+			return (1);
+		}
 		free_cmd_table(sh);
 		free_one_cmd(&p.cur);
 		return (syntax_err(NULL, p.st, NULL));

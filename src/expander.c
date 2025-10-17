@@ -80,7 +80,7 @@ static void	handle_dollar(t_expander_ctx *ctx, t_shell *sh)
         else if (!ft_isalnum(next) && next != '_' && !ft_isspace(next)
             && next != '\'' && next != '"')
             ctx->new_token = merge_str(ctx, sh);
-        else if (next != '\'' && next != '"')
+        else if (next != '\'' && next != '"' && !ft_isspace(next))
             ctx->new_token = env_expander(ctx->token, ctx->merge, ctx->envp,
                     ctx->i);
         else
@@ -124,29 +124,37 @@ char	*dollar_expander(char *token, char **envp, t_shell *sh)
 // The main expander loop after being parsed by the tokenizer.
 char	**expand_token(t_shell *sh, char **envp)
 {
-	t_expander_ctx	ctx;
+    t_expander_ctx	ctx;
 
-	ctx = (t_expander_ctx){0};
-	ctx.result = malloc(sizeof(char *) * (ft_arrlen(sh->token->tokens) + 1));
-	if (!ctx.result)
-		return (NULL);
-	while (sh->token->tokens[ctx.i])
-	{
-		if (ft_strchr(sh->token->tokens[ctx.i], '$'))
-			ctx.result[ctx.i] = dollar_expander(sh->token->tokens[ctx.i], envp, sh);
-		else
-		{
-			ctx.result[ctx.i] = ft_strdup(sh->token->tokens[ctx.i]);
-			free(sh->token->tokens[ctx.i]);
-		}
-		if (!ctx.result[ctx.i])
-		{
-			free_arr(&ctx.result, NO);
-			free_arr(&sh->token->tokens, NO);
-			return (NULL);
-		}
-		ctx.i++;
-	}
-	ctx.result[ctx.i] = NULL;
-	return (ctx.result);
+    ctx = (t_expander_ctx){0};
+    ctx.result = malloc(sizeof(char *) * (ft_arrlen(sh->token->tokens) + 1));
+    if (!ctx.result)
+        return (NULL);
+    while (sh->token->tokens[ctx.i])
+    {
+        ctx.had_dollar = (ft_strchr(sh->token->tokens[ctx.i], '$') != NULL);
+        if (ctx.had_dollar)
+            ctx.result[ctx.j] = dollar_expander(sh->token->tokens[ctx.i], envp, sh);
+        else
+        {
+            ctx.result[ctx.j] = ft_strdup(sh->token->tokens[ctx.i]);
+            free(sh->token->tokens[ctx.i]);
+        }
+        if (!ctx.result[ctx.j])
+        {
+            free_arr(&ctx.result, NO);
+            free_arr(&sh->token->tokens, NO);
+            return (NULL);
+        }
+        if (ctx.had_dollar && ctx.result[ctx.j][0] == '\0')
+        {
+            free(ctx.result[ctx.j]);
+            ctx.result[ctx.j] = NULL;
+        }
+        else
+            ctx.j++;
+        ctx.i++;
+    }
+    ctx.result[ctx.j] = NULL;
+    return (ctx.result);
 }

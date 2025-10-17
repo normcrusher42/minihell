@@ -120,7 +120,6 @@ int	execute_command(char ***env, t_shell *sh)
 		return (0);
 	if (sh->cmds->av && is_builtin(sh->cmds->av[0]))
 		return (init_and_exec_builtins(sh->cmds->av, env, sh));
-	
 	// Handle heredocs first
 	int i = -1;
 	while (++i < sh->cmds->redir_count)

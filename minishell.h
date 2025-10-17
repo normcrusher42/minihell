@@ -122,9 +122,11 @@ typedef struct s_parse_ctx
 // Stores key and value, and a bool check if it has an equal.
 typedef struct s_kv
 {
+	int		i;
 	char	*key;
 	char	*val;
 	bool	has_equal;
+	int		exit;
 }	t_kv;
 
 // Variables for setting/unsetting env values
@@ -144,6 +146,8 @@ typedef struct s_envctx
 typedef struct s_expander_ctx
 {
 	int		i;
+	int		j;
+	int		had_dollar;
 	bool	expansion;
 	char	**merge;
 	char	*new_token;
