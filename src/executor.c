@@ -66,16 +66,16 @@ static void	exec_external(t_shell *sh, char **av, char ***env)
 		vars.path_env = get_env_value(*env, "PATH");
 		if (vars.path_env)
 		{
-            vars.paths = ft_split(vars.path_env, ':');
-		    vars.i = -1;
-		    while (vars.paths && vars.paths[++vars.i])
-		    {
-		    	vars.full = ft_strjoin3(vars.paths[vars.i], "/", av[0]);
-		    	execve(vars.full, av, *env);
-		    	free(vars.full);
-		    }
-        }
-        free_arr(&vars.paths, NO);
+			vars.paths = ft_split(vars.path_env, ':');
+			vars.i = -1;
+			while (vars.paths && vars.paths[++vars.i])
+			{
+				vars.full = ft_strjoin3(vars.paths[vars.i], "/", av[0]);
+				execve(vars.full, av, *env);
+				free(vars.full);
+			}
+		}
+		free_arr(&vars.paths, NO);
 		ft_putstr_fd(av[0], 2);
 		ft_putendl_fd(": command not found", 2);
 		call_janitor(sh);
@@ -96,7 +96,12 @@ static void	handle_execution(t_shell *sh, char ***env)
 		call_janitor(sh);
 		exit(1);
 	}
-	if (is_builtin(sh->cmds->av[0]))
+	if (!sh->cmds->av || !sh->cmds->av[0])
+	{
+		call_janitor(sh);
+		exit(0);
+	}
+	if (sh->cmds->av && is_builtin(sh->cmds->av[0]))
 	{
 		status = exec_builtin(sh->cmds->av, &sh->envp, sh);
 		call_janitor(sh);
@@ -111,13 +116,13 @@ int	execute_command(char ***env, t_shell *sh)
 	pid_t	pid;
 	int		status;
 
-	if (!sh->cmds->av || !sh->cmds->av[0])
+	if ((!sh->cmds->av || !sh->cmds->av[0]) && sh->cmds->redir_count == 0)
 		return (0);
-	if (is_builtin(sh->cmds->av[0]))
+	if (sh->cmds->av && is_builtin(sh->cmds->av[0]))
 		return (init_and_exec_builtins(sh->cmds->av, env, sh));
-	int i;
-
-	i = -1;
+	
+	// Handle heredocs first
+	int i = -1;
 	while (++i < sh->cmds->redir_count)
 	{
 		if (sh->cmds->redirs[i].type == R_HEREDOC)
@@ -125,24 +130,33 @@ int	execute_command(char ***env, t_shell *sh)
 				return (130);
 	}
 	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);  // Parent ignores SIGQUIT
 	pid = fork();
 	if (pid == 0)
 		handle_execution(sh, env);
 	else if (pid > 0)
 	{
 		waitpid(pid, &status, 0);
-		int i = -1;
+		i = -1;
 		while (++i < sh->cmds->redir_count)
-				if (sh->cmds->redirs[i].type == R_HEREDOC)
-					close(sh->cmds->redirs[i].fd);
+			if (sh->cmds->redirs[i].type == R_HEREDOC)
+				close(sh->cmds->redirs[i].fd);
 		sh->is_child = NO;
+		// Restore signal handlers after child completes
+		signal(SIGINT, handle_sigint);
+		signal(SIGQUIT, handle_sigquit);
+		
+		if (WIFSIGNALED(status))
+		{
+			if (WTERMSIG(status) == SIGQUIT)
+				ft_putstr_fd("Quit (core dumped)\n", 2);
+			return (128 + WTERMSIG(status));
+		}
 		if (WIFEXITED(status))
 			return (WEXITSTATUS(status));
-		else if (WIFSIGNALED(status))
-			return (128 + WTERMSIG(status));
 	}
 	perror(RED "Well well, how did we get here? That's embarassing." RESET);
-    call_janitor(sh);
-    exit(2);
+	call_janitor(sh);
+	exit(2);
 	return (2);
 }

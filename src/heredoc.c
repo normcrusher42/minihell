@@ -33,7 +33,7 @@ int	handle_heredoc(t_redir *redir, t_shell *sh)
 
 	if (pipe(fd) == -1)
 	{
-		perror("minishell: pipe");
+		perror("miniOdy: pipe");
 		return (-1);
 	}
 	sh->in_heredoc = YES;
@@ -42,7 +42,7 @@ int	handle_heredoc(t_redir *redir, t_shell *sh)
 		line = readline("> ");
 		if (!line)
 		{
-			ft_putendl_fd("minishell: warning: here-document delimited by EOF", 2);
+			ft_putendl_fd("miniOdy: warning: here-document delimited by EOF", 2);
 			break ;
 		}
 		if (ft_strcmp(line, redir->arg) == 0)
