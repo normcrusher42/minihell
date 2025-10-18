@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
+/*   By: lsahloul <lsahloul@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 15:56:42 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/18 02:37:39 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/18 18:23:42 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 // strncmp except it actually compares full string lengths cs it aint in libft??
 int	ft_strcmp(const char *s1, const char *s2)
 {

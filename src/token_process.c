@@ -12,6 +12,19 @@
 
 #include "minishell.h"
 
+static void	handle_quote_state(const char *s, int *i, int *len, int *in_quote)
+{
+	while (s[++(*i)])
+	{
+		if (!*in_quote && (s[*i] == '\'' || s[*i] == '"'))
+			*in_quote = s[*i];
+		else if (*in_quote && s[*i] == *in_quote)
+			*in_quote = 0;
+		else
+			(*len)++;
+	}
+}
+
 // Counts the length of the string without quotes and checks for errors.
 static int	count_without_quotes(const char *s, t_shell *sh)
 {
@@ -22,15 +35,7 @@ static int	count_without_quotes(const char *s, t_shell *sh)
 	i = -1;
 	len = 0;
 	in_quote = 0;
-	while (s[++i])
-	{
-		if (!in_quote && (s[i] == '\'' || s[i] == '"'))
-			in_quote = s[i];
-		else if (in_quote && s[i] == in_quote)
-			in_quote = 0;
-		else
-			len++;
-	}
+	handle_quote_state(s, &i, &len, &in_quote);
 	if (in_quote)
 	{
 		ft_putendl_fd(UNEXPECTED_EOF, 2);
@@ -38,7 +43,7 @@ static int	count_without_quotes(const char *s, t_shell *sh)
 		if (sh)
 		{
 			sh->ex_st = 258;
-       		sh->err = YES;
+			sh->err = YES;
 		}
 		return (-1);
 	}
@@ -94,8 +99,8 @@ void	process_all_tokens(t_shell *sh, char **envp)
 	while (sh->token->tokens[i])
 	{
 		cleaned = remove_quotes(sh->token->tokens[i], sh);
-        if (!cleaned)
-            return ;
+		if (!cleaned)
+			return ;
 		free(sh->token->tokens[i]);
 		sh->token->tokens[i] = cleaned;
 		i++;

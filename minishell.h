@@ -272,6 +272,50 @@ char	*dollar_expander(char *token, char **envp, t_shell *sh);
 
 int		handle_heredoc(t_redir *redir, t_shell *sh);
 
+static int	push_word(t_cmd *c, const char *w);
+static int	push_redir(t_cmd *c, t_redirtype t, const char *arg);
+static int	finalize_segment(t_cmd **arr, int *n, t_cmd *cur);
+static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, t_parse_ctx *p);
+
+int	parse_command_table(t_shell *sh, int *st);
+void	print_cmd_table(t_shell *sh);
+
+static char	*join_path(const char *dir, const char *cmd);
+char	*resolve_path(char *cmd, char **envp);
+
+static void	exec_cmd(t_cmd *cmd, t_shell *sh);
+static void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p);
+static void	handle_parent(t_pipeinfo *p);
+static int	setup_heredocs(t_cmd *cmds, int n, t_shell *sh);
+
+int	is_builtin(char *cmd);
+int	exec_builtin(char **av, char ***envp, t_shell *sh);
+
+static void	exec_external(t_shell *sh, char **av, char ***env);
+static void	handle_execution(t_shell *sh, char ***env);
+static int	handle_parent_process(pid_t pid, t_shell *sh);
+
+static char	*env_expander(char *token, char **merge, char **envp, int i);
+char	*merge_str(t_expander_ctx *ctx, t_shell *sh);
+static void	handle_digit_case(t_expander_ctx *ctx);
+
+char	*dollar_expander(char *token, char **envp, t_shell *sh);
+static void	handle_dollar(t_expander_ctx *ctx, t_shell *sh);
+static void	process_dollar_token(t_expander_ctx *ctx, t_shell *sh);
+
+static int	skip_quotes(char *s, char quote);
+static int	is_operator(char c);
+int	is_quoted_token(const char *s);
+
+static void	read_word(char *s, int *i);
+static void	skip_spaces_operators(char *s, int *i, t_token *tok);
+static void	store_token_struct(t_token *tok, char *value);
+static void	expand_token_arrays(t_token *tok, int count);
+
+
+
+
+
 /* janitor functions */
 /* aka cleanup for u boomers */
 /* ..we can keep this in the final submission right Leen? */

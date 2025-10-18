@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsahloul <lsahloul@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/12 19:22:59 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/08/16 20:30:00 by lsahloul         ###   ########.fr       */
+/*   Created: 2025/10/18 18:30:33 by lsahloul          #+#    #+#             */
+/*   Updated: 2025/10/18 18:30:33 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,25 +71,24 @@ static int	should_debug_parse(void)
 	return (1);
 }
 
-// fine. I'll do it myself.
 // Main parsing work that tokenizes and processes the input before executing
 static void	process_line_tokens(t_shell *sh)
 {
-	int		ok;
+	int	ok;
 
 	tokenize(sh->input, sh);
 	process_all_tokens(sh, sh->envp);
-    if (sh->err == NO)
-    {
-        ok = parse_command_table(sh, &sh->ex_st);
-	    if (ok && sh->err == NO)
-	    {
-	    	if (should_debug_parse())
-	    		print_cmd_table(sh);
-	    	sh->ex_st = execute_job(sh);
-	    	free_cmd_table(sh);
-	    }
-    }
+	if (sh->err == NO)
+	{
+		ok = parse_command_table(sh, &sh->ex_st);
+		if (ok && sh->err == NO)
+		{
+			if (should_debug_parse())
+				print_cmd_table(sh);
+			sh->ex_st = execute_job(sh);
+			free_cmd_table(sh);
+		}
+	}
 	free_tokens(sh);
 }
 
@@ -118,7 +117,7 @@ int	main(int ac, char **av, char **envp)
 		if (*shell.input)
 			process_line_tokens(&shell);
 		butter_free_input(&shell);
-        shell.err = NO;
+		shell.err = NO;
 	}
 	clear_history();
 	free_arr(&shell.envp, NO);

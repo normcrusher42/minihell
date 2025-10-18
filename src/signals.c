@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsahloul <lsahloul@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/29 20:18:27 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/09/29 20:18:27 by lsahloul         ###   ########.fr       */
+/*   Created: 2025/10/18 18:32:04 by lsahloul          #+#    #+#             */
+/*   Updated: 2025/10/18 18:32:04 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,16 +49,16 @@ void	disable_echoctl(void)
 // Initializes signal handlers for SIGINT and SIGQUIT.
 void	init_signals(void)
 {
-    struct sigaction	sa_int;
-    struct sigaction	sa_quit;
+	struct sigaction	sa_int;
+	struct sigaction	sa_quit;
 
-    disable_echoctl();
-    sa_int.sa_handler = handle_sigint;
-    sigemptyset(&sa_int.sa_mask);
-    sa_int.sa_flags = 0;  // Remove SA_RESTART to allow proper interrupt handling
-    sa_quit.sa_handler = handle_sigquit;
-    sigemptyset(&sa_quit.sa_mask);
-    sa_quit.sa_flags = 0;  // Remove SA_RESTART
-    sigaction(SIGINT, &sa_int, NULL);
-    sigaction(SIGQUIT, &sa_quit, NULL);
+	disable_echoctl();
+	sa_int.sa_handler = handle_sigint;
+	sigemptyset(&sa_int.sa_mask);
+	sa_int.sa_flags = 0;
+	sa_quit.sa_handler = handle_sigquit;
+	sigemptyset(&sa_quit.sa_mask);
+	sa_quit.sa_flags = 0;
+	sigaction(SIGINT, &sa_int, NULL);
+	sigaction(SIGQUIT, &sa_quit, NULL);
 }
