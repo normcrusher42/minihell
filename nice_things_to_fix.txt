@@ -3,13 +3,14 @@ fix list is sorted from very minor to minor, mild, concerning, ragebaiting, and 
 very minor - env displaying uninitialized vars when it shouldn't ✅
 very minor - make pwd still print the current dir even the current dir is missing ✅
 very minor - make unset print an error too similar to export for consistency sake ig ❌
-very minor - make signals work properly in pipes too ❌
+very minor - make signals work properly in pipes too ✅
 very minorish - syntax error never being reached despite having its criteria ✅ WAS NEVER AN ISSUE I JUST DIDNT DO RESEARCH
 minor - global variable exit status not updating when running into an unclosed quote. 
 minor - blank newline on unclosed quote (a 3rd error msg can appear that needs its own condition) ✅
 minor - export not printing alphabetically as it should ✅
 minor - export print still running anyways despite EoF error ✅ (ignore export bug if no time since its a very harmless bug)
 IMPORTANT minor - signal calls in both parent and child cause ctrl + C and \ kinda result in whack behavior (claude aint a fraud after all) ✅
+mild - make the last pipe argument display their exit code (ex - echo hi | cat < e returns `1` while cat < e | echo hi returns `0`) ❌
 mild - leaks in pipes, possibly exiting before freeing anything ✅
 mild - bin functions not depending on PATH which it should incase PATH was unset. ✅
 concerning - weird quote behavior when trying to expand $" (at the end of the string too) ✅
@@ -21,13 +22,14 @@ just what - change the fork error thing in the executor cs it shouldn't be there
 
 Emad's fix list for reference
 https://pastebin.com/sv2zWNAt ✅
-https://pastebin.com/yZzvsNv0
-https://pastebin.com/raw/9XmkbNAj
+https://pastebin.com/yZzvsNv0 ✅
+https://pastebin.com/raw/9XmkbNAj ✅
 
 list of things to not forget to fix/change later b4 submitting: 
-DON'T FORGET TO HANDLE SIGNALS IN HEREDOC ❌
+
+DON'T FORGET TO HANDLE SIGNALS IN HEREDOC ❌ prolly not that important
 remove or comment out cmd table debugger before submitting (probably better to remove) ❌
 change fork error message? bro idfk what to do with it what does bash even say in that case 😭 ❌
-throw builtins into their own dedicated header file ❌
+throw builtins into their own dedicated header file ❌ FORGET THIS
 make sure all functions have comment describing what it does ❌
-add colors to the terminal hehe
+add colors to the terminal hehe ✅

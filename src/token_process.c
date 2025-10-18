@@ -38,7 +38,7 @@ static int	count_without_quotes(const char *s, t_shell *sh)
 		if (sh)
 		{
 			sh->ex_st = 258;
-       		sh->err = YES;
+			sh->err = YES;
 		}
 		return (-1);
 	}
@@ -94,8 +94,8 @@ void	process_all_tokens(t_shell *sh, char **envp)
 	while (sh->token->tokens[i])
 	{
 		cleaned = remove_quotes(sh->token->tokens[i], sh);
-        if (!cleaned)
-            return ;
+		if (!cleaned)
+			return ;
 		free(sh->token->tokens[i]);
 		sh->token->tokens[i] = cleaned;
 		i++;

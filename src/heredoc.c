@@ -23,7 +23,7 @@ static void	write_heredoc_line(int fd, char *line, t_shell *sh)
 		expanded = dollar_expander(line, sh->envp, sh);
 	ft_putendl_fd(expanded, fd);
 	if (expanded)
-        free(expanded);
+		free(expanded);
 }
 
 int	handle_heredoc(t_redir *redir, t_shell *sh)
