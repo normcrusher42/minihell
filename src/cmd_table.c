@@ -5,12 +5,10 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: lsahloul <lsahloul@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid Date        by              +#+  #+#    #+#             */
-/*   Updated: 2025/10/18 17:24:04 by lsahloul         ###   ########.fr       */
+/*   Created: 2025/10/18 17:24:16 by lsahloul          #+#    #+#             */
+/*   Updated: 2025/10/18 17:24:22 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #include "minishell.h"
 
