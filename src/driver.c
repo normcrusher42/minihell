@@ -77,6 +77,8 @@ static void	exec_cmd(t_cmd *cmd, t_shell *sh)
 // The child process logic for executing a command in a pipeline.
 static void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p)
 {
+	int	status;
+
 	if (p->prev_fd != -1)
 	{
 		dup2(p->prev_fd, STDIN_FILENO);
@@ -88,15 +90,17 @@ static void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p)
 		dup2(p->pipefd[1], STDOUT_FILENO);
 		close(p->pipefd[1]);
 	}
-	// if (cmd->has_heredoc && cmd->heredoc_fd != -1)
-	// {
-	// 	dup2(cmd->heredoc_fd, STDIN_FILENO);
-	// 	close(cmd->heredoc_fd);
-	// }
-	if (cmd->redir_count > 0)
-		apply_redirections(cmd, sh);
+	if (apply_redirections(cmd, sh))
+	{
+		call_janitor(sh);
+		exit(1);
+	}
 	if (is_builtin(cmd->av[0]))
-		exit(exec_builtin(cmd->av, &sh->envp, sh));
+	{
+		status = exec_builtin(cmd->av, &sh->envp, sh);
+		call_janitor(sh);
+		exit(status);
+	}
 	exec_cmd(cmd, sh);
 }
 
@@ -115,31 +119,56 @@ static void	handle_parent(t_pipeinfo *p)
 // Manages the entire pipeline execution with forking and piping.
 int	run_pipeline(t_cmd *cmds, int n, t_shell *sh)
 {
-	t_pipeinfo	p;
-	pid_t		pid;
-	int			status;
+    t_pipeinfo	p;
+    pid_t		pid;
+    int			status;
+    int			cmd_i;
+    int			redir_i;
 
-	p.prev_fd = -1;
-	p.i = -1;
-	p.n = n;
-	while (++p.i < n)
+    signal(SIGINT, SIG_IGN);
+    signal(SIGQUIT, SIG_IGN);
+    // Handle all heredocs first
+    cmd_i = -1;
+    while (++cmd_i < n)
+    {
+        redir_i = -1;
+        while (++redir_i < cmds[cmd_i].redir_count)
+        {
+            if (cmds[cmd_i].redirs[redir_i].type == R_HEREDOC)
+            {
+                if (handle_heredoc(&cmds[cmd_i].redirs[redir_i], sh) == -1)
+                    return (130);
+            }
+        }
+    }
+    p.prev_fd = -1;
+    p.i = -1;
+    p.n = n;
+    while (++p.i < n)
+    {
+        if (p.i < n - 1 && pipe(p.pipefd) == -1)
+            return (perror("pipe"), sh->ex_st = 1);
+        pid = fork();
+        if (pid == -1)
+            return (perror("fork"), sh->ex_st = 1);
+        if (pid == 0)
+            run_child(&cmds[p.i], sh, &p);
+        handle_parent(&p);
+    }
+    while (wait(&status) > 0)
 	{
-		if (p.i < n - 1 && pipe(p.pipefd) == -1)
-			return (perror("pipe"), sh->ex_st = 1);
-		pid = fork();
-		if (pid == -1)
-			return (perror("fork"), sh->ex_st = 1);
-		if (pid == 0)
-			run_child(&cmds[p.i], sh, &p);
-		handle_parent(&p);
-	}
-	while (wait(&status) > 0)
-	{
-		if (WIFEXITED(status))
-			sh->ex_st = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
+		if (WIFSIGNALED(status))
+		{
+			if (WTERMSIG(status) == SIGQUIT)
+				ft_putendl_fd("Quit (core dumped)", 2);
 			sh->ex_st = 128 + WTERMSIG(status);
+		}
+		else if (WIFEXITED(status))
+			sh->ex_st = WEXITSTATUS(status);
 	}
+	// Restore signal handlers after pipeline completes
+    signal(SIGINT, handle_sigint);
+    signal(SIGQUIT, handle_sigquit);
 	return (sh->ex_st);
 }
 
@@ -151,7 +180,8 @@ int	execute_job(t_shell *sh)
 	if (sh->ncmd == 1)
     {
         status = execute_command(&sh->envp, sh);
-        init_signals();
+        signal(SIGINT, handle_sigint);
+        signal(SIGQUIT, handle_sigquit);
     }
 	else
 		status = run_pipeline(sh->cmds, sh->ncmd, sh);

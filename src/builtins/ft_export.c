@@ -13,11 +13,12 @@
 #include "minishell.h"
 
 // Error message for bad export values (whilst pointing to the bad argument).
-static void	export_error(char *arg)
+static int	export_error(char *arg)
 {
 	ft_putstr_fd("mOdy: export: `", 2);
 	ft_putstr_fd(arg, 2);
 	ft_putendl_fd("': not a valid identifier", 2);
+	return (1);
 }
 
 // Bubble sort for environment variable array.
@@ -76,42 +77,41 @@ int	ft_export_print(char **envp)
 }
 
 // Splits & stores the key and value to better process the '=' condition.
-static t_kv	split_key_value(const char *arg)
+static void	split_key_value(const char *arg, t_kv *kv)
 {
-	t_kv	kv;
 	char	*equal;
 
-	kv = (t_kv){0};
+	kv->key = NULL;
+	kv->val = NULL;
+	kv->has_equal = 0;
 	equal = ft_strchr(arg, '=');
 	if (!equal)
 	{
-		kv.key = ft_strdup(arg);
-		return (kv);
+		kv->key = ft_strdup(arg);
+		return ;
 	}
-	kv.has_equal = 1;
-	kv.key = ft_substr(arg, 0, equal - arg);
+	kv->has_equal = 1;
+	kv->key = ft_substr(arg, 0, equal - arg);
 	if (*(equal + 1) != '\0')
-		kv.val = ft_strdup(equal + 1);
-	return (kv);
+		kv->val = ft_strdup(equal + 1);
 }
 
 // A not-so-simple remake of 'export'. Can print declared envs and defines them.
 int	ft_export(char **av, char ***envp)
 {
-	int		i;
 	t_kv	kv;
 
+	kv = (t_kv){0};
 	if (ft_arrlen(av) == 1)
 		return (ft_export_print(*envp));
-	i = 0;
-	while (av[++i])
+	while (av[++kv.i])
 	{
-		if (!is_valid_identifier(av[i]))
+		if (!is_valid_identifier(av[kv.i]))
 		{
-			export_error(av[i]);
+			kv.exit = export_error(av[kv.i]);
 			continue ;
 		}
-		kv = split_key_value(av[i]);
+		split_key_value(av[kv.i], &kv);
 		if (!kv.has_equal)
 			set_env_value(envp, kv.key, NULL, 1);
 		else if (kv.val == NULL)
@@ -122,5 +122,5 @@ int	ft_export(char **av, char ***envp)
 		if (kv.val)
 			free(kv.val);
 	}
-	return (0);
+	return (kv.exit);
 }

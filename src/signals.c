@@ -21,9 +21,10 @@
 void	handle_sigint(int sig)
 {
 	(void)sig;
-	write(1, "\n", 1);
-	rl_replace_line("", 0);
 	rl_on_new_line();
+	write(1, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
 	rl_redisplay();
 }
 
@@ -48,17 +49,16 @@ void	disable_echoctl(void)
 // Initializes signal handlers for SIGINT and SIGQUIT.
 void	init_signals(void)
 {
-	struct sigaction	sa_int;
-	struct sigaction	sa_quit;
+    struct sigaction	sa_int;
+    struct sigaction	sa_quit;
 
-	disable_echoctl();
-	sa_int.sa_handler = handle_sigint;
-	sigemptyset(&sa_int.sa_mask);
-	sa_int.sa_flags = SA_RESTART;
-	sa_quit.sa_handler = handle_sigquit;
-	// sa_quit.sa_handler = SIG_IGN;
-	sigemptyset(&sa_quit.sa_mask);
-	sa_quit.sa_flags = SA_RESTART;
-	sigaction(SIGINT, &sa_int, NULL);
-	sigaction(SIGQUIT, &sa_quit, NULL);
+    disable_echoctl();
+    sa_int.sa_handler = handle_sigint;
+    sigemptyset(&sa_int.sa_mask);
+    sa_int.sa_flags = 0;  // Remove SA_RESTART to allow proper interrupt handling
+    sa_quit.sa_handler = handle_sigquit;
+    sigemptyset(&sa_quit.sa_mask);
+    sa_quit.sa_flags = 0;  // Remove SA_RESTART
+    sigaction(SIGINT, &sa_int, NULL);
+    sigaction(SIGQUIT, &sa_quit, NULL);
 }

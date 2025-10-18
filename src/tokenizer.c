@@ -12,6 +12,19 @@
 
 #include "minishell.h"
 
+int	is_quoted_token(const char *s)
+{
+	size_t	len;
+
+	if (!s)
+		return (0);
+	len = ft_strlen(s);
+	if (len >= 2 && ((s[0] == '\'' && s[len - 1] == '\'')
+			|| (s[0] == '"' && s[len - 1] == '"')))
+		return (1);
+	return (0);
+}
+
 // Checks if the character is an operator.
 static int	is_operator(char c)
 {
@@ -36,18 +49,27 @@ static int	skip_quotes(char *s, char quote)
 static void	expand_token_arrays(t_token *tok, int count)
 {
 	char	**new_tokens;
+	int		*new_quoted;
 	int		i;
 
 	new_tokens = malloc(sizeof(char *) * (count + 2));
-	if (!new_tokens)
+	new_quoted = malloc(sizeof(int) * (count + 2));
+	if (!new_tokens || !new_quoted)
 		return ;
 	i = -1;
 	while (++i < count)
+	{
 		new_tokens[i] = tok->tokens[i];
+		new_quoted[i] = tok->quoted[i];
+	}
 	new_tokens[count] = NULL;
 	new_tokens[count + 1] = NULL;
+	new_quoted[count] = 0;
+	new_quoted[count + 1] = 0;
 	free(tok->tokens);
+	free(tok->quoted);
 	tok->tokens = new_tokens;
+	tok->quoted = new_quoted;
 }
 
 // Stores a new token in the token struct.
@@ -62,7 +84,9 @@ static void	store_token_struct(t_token *tok, char *value)
 	if (!tok->tokens)
 		return ;
 	tok->tokens[count] = value;
+	tok->quoted[count] = is_quoted_token(value);
 	tok->tokens[count + 1] = NULL;
+	tok->quoted[count + 1] = 0;
 }
 
 // Consumes spaces and tabs in the input string.
@@ -115,6 +139,7 @@ void	tokenize(char *s, t_shell *sh)
 	if (!sh->token)
 		return ;
 	sh->token->tokens = NULL;
+	sh->token->quoted = NULL;
 	i = 0;
 	while (s[i])
 	{

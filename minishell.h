@@ -35,6 +35,18 @@
 /* Pls use appropriately */
 # define RED   "\033[0;31m"
 # define BRED  "\033[1;31m"
+# define YELLOW  "\033[0;33m"
+# define BYELLOW "\033[1;33m"
+# define GREEN   "\033[0;32m"
+# define BGREEN  "\033[1;32m"
+# define BLUE    "\033[0;34m"
+# define BBLUE   "\033[1;34m"
+# define MAGENTA "\033[0;35m"
+# define BMAGENTA "\033[1;35m"
+# define CYAN    "\033[0;36m"
+# define BCYAN   "\033[1;36m"
+# define WHITE   "\033[0;37m"
+# define BWHITE  "\033[1;37m"
 # define RESET "\033[0m"
 
 # define YES 1
@@ -60,7 +72,8 @@ typedef enum e_redirtype
 
 typedef struct s_token
 {
-	char			**tokens; // tokens parsed
+	char	**tokens; // tokens parsed
+	int		*quoted;
 }	t_token;
 
 /* One redirection entry */
@@ -68,7 +81,7 @@ typedef struct s_redir
 {
 	t_redirtype	type;
 	char		*arg; // file or heredoc delimiter
-	int			is_quoted; // heredoc delim quoted? 1/0
+	bool	is_quoted; // REMOVE THIS BEFORE SUBMITTING ///////////////////////////////////////////////////
 	int			fd;
 }	t_redir;
 
@@ -83,6 +96,7 @@ typedef struct s_cmd
 	int		pipe_in; // 1 if stdin comes from a previous pipe
 	int		pipe_out; // 1 if stdout goes to next pipe
 	int		is_builtin;
+	int		*quoted;
 	t_redir	*redirs;
 }	t_cmd;
 
@@ -102,14 +116,17 @@ typedef struct s_parse_ctx
 	int		n;
 	int		i;
 	int		*st;
+	int		is_quoted;
 }	t_parse_ctx;
 
 // Stores key and value, and a bool check if it has an equal.
 typedef struct s_kv
 {
+	int		i;
 	char	*key;
 	char	*val;
 	bool	has_equal;
+	int		exit;
 }	t_kv;
 
 // Variables for setting/unsetting env values
@@ -129,6 +146,8 @@ typedef struct s_envctx
 typedef struct s_expander_ctx
 {
 	int		i;
+	int		j;
+	int		had_dollar;
 	bool	expansion;
 	char	**merge;
 	char	*new_token;
@@ -172,9 +191,11 @@ typedef struct s_shell
 	t_token	*token;
 	int		ex_st; // exit status of last command
 	t_cmd	*cmds;
-	int		ncmd;
+	int		ncmd; // num of cmds
 	bool	is_child; // bool to make redir funct safer without exiting parent
-    bool    err;
+	int		is_quoted; // heredoc delim quoted? 1/0
+	bool	in_heredoc;
+    bool    err; // early syntax error flag check to avoid resuming cmd parsing
 }	t_shell;
 
 typedef enum e_token_type
@@ -191,6 +212,10 @@ typedef enum e_token_type
 int		parse_command_table(t_shell *sh, int *st);
 void	free_cmd_table(t_shell *sh);
 void	print_cmd_table(t_shell *sh);
+void	free_one_cmd(t_cmd *c);
+void	free_cmd_table_ctx(t_cmd *cmds, int n);
+int		syntax_err(const char *tok, int *st, t_parse_ctx *p);
+void	init_cmd(t_cmd *c);
 
 /* ===================== */
 
@@ -219,7 +244,7 @@ int		ft_cd(char **av, char ***envp);
 int		ft_export(char **av, char ***envp);
 int		ft_unset(char **av, char ***envp);
 int		ft_exit(char **av, t_shell *sh);
-int		ft_pwd(void);
+int		ft_pwd(t_shell *sh);
 int		ft_echo(char **av);
 void	update_shlvl(char ***envp);
 char	*remove_quotes(const char *str, t_shell *sh);
@@ -228,6 +253,7 @@ void	try_direct_exec(char **av, char ***env, t_shell *sh);
 int		apply_redirections(t_cmd *cmd, t_shell *sh);
 int		init_and_exec_builtins(char **av, char ***env, t_shell *sh);
 int		is_valid_identifier(const char *s);
+int		is_quoted_token(const char *s);
 
 /* signals.c */
 void	init_signals(void);
