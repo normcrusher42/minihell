@@ -55,10 +55,16 @@ void	init_signals(void)
 	disable_echoctl();
 	sa_int.sa_handler = handle_sigint;
 	sigemptyset(&sa_int.sa_mask);
-	sa_int.sa_flags = 0; // Remove SA_RESTART to allow proper interrupt handling
+	sa_int.sa_flags = 0;
 	sa_quit.sa_handler = handle_sigquit;
 	sigemptyset(&sa_quit.sa_mask);
-	sa_quit.sa_flags = 0; // Remove SA_RESTART
+	sa_quit.sa_flags = 0;
 	sigaction(SIGINT, &sa_int, NULL);
 	sigaction(SIGQUIT, &sa_quit, NULL);
+}
+
+void	signal_config(void)
+{
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, handle_sigquit);
 }

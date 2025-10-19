@@ -211,7 +211,6 @@ typedef enum e_token_type
 /* Public API for parser */
 int		parse_command_table(t_shell *sh, int *st);
 void	free_cmd_table(t_shell *sh);
-void	print_cmd_table(t_shell *sh);
 void	free_one_cmd(t_cmd *c);
 void	free_cmd_table_ctx(t_cmd *cmds, int n);
 int		syntax_err(const char *tok, int *st, t_parse_ctx *p);
@@ -254,23 +253,44 @@ int		apply_redirections(t_cmd *cmd, t_shell *sh);
 int		init_and_exec_builtins(char **av, char ***env, t_shell *sh);
 int		is_valid_identifier(const char *s);
 int		is_quoted_token(const char *s);
-
+int		is_operator(char c);
+int		skip_quotes(char *s, char quote);
+void	consume_spaces(char *s, int *i);
+int		exec_builtin(char **av, char ***envp, t_shell *sh);
+int		is_builtin(char *cmd);
+void	exec_external(t_shell *sh, char **av, char ***env);
+void	handle_parent(t_pipeinfo *p);
+void	update_exit_status(t_shell *sh, int status);
+int		create_pipe_and_fork(t_pipeinfo *p, int n, t_shell *sh, pid_t *pid);
+char	*resolve_path(char *cmd, char **envp);
+int		handle_empty_parse(t_shell *sh, t_parse_ctx *p);
+int		init_parse_ctx(t_parse_ctx *p);
+int		redir_kind(const char *s);
+int		is_pipe(const char *s);
+int		push_word(t_cmd *c, const char *w);
 /* signals.c */
 void	init_signals(void);
 void	rl_replace_line(const char *text, int clear_undo);
 void	handle_sigint(int sig);
 void	handle_sigquit(int sig);
+void	signal_config(void);
 
 /* tokenizer.c */
 void	tokenize(char *s, t_shell *sh);
 void	free_tokens(t_shell *sh);
 
 /* expander.c + token_process.c */
-char	**expand_token(t_shell *sh, char **envp);
+char	**expand_token(t_shell *sh, char **envp, t_token *token);
 void	process_all_tokens(t_shell *sh, char **envp);
 char	*dollar_expander(char *token, char **envp, t_shell *sh);
-
+int		handle_non_dollar_token(t_expander_ctx *ctx, t_token *token,
+			t_shell *sh);
+void	handle_next_char(t_expander_ctx *ctx, unsigned char next,
+			t_shell *sh);
 int		handle_heredoc(t_redir *redir, t_shell *sh);
+char	*env_expander(char *token, char **merge, char **envp, int i);
+char	*merge_str(t_expander_ctx *ctx, t_shell *sh);
+
 
 /* janitor functions */
 /* aka cleanup for u boomers */

@@ -3,69 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_table.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsahloul <lsahloul@student.42abudhabi.ae>  +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42adbudhabi.ae> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 17:24:16 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/10/18 17:24:22 by lsahloul         ###   ########.fr       */
+/*   Updated: 2025/10/19 18:59:04 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// Initializes a command struct to default values.
-void	init_cmd(t_cmd *c)
-{
-	c->av = NULL;
-	c->ac = 0;
-	c->redirs = NULL;
-	c->redir_count = 0;
-}
-
-// Returns 1 if the token is a pipe operator.
-static int	is_pipe(const char *s)
-{
-	return (s && s[0] == '|' && s[1] == '\0');
-}
-
-// Returns the redirection type based on the token string.
-static int	redir_kind(const char *s)
-{
-	if (!s)
-		return (-1);
-	if (s[0] == '<' && s[1] == '\0')
-		return (R_IN);
-	if (s[0] == '>' && s[1] == '\0')
-		return (R_OUT);
-	if (s[0] == '>' && s[1] == '>' && s[2] == '\0')
-		return (R_APP);
-	if (s[0] == '<' && s[1] == '>' && s[2] == '\0')
-		return (-1);
-	if (s[0] == '<' && s[1] == '<' && s[2] == '\0')
-		return (R_HEREDOC);
-	return (-1);
-}
-
-// Adds a word to the command's argument list.
-static int	push_word(t_cmd *c, const char *w)
-{
-	char	**nv;
-	int		i;
-
-	nv = (char **)malloc(sizeof(char *) * (c->ac + 2));
-	if (!nv)
-		return (0);
-	i = -1;
-	while (++i < c->ac)
-		nv[i] = c->av[i];
-	nv[i] = ft_strdup(w);
-	if (!nv[i])
-		return (free(nv), 0);
-	nv[i + 1] = NULL;
-	free(c->av);
-	c->av = nv;
-	c->ac++;
-	return (1);
-}
 
 // Adds a redirection to the command's redirection list.
 static int	push_redir(t_cmd *c, t_redirtype t, const char *arg)
@@ -103,7 +48,7 @@ static int	finalize_segment(t_cmd **arr, int *n, t_cmd *cur)
 	i = -1;
 	while (++i < *n)
 		nv[i] = (*arr)[i];
-	init_cmd(&nv[i]);  // Initialize the new command
+	init_cmd(&nv[i]);
 	if (!nv)
 		return (0);
 	i = -1;
@@ -136,20 +81,6 @@ static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, t_parse_ctx *p)
 	}
 	if (!push_word(cur, tk->tokens[i]))
 		return (0);
-	return (1);
-}
-
-// Initializes the parsing context and checks for initial syntax errors.
-static int	init_parse_ctx(t_parse_ctx *p)
-{
-	p->arr = NULL;
-	p->n = 0;
-	p->i = -1;
-	init_cmd(&p->cur);
-	if (!p->tk || !p->tk->tokens)
-		return (0);
-	if (p->tk->tokens[0] && is_pipe(p->tk->tokens[0]))
-		return (syntax_err(p->tk->tokens[0], p->st, NULL));
 	return (1);
 }
 
@@ -192,16 +123,8 @@ int	parse_command_table(t_shell *sh, int *st)
 			return (0);
 	if (!finalize_segment(&p.arr, &p.n, &p.cur))
 	{
-		/* If no segments were produced and current command is empty,
-		   treat this as no-op (e.g. all tokens expanded to empty) and
-		   return success with no commands. */
 		if (p.n == 0)
-		{
-			sh->cmds = NULL;
-			sh->ncmd = 0;
-			sh->is_quoted = p.is_quoted;
-			return (1);
-		}
+			return (handle_empty_parse(sh, &p));
 		free_cmd_table(sh);
 		free_one_cmd(&p.cur);
 		return (syntax_err(NULL, p.st, NULL));
@@ -210,28 +133,4 @@ int	parse_command_table(t_shell *sh, int *st)
 	sh->ncmd = p.n;
 	sh->is_quoted = p.is_quoted;
 	return (1);
-}
-
-/*							remove this later if done						  */
-void	print_cmd_table(t_shell *sh)
-{
-	int	i;
-	int	j;
-
-	if (!sh->cmds)
-		return ;
-	i = -1;
-	while (++i < sh->ncmd)
-	{
-		ft_printf("cmd[%d]:\n", i);
-		j = -1;
-		while (++j < sh->cmds[i].ac)
-			ft_printf("  av[%d]=`%s`\n", j, sh->cmds[i].av[j]);
-		j = -1;
-		while (++j < sh->cmds[i].redir_count)
-			ft_printf("  redir[%d]=%d `%s` q=%d\n", j,
-				sh->cmds[i].redirs[j].type,
-				sh->cmds[i].redirs[j].arg,
-				sh->cmds[i].redirs[j].is_quoted);
-	}
 }

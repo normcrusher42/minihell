@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42adbudhabi.ae> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 15:56:42 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/18 02:37:39 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/19 18:59:16 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,4 +64,55 @@ int	init_and_exec_builtins(char **av, char ***env, t_shell *sh)
 	close(saved_stdin);
 	close(saved_stdout);
 	return (sh->ex_st);
+}
+
+// Try executing a command directly or via PATH
+void	exec_external(t_shell *sh, char **av, char ***env)
+{
+	t_exec_vars	vars;
+
+	if (ft_strchr(av[0], '/'))
+		try_direct_exec(av, env, sh);
+	else
+	{
+		vars.path_env = get_env_value(*env, "PATH");
+		if (vars.path_env)
+		{
+			vars.paths = ft_split(vars.path_env, ':');
+			vars.i = -1;
+			while (vars.paths && vars.paths[++vars.i])
+			{
+				vars.full = ft_strjoin3(vars.paths[vars.i], "/", av[0]);
+				execve(vars.full, av, *env);
+				free(vars.full);
+			}
+		}
+		free_arr(&vars.paths, NO);
+		ft_putstr_fd(av[0], 2);
+		ft_putendl_fd(": command not found", 2);
+		call_janitor(sh);
+		exit(127);
+	}
+}
+
+// Adds a word to the command's argument list.
+int	push_word(t_cmd *c, const char *w)
+{
+	char	**nv;
+	int		i;
+
+	nv = (char **)malloc(sizeof(char *) * (c->ac + 2));
+	if (!nv)
+		return (0);
+	i = -1;
+	while (++i < c->ac)
+		nv[i] = c->av[i];
+	nv[i] = ft_strdup(w);
+	if (!nv[i])
+		return (free(nv), 0);
+	nv[i + 1] = NULL;
+	free(c->av);
+	c->av = nv;
+	c->ac++;
+	return (1);
 }

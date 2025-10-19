@@ -12,39 +12,6 @@
 
 #include "minishell.h"
 
-int	is_quoted_token(const char *s)
-{
-	size_t	len;
-
-	if (!s)
-		return (0);
-	len = ft_strlen(s);
-	if (len >= 2 && ((s[0] == '\'' && s[len - 1] == '\'')
-			|| (s[0] == '"' && s[len - 1] == '"')))
-		return (1);
-	return (0);
-}
-
-// Checks if the character is an operator.
-static int	is_operator(char c)
-{
-	return (c == '|' || c == '<' || c == '>');
-}
-
-// Skips over quoted sections in the string
-// and returns the number of characters skipped.
-static int	skip_quotes(char *s, char quote)
-{
-	int	i;
-
-	i = 1;
-	while (s[i] && s[i] != quote)
-		i++;
-	if (s[i] == quote)
-		i++;
-	return (i);
-}
-
 // Expands the token array to accommodate a new token.
 static void	expand_token_arrays(t_token *tok, int count)
 {
@@ -87,13 +54,6 @@ static void	store_token_struct(t_token *tok, char *value)
 	tok->quoted[count] = is_quoted_token(value);
 	tok->tokens[count + 1] = NULL;
 	tok->quoted[count + 1] = 0;
-}
-
-// Consumes spaces and tabs in the input string.
-static void	consume_spaces(char *s, int *i)
-{
-	while (s[*i] == ' ' || s[*i] == '\t')
-		(*i)++;
 }
 
 // Skips spaces and operators, storing operators as tokens.

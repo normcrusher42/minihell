@@ -26,6 +26,21 @@ static void	write_heredoc_line(int fd, char *line, t_shell *sh)
 		free(expanded);
 }
 
+int	should_break_heredoc(char *line, t_redir *redir)
+{
+	if (!line)
+	{
+		ft_putendl_fd("miniOdy: warning: here-document delimited by EOF", 2);
+		return (1);
+	}
+	if (ft_strcmp(line, redir->arg) == 0)
+	{
+		free(line);
+		return (1);
+	}
+	return (0);
+}
+
 int	handle_heredoc(t_redir *redir, t_shell *sh)
 {
 	int		fd[2];
@@ -33,23 +48,15 @@ int	handle_heredoc(t_redir *redir, t_shell *sh)
 
 	if (pipe(fd) == -1)
 	{
-		perror("miniOdy: pipe");
+		perror("miniOdy: pipe error");
 		return (-1);
 	}
 	sh->in_heredoc = YES;
 	while (1)
 	{
 		line = readline("> ");
-		if (!line)
-		{
-			ft_putendl_fd("miniOdy: warning: here-document delimited by EOF", 2);
+		if (should_break_heredoc(line, redir))
 			break ;
-		}
-		if (ft_strcmp(line, redir->arg) == 0)
-		{
-			free(line);
-			break ;
-		}
 		write_heredoc_line(fd[1], line, sh);
 	}
 	close(fd[1]);

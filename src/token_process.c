@@ -12,6 +12,18 @@
 
 #include "minishell.h"
 
+int	handle_unexpected_eof(t_shell *sh)
+{
+	ft_putendl_fd(UNEXPECTED_EOF, 2);
+	ft_putendl_fd(SYNTAX_ERROR, 2);
+	if (sh)
+	{
+		sh->ex_st = 258;
+		sh->err = YES;
+	}
+	return (-1);
+}
+
 // Counts the length of the string without quotes and checks for errors.
 static int	count_without_quotes(const char *s, t_shell *sh)
 {
@@ -32,16 +44,7 @@ static int	count_without_quotes(const char *s, t_shell *sh)
 			len++;
 	}
 	if (in_quote)
-	{
-		ft_putendl_fd(UNEXPECTED_EOF, 2);
-		ft_putendl_fd(SYNTAX_ERROR, 2);
-		if (sh)
-		{
-			sh->ex_st = 258;
-			sh->err = YES;
-		}
-		return (-1);
-	}
+		return (handle_unexpected_eof(sh));
 	return (len);
 }
 
@@ -85,7 +88,7 @@ void	process_all_tokens(t_shell *sh, char **envp)
 
 	if (!sh || !sh->token || !sh->token->tokens)
 		return ;
-	expanded_tokens = expand_token(sh, envp);
+	expanded_tokens = expand_token(sh, envp, sh->token);
 	if (!expanded_tokens)
 		return ;
 	free(sh->token->tokens);

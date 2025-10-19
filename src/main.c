@@ -60,17 +60,6 @@ static void	init_shell(char **envp, t_shell *shell)
 	update_shlvl(&shell->envp);
 }
 
-// Return 1 if we should print the parsed table
-static int	should_debug_parse(void)
-{
-	const char	*val;
-
-	val = getenv("MSH_PARSE_DEBUG");
-	if (!val || !*val)
-		return (0);
-	return (1);
-}
-
 // fine. I'll do it myself.
 // Main parsing work that tokenizes and processes the input before executing
 static void	process_line_tokens(t_shell *sh)
@@ -84,8 +73,6 @@ static void	process_line_tokens(t_shell *sh)
 		ok = parse_command_table(sh, &sh->ex_st);
 		if (ok && sh->err == NO)
 		{
-			if (should_debug_parse())
-				print_cmd_table(sh);
 			sh->ex_st = execute_job(sh);
 			free_cmd_table(sh);
 		}
