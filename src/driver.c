@@ -10,6 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* Half of the following were done by @Nasser && @Leen */
+//		exec_cmd - Nasser
+//		run_child - Leen
+//		process_heredocs - Nasser
+//		run_pipeline - Leen
+//		execute_job - Nasser && Leen
+
 #include "minishell.h"
 
 // Executes an external command using execve.
@@ -33,7 +40,7 @@ static void	exec_cmd(t_cmd *cmd, t_shell *sh)
 }
 
 // The child process logic for executing a command in a pipeline.
-static void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p)
+void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p)
 {
 	int	status;
 
@@ -62,6 +69,7 @@ static void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p)
 	exec_cmd(cmd, sh);
 }
 
+// Processes all here-document redirections for the command table.
 static int	process_heredocs(t_cmd *cmds, int n, t_shell *sh)
 {
 	int	cmd_i;
@@ -87,27 +95,29 @@ static int	process_heredocs(t_cmd *cmds, int n, t_shell *sh)
 int	run_pipeline(t_cmd *cmds, int n, t_shell *sh)
 {
 	t_pipeinfo	p;
-	pid_t		pid;
-	int			status;
 
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	if (process_heredocs(cmds, n, sh) == 130)
 		return (130);
+	p.pids = malloc(sizeof(pid_t) * n);
+	if (!p.pids)
+	{
+		perror("malloc error");
+		sh->ex_st = 1;
+		return (sh->ex_st);
+	}
 	p.prev_fd = -1;
-	p.i = -1;
 	p.n = n;
+	if (spawn_pipeline_children(cmds, n, sh, &p) != 0)
+		return (sh->ex_st);
 	while (++p.i < n)
 	{
-		if (create_pipe_and_fork(&p, n, sh, &pid))
-			return (sh->ex_st);
-		if (pid == 0)
-			run_child(&cmds[p.i], sh, &p);
-		handle_parent(&p);
+		waitpid(p.pids[p.i], &p.status, 0);
+		if (p.i == n - 1)
+			update_exit_status(sh, p.status);
 	}
-	while (wait(&status) > 0)
-		update_exit_status(sh, status);
-	signal_config();
+	free(p.pids);
 	return (sh->ex_st);
 }
 
@@ -120,9 +130,9 @@ int	execute_job(t_shell *sh)
 	{
 		status = execute_command(&sh->envp, sh);
 		sh->is_child = NO;
-		signal_config();
 	}
 	else
 		status = run_pipeline(sh->cmds, sh->ncmd, sh);
+	signal_config();
 	return (status);
 }

@@ -10,6 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Leen */
+//	   free_one_cmd
+//	   free_cmd_table
+//	   free_cmd_table_ctx
+//	   syntax_err
+
 #include "minishell.h"
 
 // Helper for freeing a single command struct.

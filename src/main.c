@@ -10,6 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Leen && @Nasser */
+//	   update_shlvl
+//	   init_shell
+//	   process_line_tokens
+//	   main
+
 #include "minishell.h"
 
 // Increases or initializes the SHLVL environment variable.
@@ -61,7 +67,7 @@ static void	init_shell(char **envp, t_shell *shell)
 }
 
 // fine. I'll do it myself.
-// Main parsing work that tokenizes and processes the input before executing
+// Main parsing work that tokenizes and processes the input before executing.
 static void	process_line_tokens(t_shell *sh)
 {
 	int		ok;

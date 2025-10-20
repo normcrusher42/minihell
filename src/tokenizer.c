@@ -10,6 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Leen, sah? lol 🐈 */
+//	   expand_token_arrays
+//	   store_token_struct
+//	   skip_spaces_operators
+//	   read_word
+//	   tokenize
+
 #include "minishell.h"
 
 // Expands the token array to accommodate a new token.

@@ -10,8 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Nasser */
+//	   handle_unexpected_eof
+//	   count_without_quotes
+//	   remove_quotes
+//	   process_all_tokens
+
 #include "minishell.h"
 
+// Handles EoF error output with exit code check.
 int	handle_unexpected_eof(t_shell *sh)
 {
 	ft_putendl_fd(UNEXPECTED_EOF, 2);

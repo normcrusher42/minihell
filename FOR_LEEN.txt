@@ -1,0 +1,15 @@
+hiiii
+
+so these are the files you will review and study (the specific functions you did will be listed in each file):
+
+tokenizer.c - the whole file
+signals.c - the whole file, I did add a few signal functions but its not much can you study them? hehe
+main.c - not much there since we both know how it works
+driver.c - half of that, check top comment under 42 header
+driver_utils.c - half of that, check top comment under 42 header
+cmd_table.c - the whole file
+cmd_table_utils.c - the whole file
+cmd_cleanup.c - the whole file
+run_pipelines.c - only one function
+
+slayyy it mrrow 🐈

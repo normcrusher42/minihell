@@ -3,12 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42adbudhabi.ae> +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 15:56:42 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/19 18:59:16 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/20 03:28:32 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/* The entire following was done by @Nasser */
+//	   ft_strcmp
+//	   try_direct_exec
+//	   init_and_exec_builtins
+//	   exec_external
+//	   push_word
 
 #include "minishell.h"
 

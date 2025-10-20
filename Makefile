@@ -11,7 +11,7 @@ LIBFT = $(LIBFT_PATH)libft.a
 # Program sauce files
 SRC = ./src/main.c src/env_utils.c src/utils.c src/executor.c src/expander.c src/signals.c src/tokenizer.c \
 src/token_process.c src/cmd_table.c src/cleanup.c src/driver.c src/exec_utils.c src/malloc_tools.c src/apply_redir.c \
-src/heredoc.c src/cmd_cleanup.c src/tokenizer_utils.c src/expander_utils.c src/builtin_utils.c src/driver_utils.c src/cmd_table_utils.c
+src/heredoc.c src/cmd_cleanup.c src/tokenizer_utils.c src/expander_utils.c src/builtin_utils.c src/driver_utils.c src/cmd_table_utils.c src/run_pipelines.c
 
 SRC2 = ./$(BUILTINS)ft_cd.c $(BUILTINS)ft_echo.c $(BUILTINS)ft_env.c $(BUILTINS)ft_exit.c \
 $(BUILTINS)ft_export.c $(BUILTINS)ft_pwd.c $(BUILTINS)ft_unset.c
@@ -76,6 +76,7 @@ runngun: all
 
 # Calls the bitch of the subject to properly norm check the src folder so we don't need to switch directories
 norm:
+	norminette minishell.h
 	cd src/ && norminette | grep Error
 
 # Compiles and runs program and valgrind at once (and supresses readline leaks as it will always leak)
@@ -85,6 +86,6 @@ leak: all
     --track-fds=yes --trace-children=yes --gen-suppressions=no \
     --error-limit=no --undef-value-errors=yes --expensive-definedness-checks=yes \
     --read-var-info=yes --keep-debuginfo=yes \
-    --suppressions=bin.supp --suppressions=readline.supp ./minishell
+    --suppressions=../bin.supp --suppressions=../readline.supp ./minishell
 
 .PHONY: all clean fclean re leak runngun norm

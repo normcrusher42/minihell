@@ -3,12 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_table_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42adbudhabi.ae> +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 18:52:40 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/19 18:54:51 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/20 05:06:25 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/* The entire following was done by @Leen */
+//	   init_cmd
+//	   is_pipe
+//	   redir_kind
+//	   init_parse_ctx
+//	   handle_empty_parse
 
 #include "minishell.h"
 
@@ -59,6 +66,7 @@ int	init_parse_ctx(t_parse_ctx *p)
 	return (1);
 }
 
+// Handles the case of an empty parse (no commands).
 int	handle_empty_parse(t_shell *sh, t_parse_ctx *p)
 {
 	sh->cmds = NULL;

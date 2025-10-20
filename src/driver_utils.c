@@ -3,12 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   driver_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42adbudhabi.ae> +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 18:47:58 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/19 18:52:06 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/20 03:56:51 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/* Most of the following were done by @Leen && one by @Nasser */
+//		handle_parent - Leen
+//		update_exit_status - Nasser
+//		create_pipe_and_fork - Leen
+//		join_path - Leen
+//		resolve_path - Leen
 
 #include "minishell.h"
 
@@ -24,6 +31,7 @@ void	handle_parent(t_pipeinfo *p)
 	}
 }
 
+// Updates the shell's exit status based on the child's termination status.
 void	update_exit_status(t_shell *sh, int status)
 {
 	if (WIFSIGNALED(status))
@@ -36,6 +44,7 @@ void	update_exit_status(t_shell *sh, int status)
 		sh->ex_st = WEXITSTATUS(status);
 }
 
+// Creates a pipe if needed and forks a new process.
 int	create_pipe_and_fork(t_pipeinfo *p, int n, t_shell *sh, pid_t *pid)
 {
 	if (p->i < n - 1 && pipe(p->pipefd) == -1)

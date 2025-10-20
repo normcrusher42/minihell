@@ -13,6 +13,8 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# define _GNU_SOURCE
+# define RL_USE_OLD_TERMIOS
 # include "libft/ft_printf/ft_printf.h"
 # include "libft/libft.h"
 # include <readline/history.h>
@@ -81,7 +83,6 @@ typedef struct s_redir
 {
 	t_redirtype	type;
 	char		*arg; // file or heredoc delimiter
-	bool	is_quoted; // REMOVE THIS BEFORE SUBMITTING ///////////////////////////////////////////////////
 	int			fd;
 }	t_redir;
 
@@ -102,10 +103,13 @@ typedef struct s_cmd
 
 typedef struct s_pipeinfo
 {
-	int	i;
-	int	n;
-	int	prev_fd;
-	int	pipefd[2];
+	int		i;
+	int		n;
+	int		prev_fd;
+	int		pipefd[2];
+	pid_t	pid;
+	int		status;
+	pid_t	*pids;
 }	t_pipeinfo;
 
 typedef struct s_parse_ctx
@@ -195,7 +199,7 @@ typedef struct s_shell
 	bool	is_child; // bool to make redir funct safer without exiting parent
 	int		is_quoted; // heredoc delim quoted? 1/0
 	bool	in_heredoc;
-    bool    err; // early syntax error flag check to avoid resuming cmd parsing
+	bool	err; // early syntax error flag check to avoid resuming cmd parsing
 }	t_shell;
 
 typedef enum e_token_type
@@ -268,6 +272,9 @@ int		init_parse_ctx(t_parse_ctx *p);
 int		redir_kind(const char *s);
 int		is_pipe(const char *s);
 int		push_word(t_cmd *c, const char *w);
+void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p);
+int		spawn_pipeline_children(t_cmd *cmds, int n, t_shell *sh, t_pipeinfo *p);
+
 /* signals.c */
 void	init_signals(void);
 void	rl_replace_line(const char *text, int clear_undo);
@@ -290,7 +297,6 @@ void	handle_next_char(t_expander_ctx *ctx, unsigned char next,
 int		handle_heredoc(t_redir *redir, t_shell *sh);
 char	*env_expander(char *token, char **merge, char **envp, int i);
 char	*merge_str(t_expander_ctx *ctx, t_shell *sh);
-
 
 /* janitor functions */
 /* aka cleanup for u boomers */

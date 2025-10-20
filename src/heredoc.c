@@ -10,22 +10,33 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Nasser */
+//	   write_heredoc_line
+//	   should_break_heredoc
+//	   handle_heredoc
+
 #include "minishell.h"
 
-static void	write_heredoc_line(int fd, char *line, t_shell *sh)
+// Writes a line to the heredoc file descriptor, expanding variables if needed.
+static int	write_heredoc_line(int fd, char *line, t_shell *sh)
 {
 	char	*expanded;
 
 	expanded = NULL;
+	if (!line)
+		return (1);
 	if (sh->is_quoted)
 		expanded = ft_strdup(line);
 	else
 		expanded = dollar_expander(line, sh->envp, sh);
+	if (!expanded)
+		return (1);
 	ft_putendl_fd(expanded, fd);
-	if (expanded)
-		free(expanded);
+	free(expanded);
+	return (0);
 }
 
+// Determines if the heredoc input should stop based on the delimiter.
 int	should_break_heredoc(char *line, t_redir *redir)
 {
 	if (!line)
@@ -41,6 +52,7 @@ int	should_break_heredoc(char *line, t_redir *redir)
 	return (0);
 }
 
+// Handles here-document input until the delimiter is reached.
 int	handle_heredoc(t_redir *redir, t_shell *sh)
 {
 	int		fd[2];
@@ -49,7 +61,7 @@ int	handle_heredoc(t_redir *redir, t_shell *sh)
 	if (pipe(fd) == -1)
 	{
 		perror("miniOdy: pipe error");
-		return (-1);
+		return (1);
 	}
 	sh->in_heredoc = YES;
 	while (1)
@@ -57,7 +69,8 @@ int	handle_heredoc(t_redir *redir, t_shell *sh)
 		line = readline("> ");
 		if (should_break_heredoc(line, redir))
 			break ;
-		write_heredoc_line(fd[1], line, sh);
+		if (write_heredoc_line(fd[1], line, sh))
+			break ;
 	}
 	close(fd[1]);
 	redir->fd = fd[0];

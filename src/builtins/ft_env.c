@@ -10,6 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The one following was done by @Nasser */
+//	   ft_env
+
 #include "minishell.h"
 
 // A simple remake of 'env'. Prints all environment variables.

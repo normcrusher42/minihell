@@ -10,6 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Nasser */
+//	   env_expander
+//	   merge_str
+//	   handle_dollar
+//	   dollar_expander
+//	   expand_token
+
 #include "minishell.h"
 
 // The holy grail of expanding valid $ input if the other cases weren't met.
@@ -56,6 +63,8 @@ char	*merge_str(t_expander_ctx *ctx, t_shell *sh)
 	return (ft_strjoin3(ctx->merge[0], ctx->merge[1], ctx->merge[2]));
 }
 
+// Scans for special characters (including unicode) and decides if expandable.
+// Handles the '$' expansion cases.
 static void	handle_dollar(t_expander_ctx *ctx, t_shell *sh)
 {
 	unsigned char	next;
@@ -106,6 +115,7 @@ char	*dollar_expander(char *token, char **envp, t_shell *sh)
 	return (ctx.token);
 }
 
+// The main expander loop after being parsed by the tokenizer.
 char	**expand_token(t_shell *sh, char **envp, t_token *token)
 {
 	t_expander_ctx	ctx;

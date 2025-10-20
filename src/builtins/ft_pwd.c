@@ -10,6 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The one following was done by @Nasser */
+//	   ft_pwd
+
 #include "minishell.h"
 
 // A simple remake of 'pwd', prints the current working directory.

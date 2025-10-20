@@ -3,15 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42adbudhabi.ae> +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 18:03:10 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/19 18:06:36 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/20 03:23:37 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/* Ion remember who made these but a toddler could explain, lol */
+//	   is_quoted_token
+//	   is_operator
+//	   skip_quotes
+//	   consume_spaces
+
 #include "minishell.h"
 
+// Checks if token is quoted (mainly for heredoc).
 int	is_quoted_token(const char *s)
 {
 	size_t	len;

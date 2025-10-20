@@ -10,6 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Nasser */
+//	   free_arr
+//	   butter_free_input
+//	   free_tokens
+//	   call_janitor
+
 #include "minishell.h"
 
 // Frees the passed double array pointer and its content (with a reuse switch). 

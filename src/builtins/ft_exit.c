@@ -10,6 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Nasser */
+//	   parse_sign
+//	   ft_atoll
+//	   ft_exit
+
 #include "minishell.h"
 
 // Checks if the string is numeric (with optional leading + or -).
@@ -61,7 +66,7 @@ int	ft_exit(char **av, t_shell *sh)
 	ft_putendl_fd("exit", 1);
 	if (ft_arrlen(av) > 2)
 	{
-		ft_putendl_fd("mOdy: exit: too many arguments", 2);
+		ft_putendl_fd("miniOdy: exit: too many arguments", 2);
 		return (1);
 	}
 	else if (ft_arrlen(av) < 2)
@@ -71,7 +76,7 @@ int	ft_exit(char **av, t_shell *sh)
 	}
 	if (!is_numeric(av[1]) || !ft_atoll(av[1], &code))
 	{
-		ft_putendl_fd("mOdy: exit: numeric argument required", 2);
+		ft_putendl_fd("miniOdy: exit: numeric argument required", 2);
 		call_janitor(sh);
 		exit(2);
 	}

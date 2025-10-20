@@ -10,6 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The one following was done by @Nasser */
+//	   ft_echo
+
 #include "minishell.h"
 
 // A simple remake of 'echo' with the -n flag included. Prints input arguments.

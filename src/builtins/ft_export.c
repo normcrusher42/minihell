@@ -10,12 +10,19 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Nasser */
+//	   export_error
+//	   sort_env
+//	   ft_export_print
+//	   split_key_value
+//	   ft_export
+
 #include "minishell.h"
 
 // Error message for bad export values (whilst pointing to the bad argument).
 static int	export_error(char *arg)
 {
-	ft_putstr_fd("mOdy: export: `", 2);
+	ft_putstr_fd("miniOdy: export: `", 2);
 	ft_putstr_fd(arg, 2);
 	ft_putendl_fd("': not a valid identifier", 2);
 	return (1);

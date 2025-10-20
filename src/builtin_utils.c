@@ -3,12 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42adbudhabi.ae> +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 18:15:46 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/19 18:17:04 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/20 03:43:48 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/* The entire following was done by @Nasser */
+//	   is_builtin
+//	   exec_builtin
 
 #include "minishell.h"
 

@@ -10,8 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Nasser */
+//	   handle_non_dollar_token
+//	   handle_next_char
+
 #include "minishell.h"
 
+// Handles tokens that do not require dollar expansion.
 int	handle_non_dollar_token(t_expander_ctx *ctx, t_token *token,
 			t_shell *sh)
 {
@@ -26,8 +31,7 @@ int	handle_non_dollar_token(t_expander_ctx *ctx, t_token *token,
 	return (1);
 }
 
-// Scans for special characters (including unicode) and decides if expandable.
-// Handles the '$' expansion cases
+// Handles the other half of the '$' expansion cases.
 void	handle_next_char(t_expander_ctx *ctx, unsigned char next,
 			t_shell *sh)
 {

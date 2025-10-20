@@ -10,9 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Nasser */
+//	   open_redirection
+//	   apply_single_redirection
+//	   apply_redirections
+
 #include "minishell.h"
 
-/* Opens a file based on redirection type */
+// Opens a file based on redirection type
 static int	open_redirection(t_redir *redir)
 {
 	int	fd;
@@ -27,7 +32,7 @@ static int	open_redirection(t_redir *redir)
 	return (fd);
 }
 
-/* Applies one redirection (input or output) */
+// Applies one redirection (input or output)
 static int	apply_single_redirection(t_redir *redir, t_shell *sh)
 {
 	int	fd;
@@ -50,7 +55,7 @@ static int	apply_single_redirection(t_redir *redir, t_shell *sh)
 	return (0);
 }
 
-/* Main entry point for redirection handling */
+// Main entry point for redirection handling
 int	apply_redirections(t_cmd *cmd, t_shell *sh)
 {
 	int	i;

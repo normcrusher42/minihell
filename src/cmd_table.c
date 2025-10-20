@@ -3,12 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_table.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42adbudhabi.ae> +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 17:24:16 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/10/19 18:59:04 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/20 03:39:50 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/* The entire following was done by @Leen */
+//	   push_redir
+//	   finalize_segment
+//	   parse_segment_token
+//	   handle_token
+//	   parse_command_table
 
 #include "minishell.h"
 
@@ -25,6 +32,7 @@ static int	push_redir(t_cmd *c, t_redirtype t, const char *arg)
 	while (++i < c->redir_count)
 		nr[i] = c->redirs[i];
 	nr[i].type = t;
+	nr[i].fd = -1;
 	nr[i].arg = ft_strdup(arg);
 	if (!nr[i].arg)
 		return (free(nr), 0);

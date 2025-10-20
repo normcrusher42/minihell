@@ -10,6 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Nasser */
+//	   get_env_value
+//	   replace_env_value
+//	   set_env_value
+//	   handle_target_var
+//	   unset_env_value
+
 #include "minishell.h"
 
 // Finds the environment variable name passed by key and returns its definition.

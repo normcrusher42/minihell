@@ -10,11 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#define _GNU_SOURCE
-#define RL_USE_OLD_TERMIOS
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <signal.h>
+/* The entire following was done by @Leen */
+//	   handle_sigint
+//	   handle_sigquit
+//	   disable_echoctl
+//	   init_signals
+//	   signal_config
+
 #include "minishell.h"
 
 // Handles SIGINT (Ctrl+C) by printing a new prompt line.
@@ -23,7 +25,6 @@ void	handle_sigint(int sig)
 	(void)sig;
 	rl_on_new_line();
 	write(1, "\n", 1);
-	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
 }
@@ -63,6 +64,7 @@ void	init_signals(void)
 	sigaction(SIGQUIT, &sa_quit, NULL);
 }
 
+// Configures the default signal handlers for the shell.
 void	signal_config(void)
 {
 	signal(SIGINT, handle_sigint);

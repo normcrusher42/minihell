@@ -6,9 +6,13 @@
 /*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 15:57:06 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/10 15:57:07 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/20 05:05:42 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/* The entire following was done by @Nasser */
+//	   realloc_env
+//	   dup_env
 
 #include "minishell.h"
 

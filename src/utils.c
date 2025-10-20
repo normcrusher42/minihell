@@ -10,6 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Nasser */
+//	   is_key_match
+//	   ft_strjoin3
+//	   ft_isspace
+//	   ft_arrlen
+//	   is_numeric
+
 #include "minishell.h"
 
 // Compares strings and checks if they're matching and checks their last value.
