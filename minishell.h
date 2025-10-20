@@ -274,6 +274,7 @@ int		is_pipe(const char *s);
 int		push_word(t_cmd *c, const char *w);
 void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p);
 int		spawn_pipeline_children(t_cmd *cmds, int n, t_shell *sh, t_pipeinfo *p);
+void	close_cmds_heredoc_fds(int n, t_cmd *cmds);
 
 /* signals.c */
 void	init_signals(void);

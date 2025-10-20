@@ -6,16 +6,16 @@
 /*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 15:56:42 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/20 03:28:32 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/21 02:27:11 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/* The entire following was done by @Nasser */
-//	   ft_strcmp
-//	   try_direct_exec
-//	   init_and_exec_builtins
-//	   exec_external
-//	   push_word
+/* Most of the following was done by @Nasser and one by @Leen */
+//	   	ft_strcmp
+//	   	try_direct_exec
+//	   	init_and_exec_builtins
+//	   	exec_external
+//	   	push_word - Leen
 
 #include "minishell.h"
 

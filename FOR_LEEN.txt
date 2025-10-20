@@ -11,5 +11,6 @@ cmd_table.c - the whole file
 cmd_table_utils.c - the whole file
 cmd_cleanup.c - the whole file
 run_pipelines.c - only one function
+exec_utils.c - just push_word at the end lol
 
 slayyy it mrrow 🐈

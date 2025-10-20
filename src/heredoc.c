@@ -33,6 +33,8 @@ static int	write_heredoc_line(int fd, char *line, t_shell *sh)
 		return (1);
 	ft_putendl_fd(expanded, fd);
 	free(expanded);
+	if (sh->is_quoted)
+		free(line);
 	return (0);
 }
 

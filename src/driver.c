@@ -88,6 +88,7 @@ static int	process_heredocs(t_cmd *cmds, int n, t_shell *sh)
 			}
 		}
 	}
+	close_cmds_heredoc_fds(n, cmds);
 	return (0);
 }
 
