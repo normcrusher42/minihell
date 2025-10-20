@@ -69,6 +69,8 @@ static void	handle_dollar(t_expander_ctx *ctx, t_shell *sh)
 {
 	unsigned char	next;
 
+	if (!ctx || !ctx->token)
+		return ;
 	free_arr(&ctx->merge, YES);
 	next = (unsigned char)ctx->token[ctx->i + 1];
 	if (!ft_isascii(next) || !ft_isprint(next))
@@ -83,11 +85,8 @@ static void	handle_dollar(t_expander_ctx *ctx, t_shell *sh)
 	}
 	else
 		return ;
-	free(ctx->token);
-	ctx->token = ctx->new_token;
+	prepare_next_call(ctx, next);
 	ctx->i = -1;
-	ctx->in_single = 0;
-	ctx->in_double = 0;
 }
 
 // The '$' condition scanner for $VAR, $?, & $$.

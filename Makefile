@@ -74,6 +74,11 @@ re: fclean $(NAME)
 runngun: all
 	./minishell
 
+remake:
+	@rm -f $(NAME)
+	@rm -rf $(OBJ_PATH) $(OBJ_PATH2)
+	@make all
+
 # Calls the bitch of the subject to properly norm check the src folder so we don't need to switch directories
 norm:
 	norminette minishell.h
@@ -86,6 +91,6 @@ leak: all
     --track-fds=yes --trace-children=yes --gen-suppressions=no \
     --error-limit=no --undef-value-errors=yes --expensive-definedness-checks=yes \
     --read-var-info=yes --keep-debuginfo=yes \
-    --suppressions=../bin.supp --suppressions=../readline.supp ./minishell
+    --suppressions=bin.supp --suppressions=readline.supp ./minishell
 
-.PHONY: all clean fclean re leak runngun norm
+.PHONY: all clean fclean re leak runngun norm remake

@@ -297,6 +297,7 @@ void	handle_next_char(t_expander_ctx *ctx, unsigned char next,
 int		handle_heredoc(t_redir *redir, t_shell *sh);
 char	*env_expander(char *token, char **merge, char **envp, int i);
 char	*merge_str(t_expander_ctx *ctx, t_shell *sh);
+void	prepare_next_call(t_expander_ctx *ctx, int next);
 
 /* janitor functions */
 /* aka cleanup for u boomers */
