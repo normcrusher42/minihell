@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 17:24:16 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/10/20 03:39:50 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/22 01:01:06 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,10 @@ static int	push_redir(t_cmd *c, t_redirtype t, const char *arg)
 	nr[i].fd = -1;
 	nr[i].arg = ft_strdup(arg);
 	if (!nr[i].arg)
-		return (free(nr), 0);
+	{
+		free(nr);
+		return (0);
+	}
 	free(c->redirs);
 	c->redirs = nr;
 	c->redir_count++;

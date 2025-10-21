@@ -83,8 +83,11 @@ static int	process_heredocs(t_cmd *cmds, int n, t_shell *sh)
 		{
 			if (cmds[cmd_i].redirs[redir_i].type == R_HEREDOC)
 			{
-				if (handle_heredoc(&cmds[cmd_i].redirs[redir_i], sh) == -1)
+				if (handle_heredoc(&cmds[cmd_i].redirs[redir_i], sh) == 1)
+				{
+					close_cmds_heredoc_fds(n, cmds);
 					return (130);
+				}
 			}
 		}
 	}

@@ -22,7 +22,10 @@ int	ft_pwd(t_shell *sh)
 	char	*pwd;
 
 	if (getcwd(buf, sizeof(buf)))
-		return (ft_putendl_fd(buf, 1), 0);
+	{
+		ft_putendl_fd(buf, 1);
+		return (0);
+	}
 	pwd = get_env_value(sh->envp, "PWD");
 	if (!pwd)
 		ft_putendl_fd("", 1);

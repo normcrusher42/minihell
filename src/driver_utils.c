@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 18:47:58 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/20 03:56:51 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/22 01:03:32 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,14 +91,15 @@ char	*resolve_path(char *cmd, char **envp)
 	if (!path_env)
 		return (NULL);
 	paths = ft_split(path_env, ':');
-	if (!paths)
-		return (NULL);
 	i = -1;
 	while (paths[++i])
 	{
 		full_path = join_path(paths[i], cmd);
 		if (access(full_path, X_OK) == 0)
-			return (free_arr(&paths, NO), full_path);
+		{
+			free_arr(&paths, NO);
+			return (full_path);
+		}
 		free(full_path);
 	}
 	free_arr(&paths, NO);

@@ -18,6 +18,9 @@
 
 #include "minishell.h"
 
+// signal initialization for heredoc signals
+volatile sig_atomic_t	g_signal = 0;
+
 // Increases or initializes the SHLVL environment variable.
 void	update_shlvl(char ***envp)
 {

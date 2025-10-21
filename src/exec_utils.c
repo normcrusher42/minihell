@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 15:56:42 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/21 02:27:11 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/22 01:16:05 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ int	init_and_exec_builtins(char **av, char ***env, t_shell *sh)
 	saved_stdout = dup(STDOUT_FILENO);
 	if (!apply_redirections(sh->cmds, sh))
 		sh->ex_st = exec_builtin(av, env, sh);
+	else 
+		sh->ex_st = 1;
 	dup2(saved_stdin, STDIN_FILENO);
 	dup2(saved_stdout, STDOUT_FILENO);
 	close(saved_stdin);

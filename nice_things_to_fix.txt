@@ -16,8 +16,8 @@ mild - bin functions not depending on PATH which it should incase PATH was unset
 concerning - weird quote behavior when trying to expand $" (at the end of the string too) ✅
 concerning - heredoc not running and only ever working as a redir (BTW THIS APPLIES TO EVERY OTHER REDIR TYPE THEY RETURN NOTHING WHEN SOME SHOULD SYNTAX ERROR) ✅
 concerning - heredoc is sometimes not first to run in pipes ionno what's going on exactly ✅
-ragebaiting - heredoc not expanding envs and unclosed fds and unconditional jumps.. fuck me man passing the quote var gon be like the delicate flower quest from HK ✅
-ragebaiting - DON'T FORGET TO HANDLE SIGNALS IN HEREDOC ❌
+ragebaiting - heredoc not expanding envs and unclosed fds and unconditional jumps.. fuck me man passing the quote var gon be like the delicate flower quest from HK ✅ but just like in that quest, I delivered. 🌸
+ragebaiting - DON'T FORGET TO HANDLE SIGNALS IN HEREDOC ✅
 
 just what - change the fork error thing in the executor cs it shouldn't be there ❔
 

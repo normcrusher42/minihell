@@ -46,6 +46,19 @@ static void	handle_execution(t_shell *sh, char ***env)
 	exec_external(sh, sh->cmds->av, env);
 }
 
+// Closes all heredoc file descriptors in the command struct.
+static void	close_heredoc_fds(t_shell *sh)
+{
+	int	i;
+
+	i = -1;
+	while (++i < sh->cmds->redir_count)
+	{
+		if (sh->cmds->redirs[i].type == R_HEREDOC)
+			close(sh->cmds->redirs[i].fd);
+	}
+}
+
 // Handles here-document redirections before executing the command.
 static int	handle_heredoc_redirections(t_shell *sh)
 {
@@ -55,21 +68,16 @@ static int	handle_heredoc_redirections(t_shell *sh)
 	while (++i < sh->cmds->redir_count)
 	{
 		if (sh->cmds->redirs[i].type == R_HEREDOC)
+		{
 			if (handle_heredoc(&sh->cmds->redirs[i], sh) == 1)
+			{
+				close_heredoc_fds(sh);
 				return (130);
+			}
+		}
 	}
+	close_heredoc_fds(sh);
 	return (0);
-}
-
-// Closes all heredoc file descriptors in the command struct.
-static void	close_heredoc_fds(t_shell *sh)
-{
-	int	i;
-
-	i = -1;
-	while (++i < sh->cmds->redir_count)
-		if (sh->cmds->redirs[i].type == R_HEREDOC)
-			close(sh->cmds->redirs[i].fd);
 }
 
 // Handles the status of the child process after execution.

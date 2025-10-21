@@ -11,9 +11,16 @@
 /* ************************************************************************** */
 
 /* The one following was done by @Nasser */
+//	   return_cd_error
 //	   ft_cd
 
 #include "minishell.h"
+
+int	return_cd_error(char *msg)
+{
+	ft_putendl_fd(msg, 2);
+	return (1);
+}
 
 // A simple remake of 'cd'. Changes current working directory based on input.
 int	ft_cd(char **av, char ***envp)
@@ -23,18 +30,18 @@ int	ft_cd(char **av, char ***envp)
 	char	cwd[1024];
 
 	if (ft_arrlen(av) > 2)
-		return (ft_putendl_fd("-miniOdy: cd: too many arguments", 2), 1);
+		return (return_cd_error("-miniOdy: cd: too many arguments"));
 	else if (ft_arrlen(av) == 1)
 	{
 		path = get_env_value(*envp, "HOME");
 		if (!path)
-			return (ft_putendl_fd("-miniOdy: cd: HOME not set", 2), 1);
+			return (return_cd_error("-miniOdy: cd: HOME not set"));
 	}
 	else
 		path = av[1];
 	old_path = get_env_value(*envp, "PWD");
 	if (chdir(path) != 0)
-		return (ft_putendl_fd("-miniOdy: cd: No such file or directory", 2), 1);
+		return (return_cd_error("-miniOdy: cd: No such file or directory"));
 	if (old_path)
 		set_env_value(envp, "OLDPWD", old_path, 0);
 	if (getcwd(cwd, sizeof(cwd)))

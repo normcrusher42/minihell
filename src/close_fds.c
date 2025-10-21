@@ -11,9 +11,20 @@
 /* ************************************************************************** */
 
 /* The one following was done by @Leen */
+//	   hd_exit_status
 //	   close_cmds_heredoc_fds
 
 #include "minishell.h"
+
+int	hd_exit_status(int status, int fds[2])
+{
+	if (WEXITSTATUS(status) == 130)
+	{
+		close(fds[0]);
+		return (1);
+	}
+	return (0);
+}
 
 // Close heredoc FDs after processing but before running the pipeline
 void	close_cmds_heredoc_fds(int n, t_cmd *cmds)

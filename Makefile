@@ -71,19 +71,20 @@ fclean: clean
 
 re: fclean $(NAME)
 
-# Complies and runs program at once (does not re)
+# Complies and runs the program at once (does not re)
 runngun: all
 	./minishell
 
+# Only recompiles the src files and the program without waiting on libft
 remake:
 	@rm -f $(NAME)
 	@rm -rf $(OBJ_PATH) $(OBJ_PATH2)
 	@make all
 
-# Calls the bitch of the subject to properly norm check the src folder so we don't need to switch directories
+# Calls the sonnovagun of the subject to norm check the src folder + header file
+# Will only print any errors found (which it shouldn't)
 norm:
-	norminette minishell.h
-	cd src/ && norminette | grep Error
+	norminette minishell.h src/ | grep -e Error -e Global
 
 # Compiles and runs program and valgrind at once (and supresses readline leaks as it will always leak)
 leak: all
@@ -94,4 +95,4 @@ leak: all
     --read-var-info=yes --keep-debuginfo=yes \
     --suppressions=bin.supp --suppressions=readline.supp ./minishell
 
-.PHONY: all clean fclean re leak runngun norm remake
+.PHONY: all clean fclean re runngun remake norm leak

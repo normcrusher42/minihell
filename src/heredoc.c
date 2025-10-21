@@ -11,11 +11,25 @@
 /* ************************************************************************** */
 
 /* The entire following was done by @Nasser */
+//	   catch_sigint_heredoc
 //	   write_heredoc_line
 //	   should_break_heredoc
+//	   heredoc_child
 //	   handle_heredoc
 
 #include "minishell.h"
+
+extern volatile sig_atomic_t	g_signal;
+
+static void	catch_sigint_heredoc(int signum)
+{
+	if (signum == SIGINT)
+	{
+		g_signal = SIGINT;
+		write(STDIN_FILENO, "\n\r", 1);
+		close(STDIN_FILENO);
+	}
+}
 
 // Writes a line to the heredoc file descriptor, expanding variables if needed.
 static int	write_heredoc_line(int fd, char *line, t_shell *sh)
@@ -39,8 +53,10 @@ static int	write_heredoc_line(int fd, char *line, t_shell *sh)
 }
 
 // Determines if the heredoc input should stop based on the delimiter.
-int	should_break_heredoc(char *line, t_redir *redir)
+static int	should_break_heredoc(char *line, t_redir *redir)
 {
+	if (!line && g_signal == SIGINT)
+		return (1);
 	if (!line)
 	{
 		ft_putendl_fd("miniOdy: warning: here-document delimited by EOF", 2);
@@ -54,28 +70,56 @@ int	should_break_heredoc(char *line, t_redir *redir)
 	return (0);
 }
 
-// Handles here-document input until the delimiter is reached.
-int	handle_heredoc(t_redir *redir, t_shell *sh)
+// The child process that handles heredoc input
+static void	heredoc_child(int fds[2], t_redir *redir, t_shell *sh)
 {
-	int		fd[2];
 	char	*line;
 
-	if (pipe(fd) == -1)
-	{
-		perror("miniOdy: pipe error");
-		return (1);
-	}
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, catch_sigint_heredoc);
+	close(fds[0]);
 	sh->in_heredoc = YES;
 	while (1)
 	{
 		line = readline("> ");
 		if (should_break_heredoc(line, redir))
 			break ;
-		if (write_heredoc_line(fd[1], line, sh))
+		if (write_heredoc_line(fds[1], line, sh))
 			break ;
 	}
-	close(fd[1]);
-	redir->fd = fd[0];
+	close(fds[1]);
+	call_janitor(sh);
+	if (g_signal == SIGINT)
+		exit(g_signal + 128);
+	exit(0);
+}
+
+// The main heredoc handler in the parent shell
+int	handle_heredoc(t_redir *redir, t_shell *sh)
+{
+	int		fds[2];
+	int		pid;
+	int		status;
+
+	if (pipe(fds) == -1)
+	{
+		perror("miniOdy: pipe error");
+		return (1);
+	}
+	sh->in_heredoc = YES;
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("miniOdy: fork error");
+		return (1);
+	}
+	else if (pid == 0)
+		heredoc_child(fds, redir, sh);
+	signal(SIGINT, SIG_IGN);
+	close(fds[1]);
+	waitpid(pid, &status, 0);
 	sh->in_heredoc = NO;
-	return (0);
+	redir->fd = fds[0];
+	init_signals();
+	return (hd_exit_status(status, fds));
 }
