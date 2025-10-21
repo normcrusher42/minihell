@@ -54,7 +54,7 @@ char	*merge_str(t_expander_ctx *ctx, t_shell *sh)
 {
 	ctx->merge[0] = ft_substr(ctx->token, 0, ctx->i);
 	if (ctx->token[ctx->i + 1] == '$')
-		ctx->merge[1] = ft_substr("miniOdy", 0, 8);
+		ctx->merge[1] = ft_substr(RED "mini\033[1;31mOdy" RESET, 0, 30);
 	else if (ctx->token[ctx->i + 1] == '?')
 		ctx->merge[1] = ft_itoa(sh->ex_st);
 	else

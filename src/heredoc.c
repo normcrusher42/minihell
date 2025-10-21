@@ -59,7 +59,10 @@ static int	should_break_heredoc(char *line, t_redir *redir)
 		return (1);
 	if (!line)
 	{
-		ft_putendl_fd("miniOdy: warning: here-document delimited by EOF", 2);
+		ft_putstr_fd("miniOdy: warning: here-document delimited by EOF ", 2);
+		ft_putstr_fd("(wanted `", 2);
+		ft_putstr_fd(redir->arg, 2);
+		ft_putendl_fd("')", 2);
 		return (1);
 	}
 	if (ft_strcmp(line, redir->arg) == 0)

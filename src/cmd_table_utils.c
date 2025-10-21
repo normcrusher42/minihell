@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 18:52:40 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/20 05:06:25 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/22 02:18:13 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,5 +72,6 @@ int	handle_empty_parse(t_shell *sh, t_parse_ctx *p)
 	sh->cmds = NULL;
 	sh->ncmd = 0;
 	sh->is_quoted = p->is_quoted;
+	sh->ex_st = 0;
 	return (1);
 }
