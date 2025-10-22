@@ -2,8 +2,9 @@
 *.a
 minishell
 minishell.dSYM/
+test.c
+./a.out
 minihell
 .DS_Store
 obj
-notes.c
 .vscode

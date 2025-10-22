@@ -1,0 +1,139 @@
+Alright 👍 now that we double-checked your **actual code vs the subject**, here’s the **updated 2-week roadmap** tailored exactly to what’s left:
+
+---
+
+# 📅 Two-Week Minishell Roadmap (Adjusted to Current Code)
+
+---
+
+## **Week 1 — Execution Core**
+
+
+### 🗓 Day 1–4
+
+🐤 **Pika — Redirections Execution**
+
+* Implement `apply_redirections(t_cmd*)`:
+
+  * `<` O_RDONLY
+  * `>` O_WRONLY|O_CREAT|O_TRUNC 0644
+  * `>>` O_WRONLY|O_CREAT|O_APPEND 0644
+* Apply in child before `execve`.
+* On open error → print message, `_exit(1)` or `126`.
+
+🫘 **Beans — Pipeline Skeleton**
+
+* Implement `run_pipeline()`:
+
+  * Loop commands.
+  * Create pipes between children.
+  * Child i: connect previous read → stdin, next write → stdout.
+  * Parent closes unused FDs, waits all children.
+
+---
+
+### 🗓 Day 5–6
+
+🐤 **Pika — Heredoc Reader**
+
+* Implement heredoc collection:
+
+  * Read until delimiter.
+  * Quoted delimiter → no expansion.
+  * Unquoted → expansion enabled later.
+  * Ctrl-C → abort heredoc, set status 130.
+  * Don’t add lines to history.
+
+🫘 **Beans — Pipeline + Redirs Integration**
+
+* In child: call `apply_redirections()` after setting up pipes.
+* “Last redir wins” rule.
+* If heredoc exists, replace stdin with heredoc pipe.
+
+---
+
+### 🗓 Day 7
+
+🤝 **Both — Mid-Week Integration**
+
+* Test:
+
+  * `cat < infile`
+  * `echo hi > out`
+  * `echo hi >> out`
+  * `cat < infile | wc -l`
+  * `cat <<EOF | wc -l`
+
+---
+
+## **Week 2 — Errors, Signals, Polishing**
+
+### 🗓 Day 8–9
+
+🫘 **Beans — Syntax & Error Handling**
+
+* `> out ls` → syntax error 258.
+* `cat | | wc` → syntax error 258.
+* Unclosed quotes → syntax error 258.
+* Match bash-style messages.
+
+🐤 **Pika — Builtin Edge Cases**
+
+* Confirm `cd` updates `PWD`/`OLDPWD`.
+* `export` prints sorted, handles invalid identifiers.
+* `unset` ignores invalid identifiers.
+* Ensure `env` prints only valid key=val.
+
+---
+
+### 🗓 Day 10–11
+
+🐤 **Pika — Signals in Children**
+
+* Reset SIGINT/SIGQUIT to default in forked child.
+* Parent keeps readline behavior.
+* Check exit codes (`128+sig`).
+
+🫘 **Beans — Stress Testing**
+
+* Long pipelines.
+* Strange redirs (`echo "" | wc`, `cat <<< nope`).
+* Expansion edge cases: `$?`, nested quotes.
+
+---
+
+### 🗓 Day 12–13
+
+🤝 **Both — Final Feature Polishing**
+
+* Check builtins inside pipelines (`cd / | pwd`).
+* Double-check precedence of multiple redirs.
+* Fix regressions.
+
+---
+
+### 🗓 Day 14 — Full Defense Rehearsal
+
+🤝 **Both Together**
+
+* Test everything:
+
+  * Prompt/history.
+  * Signals (Ctrl-C, Ctrl-D, Ctrl-).
+  * Quotes, expansions, `$?`.
+  * All 7 builtins.
+  * Redirs `<`, `>`, `>>`.
+  * Pipelines.
+  * Heredoc.
+* Run Valgrind (ignore readline leaks).
+* Norminette check.
+* Remove debug prints.
+* Push final version.
+
+---
+
+✅ At the end: **Mandatory part 100% covered** — parser, expansions, redirs, pipes, heredoc, PATH, builtins, signals, exit codes, error messages, memory/FD hygiene.
+
+---
+
+Do you want me to also **split this into a table checklist** (Day | Beans | Pika | Tests) so you and your partner can literally tick things off?

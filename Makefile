@@ -10,7 +10,10 @@ LIBFT = $(LIBFT_PATH)libft.a
 
 # Program sauce files
 SRC = ./src/main.c src/env_utils.c src/utils.c src/executor.c src/expander.c src/signals.c src/tokenizer.c \
-src/token_process.c src/cmd_table.c src/cleanup.c src/driver.c
+src/token_process.c src/cmd_table.c src/cleanup.c src/driver.c src/exec_utils.c src/malloc_tools.c src/apply_redir.c \
+src/heredoc.c src/cmd_cleanup.c src/tokenizer_utils.c src/expander_utils.c src/builtin_utils.c src/driver_utils.c src/cmd_table_utils.c \
+src/run_pipelines.c src/close_fds.c
+
 SRC2 = ./$(BUILTINS)ft_cd.c $(BUILTINS)ft_echo.c $(BUILTINS)ft_env.c $(BUILTINS)ft_exit.c \
 $(BUILTINS)ft_export.c $(BUILTINS)ft_pwd.c $(BUILTINS)ft_unset.c
 
@@ -20,7 +23,7 @@ OBJ2 = $(SRC2:$(BUILTINS)%.c=$(OBJ_PATH2)%.o)
 
 # Compiler n flags
 CC		=		cc
-CFLAGS	= -g -I.
+CFLAGS	= -Wall -Wextra -Werror -g -I.
 LDFLAGS = -lreadline -L/opt/vagrant/embedded/lib/ -Iopt/vagrant/embedded/include/readline
 
 # Color codes ✨
@@ -68,16 +71,28 @@ fclean: clean
 
 re: fclean $(NAME)
 
-# Complies and runs program at once (does not re)
+# Complies and runs the program at once (does not re)
 runngun: all
 	./minishell
 
-# Calls the bitch of the subject to properly norm check the src folder so we don't need to switch directories
+# Only recompiles the src files and the program without waiting on libft
+remake:
+	@rm -f $(NAME)
+	@rm -rf $(OBJ_PATH) $(OBJ_PATH2)
+	@make all
+
+# Calls the sonnovagun of the subject to norm check the src folder + header file
+# Will only print any errors found (which it shouldn't)
 norm:
-	cd src/ && norminette | grep Error
+	norminette minishell.h src/ | grep -e Error -e Global
 
 # Compiles and runs program and valgrind at once (and supresses readline leaks as it will always leak)
 leak: all
-	valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all --track-origins=yes  --trace-children=yes --track-fds=yes ./minishell
+	valgrind --leak-check=full --leak-resolution=high -s --track-origins=yes \
+    --num-callers=500 --show-mismatched-frees=yes --show-leak-kinds=all \
+    --track-fds=yes --trace-children=yes --gen-suppressions=no \
+    --error-limit=no --undef-value-errors=yes --expensive-definedness-checks=yes \
+    --read-var-info=yes --keep-debuginfo=yes \
+    --suppressions=bin.supp --suppressions=readline.supp ./minishell
 
-.PHONY: all clean fclean re leak runngun norm
+.PHONY: all clean fclean re runngun remake norm leak

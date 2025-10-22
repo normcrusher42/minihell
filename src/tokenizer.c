@@ -3,57 +3,51 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 22:06:47 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/04 22:06:47 by nanasser         ###   ########.fr       */
+/*   Created: 2025/09/29 20:18:49 by lsahloul          #+#    #+#             */
+/*   Updated: 2025/09/29 20:18:49 by lsahloul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Leen, sah? lol 🐈 */
+//	   expand_token_arrays
+//	   store_token_struct
+//	   skip_spaces_operators
+//	   read_word
+//	   tokenize
+
 #include "minishell.h"
 
-static int	is_operator(char c)
-{
-	return (c == '|' || c == '<' || c == '>');
-}
-
-static int	skip_quotes(char *s, char quote)
-{
-	int	i;
-
-	i = 1;
-	while (s[i] && s[i] != quote)
-		i++;
-	if (s[i] == quote)
-		i++;
-	return (i);
-}
-
+// Expands the token array to accommodate a new token.
 static void	expand_token_arrays(t_token *tok, int count)
 {
-	char			**new_tokens;
-	t_quote_type	*new_quotes;
-	int				i;
+	char	**new_tokens;
+	int		*new_quoted;
+	int		i;
 
 	new_tokens = malloc(sizeof(char *) * (count + 2));
-	new_quotes = malloc(sizeof(t_quote_type) * (count + 2));
-	if (!new_tokens || !new_quotes)
-		return (free(new_tokens), free(new_quotes), (void)0);
+	new_quoted = malloc(sizeof(int) * (count + 2));
+	if (!new_tokens || !new_quoted)
+		return ;
 	i = -1;
 	while (++i < count)
 	{
 		new_tokens[i] = tok->tokens[i];
-		new_quotes[i] = tok->quote[i];
+		new_quoted[i] = tok->quoted[i];
 	}
 	new_tokens[count] = NULL;
-	new_quotes[count] = QTE_NONE;
+	new_tokens[count + 1] = NULL;
+	new_quoted[count] = 0;
+	new_quoted[count + 1] = 0;
 	free(tok->tokens);
-	free(tok->quote);
+	free(tok->quoted);
 	tok->tokens = new_tokens;
-	tok->quote = new_quotes;
+	tok->quoted = new_quoted;
 }
 
-static void	store_token_struct(t_token *tok, char *value, t_quote_type qt)
+// Stores a new token in the token struct.
+static void	store_token_struct(t_token *tok, char *value)
 {
 	int	count;
 
@@ -61,20 +55,15 @@ static void	store_token_struct(t_token *tok, char *value, t_quote_type qt)
 	while (tok->tokens && tok->tokens[count])
 		count++;
 	expand_token_arrays(tok, count);
-	if (!tok->tokens || !tok->quote)
+	if (!tok->tokens)
 		return ;
 	tok->tokens[count] = value;
-	tok->quote[count] = qt;
+	tok->quoted[count] = is_quoted_token(value);
 	tok->tokens[count + 1] = NULL;
-	tok->quote[count + 1] = QTE_NONE;
+	tok->quoted[count + 1] = 0;
 }
 
-static void	consume_spaces(char *s, int *i)
-{
-	while (s[*i] == ' ' || s[*i] == '\t')
-		(*i)++;
-}
-
+// Skips spaces and operators, storing operators as tokens.
 static void	skip_spaces_operators(char *s, int *i, t_token *tok)
 {
 	int	len;
@@ -86,68 +75,46 @@ static void	skip_spaces_operators(char *s, int *i, t_token *tok)
 		len = 1;
 		if (s[*i] == s[*i + 1] && (s[*i] == '<' || s[*i] == '>'))
 			len = 2;
-		store_token_struct(tok, ft_substr(s, *i, len), QTE_NONE);
+		store_token_struct(tok, ft_substr(s, *i, len));
 		*i += len;
 	}
 }
 
-static void	read_word(char *s, int *i, t_quote_type *qt)
+// Reads a word token, handling quoted sections properly.
+static void	read_word(char *s, int *i)
 {
-	*qt = QTE_NONE;
 	while (s[*i] && !is_operator(s[*i]) && s[*i] != ' ' && s[*i] != '\t')
 	{
-		if (s[*i] == '\'')
-		{
-			*qt = QTE_SINGLE;
+		if (s[*i] == '\'' || s[*i] == '"')
 			*i += skip_quotes(&s[*i], s[*i]);
-		}
-		else if (s[*i] == '"')
-		{
-			*qt = QTE_DOUBLE;
-			*i += skip_quotes(&s[*i], s[*i]);
-		}
 		else
 			(*i)++;
 	}
 }
 
-t_token	*tokenize(char *s)
+// Tokenizes the input string and stores tokens in the shell struct.
+void	tokenize(char *s, t_shell *sh)
 {
-	t_token			*tok;
-	int				i;
-	int				start;
-	t_quote_type	qt;
+	int		i;
+	int		start;
 
-	if (!s)
-		return (NULL);
+	if (!s || !sh)
+		return ;
+	if (sh->token)
+		free_tokens(sh);
+	sh->token = malloc(sizeof(t_token));
+	if (!sh->token)
+		return ;
+	sh->token->tokens = NULL;
+	sh->token->quoted = NULL;
 	i = 0;
-	tok = malloc(sizeof(t_token));
-	if (!tok)
-		return (NULL);
-	tok->tokens = NULL;
-	tok->quote = NULL;
 	while (s[i])
 	{
-		skip_spaces_operators(s, &i, tok);
+		skip_spaces_operators(s, &i, sh->token);
 		if (!s[i] || is_operator(s[i]) || s[i] == ' ' || s[i] == '\t')
 			continue ;
 		start = i;
-		read_word(s, &i, &qt);
-		store_token_struct(tok, ft_substr(s, start, i - start), qt);
+		read_word(s, &i);
+		store_token_struct(sh->token, ft_substr(s, start, i - start));
 	}
-	return (tok);
-}
-
-void	free_tokens(t_token *tok)
-{
-	int	i;
-
-	if (!tok)
-		return ;
-	i = 0;
-	while (tok->tokens && tok->tokens[i])
-		free(tok->tokens[i++]);
-	free(tok->tokens);
-	free(tok->quote);
-	free(tok);
 }

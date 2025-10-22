@@ -3,67 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_table.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsahloul <lsahloul@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/16 15:44:42 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/09/09 20:03:23 by lsahloul         ###   ########.fr       */
+/*   Created: 2025/10/18 17:24:16 by lsahloul          #+#    #+#             */
+/*   Updated: 2025/10/22 20:53:24 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Leen */
+//	   push_redir
+//	   finalize_segment
+//	   parse_segment_token
+//	   handle_token
+//	   parse_command_table
+
 #include "minishell.h"
 
-static void	init_cmd(t_cmd *c)
-{
-	c->av = NULL;
-	c->ac = 0;
-	c->redirs = NULL;
-	c->redir_count = 0;
-}
-
-static int	is_pipe(const char *s)
-{
-	return (s && s[0] == '|' && s[1] == '\0');
-}
-
-static int	redir_kind(const char *s)
-{
-	if (!s)
-		return (-1);
-	if (s[0] == '<' && s[1] == '\0')
-		return (R_IN);
-	if (s[0] == '>' && s[1] == '\0')
-		return (R_OUT);
-	if (s[0] == '>' && s[1] == '>' && s[2] == '\0')
-		return (R_APP);
-	if (s[0] == '<' && s[1] == '>' && s[2] == '\0')
-		return (-1);
-	if (s[0] == '<' && s[1] == '<' && s[2] == '\0')
-		return (R_HEREDOC);
-	return (-1);
-}
-
-static int	push_word(t_cmd *c, const char *w)
-{
-	char	**nv;
-	int		i;
-
-	nv = (char **)malloc(sizeof(char *) * (c->ac + 2));
-	if (!nv)
-		return (0);
-	i = -1;
-	while (++i < c->ac)
-		nv[i] = c->av[i];
-	nv[i] = ft_strdup(w);
-	if (!nv[i])
-		return (free(nv), 0);
-	nv[i + 1] = NULL;
-	free(c->av);
-	c->av = nv;
-	c->ac++;
-	return (1);
-}
-
-static int	push_redir(t_cmd *c, t_redirtype t, const char *arg, int quoted)
+// Adds a redirection to the command's redirection list.
+static int	push_redir(t_cmd *c, t_redirtype t, const char *arg)
 {
 	t_redir	*nr;
 	int		i;
@@ -75,46 +32,20 @@ static int	push_redir(t_cmd *c, t_redirtype t, const char *arg, int quoted)
 	while (++i < c->redir_count)
 		nr[i] = c->redirs[i];
 	nr[i].type = t;
+	nr[i].fd = -1;
 	nr[i].arg = ft_strdup(arg);
-	nr[i].is_quoted = quoted;
 	if (!nr[i].arg)
-		return (free(nr), 0);
+	{
+		free(nr);
+		return (0);
+	}
 	free(c->redirs);
 	c->redirs = nr;
 	c->redir_count++;
 	return (1);
 }
 
-static void	free_one_cmd(t_cmd *c)
-{
-	int	i;
-
-	if (!c)
-		return ;
-	i = -1;
-	while (++i < c->ac)
-		free(c->av[i]);
-	free(c->av);
-	i = -1;
-	while (++i < c->redir_count)
-		free(c->redirs[i].arg);
-	free(c->redirs);
-	init_cmd(c);
-}
-
-static int	syntax_err(const char *tok, int *st)
-{
-	ft_putstr_fd("minishell: syntax error near `", 2);
-	if (tok)
-		ft_putstr_fd((char *)tok, 2);
-	else
-		ft_putstr_fd("newline", 2);
-	ft_putstr_fd("'\n", 2);
-	if (st)
-		*st = 127;
-	return (0);
-}
-
+// Finalizes the current command segment and adds it to the command array.
 static int	finalize_segment(t_cmd **arr, int *n, t_cmd *cur)
 {
 	t_cmd	*nv;
@@ -128,6 +59,12 @@ static int	finalize_segment(t_cmd **arr, int *n, t_cmd *cur)
 	i = -1;
 	while (++i < *n)
 		nv[i] = (*arr)[i];
+	init_cmd(&nv[i]);
+	if (!nv)
+		return (0);
+	i = -1;
+	while (++i < *n)
+		nv[i] = (*arr)[i];
 	nv[i] = *cur;
 	free(*arr);
 	*arr = nv;
@@ -136,24 +73,28 @@ static int	finalize_segment(t_cmd **arr, int *n, t_cmd *cur)
 	return (1);
 }
 
-static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, int *st)
+// Parses a single token, updating the command struct accordingly.
+static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, t_parse_ctx *p)
 {
-	int	k;
-	int	is_quoted;
+	int		k;
+	int		next_unquoted;
 
+	if (tk->quoted && tk->quoted[i])
+	{
+		if (!push_word(cur, tk->tokens[i]))
+			return (0);
+		return (1);
+	}
 	k = redir_kind(tk->tokens[i]);
 	if (k >= 0)
 	{
-		if (!tk->tokens[i + 1] || is_pipe(tk->tokens[i + 1])
-			|| redir_kind(tk->tokens[i + 1]) >= 0)
-			return (syntax_err(tk->tokens[i + 1], st));
-		is_quoted = 0;
-		if (k == R_HEREDOC && tk->quote)
-		{
-			if (tk->quote[i + 1] != QTE_NONE)
-				is_quoted = 1;
-		}
-		if (!push_redir(cur, k, tk->tokens[i + 1], is_quoted))
+		next_unquoted = !(tk->quoted && tk->quoted[i + 1]);
+		if (!tk->tokens[i + 1] || (next_unquoted && (is_pipe(tk->tokens[i + 1])
+					|| redir_kind(tk->tokens[i + 1]) >= 0)))
+			return (syntax_err(tk->tokens[i + 1], p->st, NULL));
+		if (k == R_HEREDOC)
+			p->is_quoted = (tk->quoted && tk->quoted[i + 1]);
+		if (!push_redir(cur, k, tk->tokens[i + 1]))
 			return (0);
 		return (2);
 	}
@@ -162,35 +103,23 @@ static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, int *st)
 	return (1);
 }
 
-static int	init_parse_ctx(t_parse_ctx *p)
-{
-	p->arr = NULL;
-	p->n = 0;
-	p->i = -1;
-	init_cmd(&p->cur);
-	if (!p->tk || !p->tk->tokens)
-		return (0);
-	if (p->tk->tokens[0] && is_pipe(p->tk->tokens[0]))
-		return (syntax_err(p->tk->tokens[0], p->st));
-	return (1);
-}
-
+// Handles a single token during parsing, updating the context.
 static int	handle_token(t_parse_ctx *p)
 {
 	int	step;
 
-	if (is_pipe(p->tk->tokens[p->i]))
+	if (is_pipe(p->tk->tokens[p->i]) && !(p->tk->quoted && p->tk->quoted[p->i]))
 	{
 		if (!finalize_segment(&p->arr, &p->n, &p->cur))
-			return (syntax_err(p->tk->tokens[p->i], p->st));
+			return (syntax_err(p->tk->tokens[p->i], p->st, p));
 	}
 	else
 	{
-		step = parse_segment_token(&p->cur, p->tk, p->i, p->st);
+		step = parse_segment_token(&p->cur, p->tk, p->i, p);
 		if (step == 0)
 		{
 			free_one_cmd(&p->cur);
-			free_cmd_table(p->arr, p->n);
+			free_cmd_table_ctx(p->arr, p->n);
 			return (0);
 		}
 		p->i += (step - 1);
@@ -198,59 +127,29 @@ static int	handle_token(t_parse_ctx *p)
 	return (1);
 }
 
-int	parse_command_table(t_token *tk, t_cmd **out, int *count, int *st)
+// The main function to parse the command table from tokens.
+int	parse_command_table(t_shell *sh, int *st)
 {
 	t_parse_ctx	p;
 
-	p.tk = tk;
+	p.tk = sh->token;
 	p.st = st;
-	if (!out || !count || !init_parse_ctx(&p))
+	p.is_quoted = NO;
+	if (!init_parse_ctx(&p))
 		return (0);
 	while (p.tk->tokens[++p.i])
 		if (!handle_token(&p))
 			return (0);
 	if (!finalize_segment(&p.arr, &p.n, &p.cur))
 	{
-		free_cmd_table(p.arr, p.n);
+		if (p.n == 0)
+			return (handle_empty_parse(sh, &p));
+		free_cmd_table(sh);
 		free_one_cmd(&p.cur);
-		return (syntax_err(NULL, p.st));
+		return (syntax_err(NULL, p.st, NULL));
 	}
-	*out = p.arr;
-	*count = p.n;
+	sh->cmds = p.arr;
+	sh->ncmd = p.n;
+	sh->is_quoted = p.is_quoted;
 	return (1);
-}
-
-void	free_cmd_table(t_cmd *cmds, int n)
-{
-	int	i;
-
-	if (!cmds)
-		return ;
-	i = -1;
-	while (++i < n)
-		free_one_cmd(&cmds[i]);
-	free(cmds);
-}
-/*							remove this later if done						  */
-void	print_cmd_table(t_cmd *cmds, int n)
-{
-	int	i;
-	int	j;
-
-	if (!cmds)
-		return ;
-	i = -1;
-	while (++i < n)
-	{
-		ft_printf("cmd[%d]:\n", i);
-		j = -1;
-		while (++j < cmds[i].ac)
-			ft_printf("  av[%d]=`%s`\n", j, cmds[i].av[j]);
-		j = -1;
-		while (++j < cmds[i].redir_count)
-			ft_printf("  redir[%d]=%d `%s` q=%d\n", j,
-				cmds[i].redirs[j].type,
-				cmds[i].redirs[j].arg,
-				cmds[i].redirs[j].is_quoted);
-	}
 }

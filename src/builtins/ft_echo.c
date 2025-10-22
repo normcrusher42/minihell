@@ -3,12 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42.ae>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 19:37:15 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/04 19:37:15 by nanasser         ###   ########.fr       */
+/*   Created: 2025/09/29 04:41:28 by nanasser          #+#    #+#             */
+/*   Updated: 2025/09/29 04:41:28 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/* The one following was done by @Nasser */
+//	   ft_echo
 
 #include "minishell.h"
 

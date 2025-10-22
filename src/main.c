@@ -10,8 +10,18 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Leen && @Nasser */
+//	   update_shlvl
+//	   init_shell
+//	   process_line_tokens
+//	   main
+
 #include "minishell.h"
 
+// signal initialization for heredoc signals
+volatile sig_atomic_t	g_signal = 0;
+
+// Increases or initializes the SHLVL environment variable.
 void	update_shlvl(char ***envp)
 {
 	char	*val;
@@ -34,24 +44,6 @@ void	update_shlvl(char ***envp)
 		return ;
 	set_env_value(envp, "SHLVL", new_val, 0);
 	free(new_val);
-}
-
-
-// Duplicates the passed environment variables into the shell struct.
-char	**dup_env(char **envp)
-{
-	char	**new_envp;
-	int		count;
-
-	count = ft_arrlen(envp);
-	new_envp = malloc(sizeof(char *) * (count + 1));
-	if (!new_envp)
-		return (NULL);
-	count = -1;
-	while (envp[++count])
-		new_envp[count] = ft_strdup(envp[count]);
-	new_envp[count] = NULL;
-	return (new_envp);
 }
 
 // Prepares shell environment variables by copying them (otherwise, create one).
@@ -77,40 +69,24 @@ static void	init_shell(char **envp, t_shell *shell)
 	update_shlvl(&shell->envp);
 }
 
-/* return 1 if we should print the parsed table */
-static int	should_debug_parse(void)
-{
-	const char	*val;
-
-	val = getenv("MSH_PARSE_DEBUG");
-	if (!val || !*val)
-		return (0);
-	return (1);
-}
-
-// Leen, contextualize this. I ain't re-readin alladat LOL
+// fine. I'll do it myself.
+// Main parsing work that tokenizes and processes the input before executing.
 static void	process_line_tokens(t_shell *sh)
 {
-	t_token	*tok;
-	t_cmd	*cmds;
-	int		ncmd;
 	int		ok;
 
-	tok = tokenize(sh->input);
-	if (!tok)
-		return ;
-	process_all_tokens(tok, sh->envp, g_last_status);
-	cmds = NULL;
-	ncmd = 0;
-	ok = parse_command_table(tok, &cmds, &ncmd, &g_last_status);
-	if (ok)
+	tokenize(sh->input, sh);
+	process_all_tokens(sh, sh->envp);
+	if (sh->err == NO)
 	{
-		if (should_debug_parse())
-			print_cmd_table(cmds, ncmd);
-		execute_job(cmds, ncmd, sh);
-		free_cmd_table(cmds, ncmd);
+		ok = parse_command_table(sh, &sh->ex_st);
+		if (ok && sh->err == NO)
+		{
+			sh->ex_st = execute_job(sh);
+			free_cmd_table(sh);
+		}
 	}
-	free_tokens(tok);
+	free_tokens(sh);
 }
 
 /*   minishell brought to you by none other than @Nasser and @Leen!!!      */
@@ -129,7 +105,8 @@ int	main(int ac, char **av, char **envp)
 	init_signals();
 	while (1)
 	{
-		shell.input = readline("miniOdy$ ");
+		signal(SIGQUIT, SIG_IGN);
+		shell.input = readline(BGREEN "mini\033[1;34mOdy\033[0m$ ");
 		if (!shell.input)
 			break ;
 		if (*shell.input)
@@ -137,8 +114,10 @@ int	main(int ac, char **av, char **envp)
 		if (*shell.input)
 			process_line_tokens(&shell);
 		butter_free_input(&shell);
+		shell.err = NO;
 	}
 	clear_history();
 	free_arr(&shell.envp, NO);
-	return (0);
+	ft_printf("exit\n");
+	return (shell.ex_st);
 }

@@ -3,86 +3,122 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 22:06:01 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/04 22:06:01 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/10 15:56:47 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/10 15:56:47 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Nasser */
+//	   handle_execution
+//	   handle_heredoc_redirections
+//	   close_heredoc_fds
+//	   handle_child_status
+//	   execute_command
+
 #include "minishell.h"
 
-int	g_last_status = 0;
-
-// A checker if the argument is a built-in.
-int	is_builtin(char *cmd)
+// Runs inside the child process
+static void	handle_execution(t_shell *sh, char ***env)
 {
-	if (!cmd)
-		return (0);
-	if (!ft_strncmp(cmd, "echo", ft_strlen("echo")))
-		return (1);
-	if (!ft_strncmp(cmd, "pwd", ft_strlen("pwd")))
-		return (1);
-	if (!ft_strncmp(cmd, "env", ft_strlen("env")))
-		return (1);
-	if (!ft_strncmp(cmd, "cd", ft_strlen("cd")))
-		return (1);
-	if (!ft_strncmp(cmd, "export", ft_strlen("export")))
-		return (1);
-	if (!ft_strncmp(cmd, "unset", ft_strlen("unset")))
-		return (1);
-	if (!ft_strncmp(cmd, "exit", ft_strlen("exit")))
-		return (1);
+	int	status;
+
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	sh->is_child = YES;
+	if (apply_redirections(sh->cmds, sh))
+	{
+		call_janitor(sh);
+		exit(1);
+	}
+	if (!sh->cmds->av || !sh->cmds->av[0])
+	{
+		call_janitor(sh);
+		exit(0);
+	}
+	if (sh->cmds->av && is_builtin(sh->cmds->av[0]))
+	{
+		status = exec_builtin(sh->cmds->av, &sh->envp, sh);
+		call_janitor(sh);
+		exit(status);
+	}
+	exec_external(sh, sh->cmds->av, env);
+}
+
+// Closes all heredoc file descriptors in the command struct.
+static void	close_heredoc_fds(t_shell *sh)
+{
+	int	i;
+
+	i = -1;
+	while (++i < sh->cmds->redir_count)
+	{
+		if (sh->cmds->redirs[i].type == R_HEREDOC)
+			close(sh->cmds->redirs[i].fd);
+	}
+}
+
+// Handles here-document redirections before executing the command.
+static int	handle_heredoc_redirections(t_shell *sh)
+{
+	int	i;
+
+	i = -1;
+	while (++i < sh->cmds->redir_count)
+	{
+		if (sh->cmds->redirs[i].type == R_HEREDOC)
+		{
+			if (handle_heredoc(&sh->cmds->redirs[i], sh) == 1)
+			{
+				close_heredoc_fds(sh);
+				return (130);
+			}
+		}
+	}
 	return (0);
 }
 
-// The built-ins executor based on the passed argument.
-int	exec_builtin(char **av, char ***envp, t_shell *sh)
+// Handles the status of the child process after execution.
+static int	handle_child_status(int status)
 {
-	if (!ft_strncmp(av[0], "echo", ft_strlen("echo")))
-		return (ft_echo(av));
-	if (!ft_strncmp(av[0], "pwd", ft_strlen("pwd")))
-		return (ft_pwd());
-	if (!ft_strncmp(av[0], "env", ft_strlen("env")))
-		return (ft_env(*envp));
-	if (!ft_strncmp(av[0], "export", ft_strlen("export")))
-		return (ft_export(av, envp));
-	if (!ft_strncmp(av[0], "unset", ft_strlen("unset")))
-		return (ft_unset(av, envp, sh));
-	if (!ft_strncmp(av[0], "exit", ft_strlen("exit")))
-		return (ft_exit(av, sh));
-	if (!ft_strncmp(av[0], "cd", ft_strlen("cd")))
-		return (ft_cd(av, envp));
+	if (WIFSIGNALED(status))
+	{
+		if (WTERMSIG(status) == SIGQUIT)
+			ft_putstr_fd("Quit (core dumped)\n", 2);
+		return (128 + WTERMSIG(status));
+	}
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
 	return (1);
 }
 
-// Runs a single cmd passed and checks if its a builtin or a program
-int	execute_command(t_cmd *cmd, char ***env, t_shell *sh)
+// Executes a command, handling built-ins and external commands.
+int	execute_command(char ***env, t_shell *sh)
 {
 	pid_t	pid;
 	int		status;
 
-	if (!cmd->av || !cmd->av[0])
-		return (g_last_status = 0);
-	if (is_builtin(cmd->av[0]))
-		return (g_last_status = exec_builtin(cmd->av, env, sh));
+	if ((!sh->cmds->av || !sh->cmds->av[0]) && sh->cmds->redir_count == 0)
+		return (0);
+	if (sh->cmds->av && is_builtin(sh->cmds->av[0]))
+		return (init_and_exec_builtins(sh->cmds->av, env, sh));
+	if (handle_heredoc_redirections(sh))
+		return (130);
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	pid = fork();
 	if (pid == 0)
-	{
-		execve(cmd->av[0], cmd->av, *env);
-		ft_putstr_fd(cmd->av[0], 2);
-		ft_putendl_fd(": command not found", 2);
-		exit(127);
-	}
+		handle_execution(sh, env);
 	else if (pid > 0)
 	{
 		waitpid(pid, &status, 0);
-		if (WIFEXITED(status))
-    		g_last_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-    		g_last_status = 128 + WTERMSIG(status);
+		close_heredoc_fds(sh);
+		signal_config();
+		return (handle_child_status(status));
 	}
-	else
-		return (perror(RED "Fork Error" RESET), g_last_status = 1);
-	return (g_last_status);
+	perror(RED "Well well, how did we get here? That's embarassing." RESET);
+	call_janitor(sh);
+	exit(2);
+	return (2);
 }

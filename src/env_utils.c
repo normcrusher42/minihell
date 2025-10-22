@@ -3,29 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 22:05:42 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/04 22:05:42 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/10 15:56:34 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/10 15:56:34 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/* The entire following was done by @Nasser */
+//	   get_env_value
+//	   replace_env_value
+//	   set_env_value
+//	   handle_target_var
+//	   unset_env_value
+
 #include "minishell.h"
-
-// Reallocates and copies from the old env array to the new.
-char	**realloc_env(char **envp, int extra)
-{
-	int		i;
-	char	**new_envp;
-
-	new_envp = ft_calloc(ft_arrlen(envp) + extra + 1, sizeof(char *));
-	if (!new_envp)
-		return (NULL);
-	i = -1;
-	while (envp[++i])
-		new_envp[i] = envp[i];
-	return (new_envp);
-}
 
 // Finds the environment variable name passed by key and returns its definition.
 char	*get_env_value(char **envp, const char *key)
@@ -50,62 +42,82 @@ char	*get_env_value(char **envp, const char *key)
 	return (NULL);
 }
 
+// Helper to replace an existing environment variable's value.
+static void	replace_env_value(char **slot, const char *key, const char *val)
+{
+	free(*slot);
+	if (val)
+		*slot = ft_strjoin3(key, "=", val);
+	else
+		*slot = ft_strdup(key);
+}
+
 // Sets/updates an environment variable through their passed definition (value).
 void	set_env_value(char ***envp, const char *key, const char *val, int exist)
 {
-	int		i;
-	char	**new_envp;
+	t_envctx	e;
 
-	i = -1;
-	while ((*envp)[++i])
+	e.i = -1;
+	e.key = (char *)key;
+	e.val = (char *)val;
+	e.exist = exist;
+	while ((*envp)[++e.i])
 	{
-		if (is_key_match((*envp)[i], key))
+		if (is_key_match((*envp)[e.i], e.key))
 		{
-			if (exist)
+			if (e.exist)
 				return ;
-			free((*envp)[i]);
-			if (val)
-				return ((*envp)[i] = ft_strjoin3(key, "=", val), (void)0);
-			else
-				return ((*envp)[i] = ft_strdup(key), (void)0);
+			replace_env_value(&(*envp)[e.i], e.key, e.val);
+			return ;
 		}
 	}
-	new_envp = realloc_env(*envp, 1);
-	if (!new_envp)
+	e.new_envp = realloc_env(*envp, 1);
+	if (!e.new_envp)
 		return ;
-	if (val != NULL)
-		new_envp[i] = ft_strjoin3(key, "=", val);
+	if (e.val)
+		e.new_envp[e.i] = ft_strjoin3(e.key, "=", e.val);
 	else
-		new_envp[i] = ft_strdup(key);
-	return (free(*envp), *envp = new_envp, (void)0);
+		e.new_envp[e.i] = ft_strdup(e.key);
+	free(*envp);
+	*envp = e.new_envp;
+}
+
+// Helper to check if the current env entry is the target variable to remove.
+static bool	handle_target_var(char *entry, const char *key, t_envctx *u)
+{
+	if (!ft_strncmp(entry, key, u->key_len)
+		&& (entry[u->key_len] == '=' || entry[u->key_len] == '\0'))
+	{
+		free(entry);
+		u->removed = true;
+		return (true);
+	}
+	return (false);
 }
 
 // Removes an environemnt variable through its passed name (key).
-char	**unset_env_value(char **envp, const char *key, t_shell *shell)
+char	**unset_env_value(char **envp, const char *key)
 {
-	int		i;
-	int		j;
-	size_t	key_len;
-	char	**new_envp;
+	t_envctx	u;
 
-	key_len = ft_strlen(key);
-	new_envp = malloc(sizeof(char *) * (ft_arrlen(envp) + 1));
-	if (!new_envp)
+	u = (t_envctx){0};
+	u.i = -1;
+	u.key_len = ft_strlen(key);
+	u.new_envp = malloc(sizeof(char *) * (ft_arrlen(envp) + 1));
+	if (!u.new_envp)
 		return (envp);
-	i = -1;
-	j = 0;
-	while (envp[++i])
+	while (envp[++u.i])
 	{
-		if (!ft_strncmp(envp[i], key, key_len)
-			&& (envp[i][key_len] == '=' || envp[i][key_len] == '\0'))
-		{
-			free(envp[i]);
-			shell->removed = true;
+		if (handle_target_var(envp[u.i], key, &u))
 			continue ;
-		}
-		new_envp[j++] = envp[i];
+		u.new_envp[u.j++] = envp[u.i];
 	}
-	if (!shell->removed)
-		return (free(new_envp), envp);
-	return (new_envp[j] = NULL, free(envp), new_envp);
+	if (!u.removed)
+	{
+		free(u.new_envp);
+		return (envp);
+	}
+	u.new_envp[u.j] = NULL;
+	free(envp);
+	return (u.new_envp);
 }

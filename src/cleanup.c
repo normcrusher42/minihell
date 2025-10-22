@@ -3,12 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   cleanup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 19:37:31 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/04 19:37:31 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/10 15:54:51 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/10 15:54:51 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/* The entire following was done by @Nasser */
+//	   free_arr
+//	   butter_free_input
+//	   free_tokens
+//	   call_janitor
 
 #include "minishell.h"
 
@@ -42,12 +48,33 @@ void	butter_free_input(t_shell *shell)
 	}
 }
 
-// The all-in-one cleanup function for the exit function.
+// Frees the array of tokens from sh, ready for the next call.
+void	free_tokens(t_shell *sh)
+{
+	if (!sh || !sh->token)
+		return ;
+	if (sh->token->tokens)
+		free_arr(&sh->token->tokens, NO);
+	if (sh->token)
+	{
+		if (sh->token->quoted)
+		{
+			free(sh->token->quoted);
+			sh->token->quoted = NULL;
+		}
+		free(sh->token);
+		sh->token = NULL;
+	}
+}
+
+// The all-in-one cleanup function for a clean exit.
 void	call_janitor(t_shell *sh)
 {
 	if (!sh)
 		return ;
 	free_arr(&sh->envp, NO);
-	free_arr(&sh->token.tokens, NO);
-	free(sh->input);
+	if (sh->input)
+		free(sh->input);
+	free_cmd_table(sh);
+	free_tokens(sh);
 }

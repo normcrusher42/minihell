@@ -3,115 +3,142 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 22:06:10 by nanasser          #+#    #+#             */
-/*   Updated: 2025/09/04 22:06:10 by nanasser         ###   ########.fr       */
+/*   Created: 2025/10/10 15:56:58 by nanasser          #+#    #+#             */
+/*   Updated: 2025/10/10 15:56:58 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/* The entire following was done by @Nasser */
+//	   env_expander
+//	   merge_str
+//	   handle_dollar
+//	   dollar_expander
+//	   expand_token
 
 #include "minishell.h"
 
 // The holy grail of expanding valid $ input if the other cases weren't met.
 char	*env_expander(char *token, char **merge, char **envp, int i)
 {
-	char		*updated_token;
-	char		**env_values;
-	int			strt;
+	t_expander_ctx	q;
 
-	env_values = ft_calloc(3, sizeof(char *));
-	if (!env_values)
+	q.env_values = ft_calloc(3, sizeof(char *));
+	if (!q.env_values)
 		return (NULL);
-	if (token[i] == '$' && (ft_isalnum(token[i + 1]) || token[i + 1] == '_'))
+	if (token[i] == '$' && (ft_isalpha(token[i + 1]) || token[i + 1] == '_'))
 	{
-		strt = i + 1;
-		while (token[strt] && (ft_isalnum(token[strt]) || token[strt] == '_'))
-			strt++;
+		q.strt = i + 1;
+		while (token[q.strt] && (ft_isalnum(token[q.strt])
+				|| token[q.strt] == '_'))
+			q.strt++;
 		merge[0] = ft_substr(token, 0, i);
-		env_values[0] = ft_substr(token, i + 1, strt - (i + 1));
-		merge[1] = ft_substr(token, strt, ft_strlen(token) - strt);
-		env_values[1] = get_env_value(envp, env_values[0]);
-		if (!env_values[1])
-			env_values[1] = ft_strdup("");
+		q.env_values[0] = ft_substr(token, i + 1, q.strt - (i + 1));
+		merge[1] = ft_substr(token, q.strt, ft_strlen(token) - q.strt);
+		q.env_values[1] = get_env_value(envp, q.env_values[0]);
+		if (!q.env_values[1])
+			q.env_values[1] = ft_strdup("");
 		else
-			env_values[1] = ft_strdup(env_values[1]);
-		updated_token = ft_strjoin3(merge[0], env_values[1], merge[1]);
-		return (free_arr(&env_values, NO), updated_token);
+			q.env_values[1] = ft_strdup(q.env_values[1]);
+		q.updated_token = ft_strjoin3(merge[0], q.env_values[1], merge[1]);
+		free_arr(&q.env_values, NO);
+		return (q.updated_token);
 	}
-	return (free_arr(&env_values, NO), ft_strdup(token));
+	free_arr(&q.env_values, NO);
+	return (ft_strdup(token));
 }
 
 // Straight forward merging for cases like special characters or $$ & $?.
-static char	*merge_str(char *token, int last_status, int i, char **merge)
+char	*merge_str(t_expander_ctx *ctx, t_shell *sh)
 {
-	merge[0] = ft_substr(token, 0, i);
-	if (token[i + 1] == '$')
-		merge[1] = ft_substr("miniOdy", 0, 8);
-	else if (last_status == -1)
-		merge[1] = ft_strdup("");
+	ctx->merge[0] = ft_substr(ctx->token, 0, ctx->i);
+	if (ctx->token[ctx->i + 1] == '$')
+		ctx->merge[1] = ft_substr(RED "mini\033[1;31mOdy" RESET, 0, 30);
+	else if (ctx->token[ctx->i + 1] == '?')
+		ctx->merge[1] = ft_itoa(sh->ex_st);
 	else
-		merge[1] = ft_itoa(last_status);
-	merge[2] = ft_substr(token, i + 2, ft_strlen(token));
-	return (ft_strjoin3(merge[0], merge[1], merge[2]));
+		ctx->merge[1] = ft_strdup("");
+	ctx->merge[2] = ft_substr(ctx->token, ctx->i + 2, ft_strlen(ctx->token));
+	return (ft_strjoin3(ctx->merge[0], ctx->merge[1], ctx->merge[2]));
 }
 
 // Scans for special characters (including unicode) and decides if expandable.
-char	*very_specific_expander(char *token, char **merge, char **envp, int i)
+// Handles the '$' expansion cases.
+static void	handle_dollar(t_expander_ctx *ctx, t_shell *sh)
 {
 	unsigned char	next;
 
-	next = (unsigned char)token[i + 1];
-	if (!ft_isalnum(next) && next != '_' && !ft_isspace(next))
-		return (merge_str(token, -1, i, merge));
-	return (env_expander(token, merge, envp, i));
+	if (!ctx || !ctx->token)
+		return ;
+	free_arr(&ctx->merge, YES);
+	next = (unsigned char)ctx->token[ctx->i + 1];
+	if (!ft_isascii(next) || !ft_isprint(next))
+		return ;
+	if (ctx->token[ctx->i + 1] == '$' || ctx->token[ctx->i + 1] == '?')
+		ctx->new_token = merge_str(ctx, sh);
+	else if (ctx->token[ctx->i + 1])
+	{
+		handle_next_char(ctx, next, sh);
+		if (!ctx->new_token)
+			return ;
+	}
+	else
+		return ;
+	prepare_next_call(ctx, next);
+	ctx->i = -1;
 }
 
 // The '$' condition scanner for $VAR, $?, & $$.
-char	*dollar_expander(char *token, int last_status, char **envp)
+char	*dollar_expander(char *token, char **envp, t_shell *sh)
 {
-	int		i;
-	char	*new_token;
-	char	**merge;
+	t_expander_ctx	ctx;
 
-	i = -1;
-	merge = ft_calloc(4, sizeof(char *));
-	if (!merge)
+	ctx = (t_expander_ctx){0};
+	ctx.i = -1;
+	ctx.merge = ft_calloc(4, sizeof(char *));
+	if (!ctx.merge)
 		return (NULL);
-	while (token[++i])
+	ctx.token = token;
+	ctx.envp = envp;
+	while (ctx.token[++ctx.i])
 	{
-		free_arr(&merge, YES);
-		if (token[i] == '$' && (token[i + 1] == '$' || token[i + 1] == '?'))
-			new_token = merge_str(token, last_status, i, merge);
-		else if (token[i] == '$' && token[i + 1] && token[i + 1] != '$')
-			new_token = very_specific_expander(token, merge, envp, i);
-		else
-			continue ;
-		free(token);
-		token = new_token;
-		i = -1;
+		if (!sh->in_heredoc && ctx.token[ctx.i] == '\'' && !ctx.in_double)
+			ctx.in_single = !ctx.in_single;
+		else if (!sh->in_heredoc && ctx.token[ctx.i] == '"' && !ctx.in_single)
+			ctx.in_double = !ctx.in_double;
+		else if (!ctx.in_single && ctx.token[ctx.i] == '$')
+			handle_dollar(&ctx, sh);
 	}
-	return (free_arr(&merge, NO), token);
+	free_arr(&ctx.merge, NO);
+	return (ctx.token);
 }
 
 // The main expander loop after being parsed by the tokenizer.
-char	**expand_token(t_token *token, char **envp, int last_status)
+char	**expand_token(t_shell *sh, char **envp, t_token *token)
 {
-	int		i;
-	char	**result;
+	t_expander_ctx	ctx;
 
-	i = -1;
-	result = malloc(sizeof(char *) * (ft_arrlen(token->tokens) + 1));
-	if (!result)
+	ctx = (t_expander_ctx){0};
+	ctx.result = malloc(sizeof(char *) * (ft_arrlen(sh->token->tokens) + 1));
+	if (!ctx.result)
 		return (NULL);
-	while (token->tokens[++i])
+	while (token->tokens[ctx.i])
 	{
-		if (ft_strchr(token->tokens[i], '$') && token->quote[i] != QTE_SINGLE)
-			result[i] = dollar_expander(token->tokens[i], last_status, envp);
+		ctx.had_dollar = (ft_strchr(sh->token->tokens[ctx.i], '$') != NULL);
+		if (ctx.had_dollar)
+			ctx.result[ctx.j] = dollar_expander(token->tokens[ctx.i], envp, sh);
+		else if (!handle_non_dollar_token(&ctx, token, sh))
+			return (NULL);
+		if (ctx.had_dollar && ctx.result[ctx.j][0] == '\0')
+		{
+			free(ctx.result[ctx.j]);
+			ctx.result[ctx.j] = NULL;
+		}
 		else
-			result[i] = ft_strdup(token->tokens[i]);
-		if (!result[i])
-			return (free_arr(&result, NO), NULL);
+			ctx.j++;
+		ctx.i++;
 	}
-	result[i] = NULL;
-	return (result);
+	ctx.result[ctx.j] = NULL;
+	return (ctx.result);
 }
