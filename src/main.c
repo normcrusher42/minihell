@@ -106,7 +106,7 @@ int	main(int ac, char **av, char **envp)
 	while (1)
 	{
 		signal(SIGQUIT, SIG_IGN);
-		shell.input = readline(BGREEN "mini\033[1;34mOdy\033[0m$ ");
+		shell.input = readline(MINIODY);
 		if (!shell.input)
 			break ;
 		if (*shell.input)

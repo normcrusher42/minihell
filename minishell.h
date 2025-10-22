@@ -53,6 +53,7 @@
 
 # define YES 1
 # define NO 0
+# define MINIODY "\001\033[1;32m\002mini\001\033[1;34m\002Ody\001\033[0m\002$ "
 
 /* ======================== */
 /* === Error Messages ⚠️ ===*/
