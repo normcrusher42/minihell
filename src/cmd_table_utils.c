@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 18:52:40 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/22 02:18:13 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/22 20:52:58 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ int	init_parse_ctx(t_parse_ctx *p)
 	init_cmd(&p->cur);
 	if (!p->tk || !p->tk->tokens)
 		return (0);
-	if (p->tk->tokens[0] && is_pipe(p->tk->tokens[0]))
+	if (p->tk->tokens[0] && is_pipe(p->tk->tokens[0])
+		&& !(p->tk->quoted && p->tk->quoted[0]))
 		return (syntax_err(p->tk->tokens[0], p->st, NULL));
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 17:24:16 by lsahloul          #+#    #+#             */
-/*   Updated: 2025/10/22 01:01:06 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/22 20:53:24 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,15 +77,23 @@ static int	finalize_segment(t_cmd **arr, int *n, t_cmd *cur)
 static int	parse_segment_token(t_cmd *cur, t_token *tk, int i, t_parse_ctx *p)
 {
 	int		k;
+	int		next_unquoted;
 
+	if (tk->quoted && tk->quoted[i])
+	{
+		if (!push_word(cur, tk->tokens[i]))
+			return (0);
+		return (1);
+	}
 	k = redir_kind(tk->tokens[i]);
 	if (k >= 0)
 	{
-		if (!tk->tokens[i + 1] || is_pipe(tk->tokens[i + 1])
-			|| redir_kind(tk->tokens[i + 1]) >= 0)
+		next_unquoted = !(tk->quoted && tk->quoted[i + 1]);
+		if (!tk->tokens[i + 1] || (next_unquoted && (is_pipe(tk->tokens[i + 1])
+					|| redir_kind(tk->tokens[i + 1]) >= 0)))
 			return (syntax_err(tk->tokens[i + 1], p->st, NULL));
 		if (k == R_HEREDOC)
-			p->is_quoted = tk->quoted[i + 1];
+			p->is_quoted = (tk->quoted && tk->quoted[i + 1]);
 		if (!push_redir(cur, k, tk->tokens[i + 1]))
 			return (0);
 		return (2);
@@ -100,7 +108,7 @@ static int	handle_token(t_parse_ctx *p)
 {
 	int	step;
 
-	if (is_pipe(p->tk->tokens[p->i]))
+	if (is_pipe(p->tk->tokens[p->i]) && !(p->tk->quoted && p->tk->quoted[p->i]))
 	{
 		if (!finalize_segment(&p->arr, &p->n, &p->cur))
 			return (syntax_err(p->tk->tokens[p->i], p->st, p));
