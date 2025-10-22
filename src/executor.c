@@ -76,7 +76,6 @@ static int	handle_heredoc_redirections(t_shell *sh)
 			}
 		}
 	}
-	close_heredoc_fds(sh);
 	return (0);
 }
 

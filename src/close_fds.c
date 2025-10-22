@@ -49,3 +49,10 @@ void	close_cmds_heredoc_fds(int n, t_cmd *cmds)
 		i++;
 	}
 }
+
+int	error_return_and_close_fds(const char *msg, int n, t_shell *sh)
+{
+	perror(msg);
+	close_cmds_heredoc_fds(n, sh->cmds);
+	return (1);
+}

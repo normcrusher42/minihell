@@ -91,7 +91,6 @@ static int	process_heredocs(t_cmd *cmds, int n, t_shell *sh)
 			}
 		}
 	}
-	close_cmds_heredoc_fds(n, cmds);
 	return (0);
 }
 
@@ -106,18 +105,15 @@ int	run_pipeline(t_cmd *cmds, int n, t_shell *sh)
 		return (130);
 	p.pids = malloc(sizeof(pid_t) * n);
 	if (!p.pids)
-	{
-		perror("malloc error");
-		sh->ex_st = 1;
-		return (sh->ex_st);
-	}
+		return (error_return_and_close_fds("malloc error", n, sh));
 	p.prev_fd = -1;
 	p.n = n;
 	if (spawn_pipeline_children(cmds, n, sh, &p) != 0)
-		return (sh->ex_st);
+		return (error_return_and_close_fds("child forking error", n, sh));
 	while (++p.i < n)
 	{
 		waitpid(p.pids[p.i], &p.status, 0);
+		close_cmds_heredoc_fds(n, cmds);
 		if (p.i == n - 1)
 			update_exit_status(sh, p.status);
 	}
