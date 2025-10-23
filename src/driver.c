@@ -44,28 +44,21 @@ void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p)
 {
 	int	status;
 
-	if (p->prev_fd != -1)
-	{
-		dup2(p->prev_fd, STDIN_FILENO);
-		close(p->prev_fd);
-	}
-	if (p->i < p->n - 1)
-	{
-		close(p->pipefd[0]);
-		dup2(p->pipefd[1], STDOUT_FILENO);
-		close(p->pipefd[1]);
-	}
+	check_pipes(p);
 	if (apply_redirections(cmd, sh))
 	{
 		call_janitor(sh);
+		free(p->pids);
 		exit(1);
 	}
 	if (is_builtin(cmd->av[0]))
 	{
 		status = exec_builtin(cmd->av, &sh->envp, sh);
 		call_janitor(sh);
+		free(p->pids);
 		exit(status);
 	}
+	free(p->pids);
 	exec_cmd(cmd, sh);
 }
 

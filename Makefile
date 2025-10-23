@@ -28,6 +28,7 @@ LDFLAGS = -lreadline -L/opt/vagrant/embedded/lib/ -Iopt/vagrant/embedded/include
 
 # Color codes ✨
 WHITE = \033[0;37m
+BRED = \033[1;31m
 BWHITE = \033[1;37m
 BGREEN = \033[1;32m
 RESET = \033[0m

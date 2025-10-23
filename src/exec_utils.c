@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 15:56:42 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/22 02:10:58 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/23 03:09:52 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ void	exec_external(t_shell *sh, char **av, char ***env)
 {
 	t_exec_vars	vars;
 
+	vars = (t_exec_vars){0};
 	if (ft_strchr(av[0], '/'))
 		try_direct_exec(av, env, sh);
 	else

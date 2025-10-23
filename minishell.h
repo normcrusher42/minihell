@@ -261,6 +261,7 @@ void	run_child(t_cmd *cmd, t_shell *sh, t_pipeinfo *p);
 void	close_cmds_heredoc_fds(int n, t_cmd *cmds);
 int		hd_exit_status(int status, int fds[2]);
 int		error_return_and_close_fds(const char *msg, int n, t_shell *sh);
+void	check_pipes(t_pipeinfo *p);
 
 /* ===================== */
 /* === Builtins API   ===*/

@@ -10,11 +10,29 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-/* The one following was done by @Leen */
-//	   hd_exit_status
-//	   close_cmds_heredoc_fds
+/* One of the following was done by @Leen && rest by @Nasser */
+//		check_pipes - Leen
+//		hd_exit_status - Nasser
+//		close_cmds_heredoc_fds - Nasser
+//		error_return_and_close_fds - Nasser
 
 #include "minishell.h"
+
+// Handles the FD setup for a pipeline of commands.
+void	check_pipes(t_pipeinfo *p)
+{
+	if (p->prev_fd != -1)
+	{
+		dup2(p->prev_fd, STDIN_FILENO);
+		close(p->prev_fd);
+	}
+	if (p->i < p->n - 1)
+	{
+		close(p->pipefd[0]);
+		dup2(p->pipefd[1], STDOUT_FILENO);
+		close(p->pipefd[1]);
+	}
+}
 
 int	hd_exit_status(int status, int fds[2])
 {
