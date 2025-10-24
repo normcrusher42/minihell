@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 15:56:42 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/23 03:09:52 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/25 02:05:12 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,21 +39,23 @@ void	try_direct_exec(char **av, char ***env, t_shell *sh)
 {
 	struct stat	st;
 
-	(void)sh;
 	execve(av[0], av, *env);
 	ft_putstr_fd("miniOdy: ", 2);
-	if (stat(av[0], &st) == 0 && S_ISDIR(st.st_mode))
+	ft_putstr_fd(av[0], 2);
+	if (stat(av[0], &st) == -1)
 	{
-		ft_putstr_fd(av[0], 2);
-		ft_putendl_fd(": Is a directory", 2);
+		ft_putendl_fd(": No such file or directory", 2);
 		call_janitor(sh);
-		exit(126);
+		exit(127);
 	}
-	perror(av[0]);
+	else if (S_ISDIR(st.st_mode))
+		ft_putendl_fd(": Is a directory", 2);
+	else if (access(av[0], X_OK) != 0)
+		ft_putendl_fd(": Permission denied", 2);
+	else
+		ft_putendl_fd(": cannot execute", 2);
 	call_janitor(sh);
-	if (errno == EACCES)
-		exit(126);
-	exit(127);
+	exit(126);
 }
 
 // Initializes and executes built-in commands with redirections.

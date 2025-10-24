@@ -23,6 +23,7 @@
 static void	exec_cmd(t_cmd *cmd, t_shell *sh)
 {
 	char	*path;
+	char	*err;
 
 	path = resolve_path(cmd->av[0], sh->envp);
 	if (!path)
@@ -33,7 +34,9 @@ static void	exec_cmd(t_cmd *cmd, t_shell *sh)
 		exit(127);
 	}
 	execve(path, cmd->av, sh->envp);
-	perror(cmd->av[0]);
+	err = ft_strjoin("miniOdy: ", cmd->av[0]);
+	perror(err);
+	free(err);
 	free(path);
 	call_janitor(sh);
 	exit(127);

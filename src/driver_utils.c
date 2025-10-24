@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 18:47:58 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/22 01:03:32 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/25 00:41:39 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,14 @@ int	create_pipe_and_fork(t_pipeinfo *p, int n, t_shell *sh, pid_t *pid)
 {
 	if (p->i < n - 1 && pipe(p->pipefd) == -1)
 	{
-		perror("pipe");
+		perror("pipe error");
 		sh->ex_st = 1;
 		return (1);
 	}
 	*pid = fork();
 	if (*pid == -1)
 	{
-		perror("fork");
+		perror("fork error");
 		sh->ex_st = 1;
 		return (1);
 	}

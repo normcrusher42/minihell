@@ -23,7 +23,6 @@
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <errno.h>
 # include "libft/libft.h"
 # include "libft/ft_printf/ft_printf.h"
 # include <sys/types.h>

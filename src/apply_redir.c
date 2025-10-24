@@ -35,13 +35,15 @@ static int	open_redirection(t_redir *redir)
 // Applies one redirection (input or output)
 static int	apply_single_redirection(t_redir *redir, t_shell *sh)
 {
-	int	fd;
+	int		fd;
+	char	*err;
 
 	fd = open_redirection(redir);
 	if (fd < 0)
 	{
-		ft_putstr_fd("miniOdy: ", 2);
-		perror(redir->arg);
+		err = ft_strjoin("miniOdy: ", redir->arg);
+		perror(err);
+		free(err);
 		if (!sh->is_child)
 			return (1);
 		call_janitor(sh);

@@ -114,10 +114,10 @@ int	execute_command(char ***env, t_shell *sh)
 	{
 		waitpid(pid, &status, 0);
 		close_heredoc_fds(sh);
-		signal_config();
 		return (handle_child_status(status));
 	}
 	perror(RED "Well well, how did we get here? That's embarassing." RESET);
+	close_heredoc_fds(sh);
 	call_janitor(sh);
 	exit(2);
 	return (2);
