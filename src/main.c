@@ -76,8 +76,7 @@ static void	process_line_tokens(t_shell *sh)
 	int		ok;
 
 	tokenize(sh->input, sh);
-	process_all_tokens(sh, sh->envp);
-	if (sh->err == NO)
+	if (!process_all_tokens(sh, sh->envp) && sh->err == NO)
 	{
 		ok = parse_command_table(sh, &sh->ex_st);
 		if (ok && sh->err == NO)

@@ -39,13 +39,13 @@ int	handle_non_dollar_token(t_expander_ctx *ctx, t_token *token,
 			t_shell *sh)
 {
 	ctx->result[ctx->j] = ft_strdup(token->tokens[ctx->i]);
-	free(sh->token->tokens[ctx->i]);
 	if (!ctx->result[ctx->j])
 	{
 		free_arr(&ctx->result, NO);
 		free_arr(&token->tokens, NO);
 		return (0);
 	}
+	free(sh->token->tokens[ctx->i]);
 	return (1);
 }
 

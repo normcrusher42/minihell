@@ -87,17 +87,17 @@ char	*remove_quotes(const char *s, t_shell *sh)
 
 // Processes all tokens in the shell struct: 
 // expands variables and removes quotes.
-void	process_all_tokens(t_shell *sh, char **envp)
+int	process_all_tokens(t_shell *sh, char **envp)
 {
 	char	**expanded_tokens;
 	int		i;
 	char	*cleaned;
 
 	if (!sh || !sh->token || !sh->token->tokens)
-		return ;
+		return (1);
 	expanded_tokens = expand_token(sh, envp, sh->token);
 	if (!expanded_tokens)
-		return ;
+		return (1);
 	free(sh->token->tokens);
 	sh->token->tokens = expanded_tokens;
 	i = 0;
@@ -105,9 +105,10 @@ void	process_all_tokens(t_shell *sh, char **envp)
 	{
 		cleaned = remove_quotes(sh->token->tokens[i], sh);
 		if (!cleaned)
-			return ;
+			return (1);
 		free(sh->token->tokens[i]);
 		sh->token->tokens[i] = cleaned;
 		i++;
 	}
+	return (0);
 }

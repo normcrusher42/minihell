@@ -322,7 +322,7 @@ void	free_tokens(t_shell *sh);
 /* === Expander + Token Process ===*/
 /* =============================== */
 char	**expand_token(t_shell *sh, char **envp, t_token *token);
-void	process_all_tokens(t_shell *sh, char **envp);
+int		process_all_tokens(t_shell *sh, char **envp);
 char	*dollar_expander(char *token, char **envp, t_shell *sh);
 int		handle_non_dollar_token(t_expander_ctx *ctx, t_token *token,
 			t_shell *sh);
