@@ -1,6 +1,8 @@
 # miniOdy
 yep.. This is our minihell's odyssey. Almost as if Ody hadn't gone through enough :|
 
+### How long has it been? 20 years....
+
 Starting from July 28th, after a lot of trial and errors and moral support spamming, we've done it. On the 26th of October.
 Introducing, the not-so-original, minishell. Nicknamed miniOdy for funzies and cs we like EPIC: The Musical :))
 Functionally no different from any other minishell as this is just a literal coughing baby made to work like the atomic bomb that is bash
@@ -89,10 +91,12 @@ Your efforts helped us create an Epic minishell program and made those 3 months 
 wanted to move on from LOL
 Stay diligent Beanie, don't let anything ever make you feel doubtful about your work, you can do wonders with persistency and a sip of hope hehe
 
+We're half way through our 42 journey but another memorable arc is about to begin at rank 4✨
 we may not work together next rank (idk about rank 5) but I look forward to forming our transcendance team with you again :D
 
 imma go to sleep now. Our minishell better have passed by the time you're reading this LMAO
 
 
 p.s. dessert is still on me and you're NOT doing anything about it! my turn >:3
+
 
