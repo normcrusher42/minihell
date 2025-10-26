@@ -62,11 +62,11 @@ This is even simpler than the first as I've already included suppression files f
 ## Easter Eggs
 
 Yes! Those exist! Although not much of it just to be safe... but if you're an EPIC: The Musical fan, you'd get them hehe
-I'll list how to find them here under a spoilers flag:
+I'll list how to find them here under a spoilers flag (there is no spoiler flag... READ AWAY):
 
-<!-- try expanding "$$" -->
-<!-- crash any program (try executing code that dereferences a null pointer ;3 ) -->
-<!--  huh.. I thought I included more easter eggs.. oh well. -->
+try expanding "$$"
+crash any program (try executing code that dereferences a null pointer ;3)
+huh.. I thought I included more easter eggs.. oh well.
 
 some records of our journey is available in the "txt junk" folder. Constantly changing roadmaps, a checklist, etc.. its worth the look lool
 
@@ -95,3 +95,4 @@ imma go to sleep now. Our minishell better have passed by the time you're readin
 
 
 p.s. dessert is still on me and you're NOT doing anything about it! my turn >:3
+
