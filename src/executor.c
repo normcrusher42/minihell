@@ -85,7 +85,9 @@ static int	handle_child_status(int status)
 	if (WIFSIGNALED(status))
 	{
 		if (WTERMSIG(status) == SIGQUIT)
-			ft_putstr_fd("Quit (core dumped)\n", 2);
+			ft_putendl_fd("Quit (core dumped)", 2);
+		else if (WTERMSIG(status) == SIGSEGV)
+			ft_putendl_fd(RED "I'm just a man." RESET, 2);
 		return (128 + WTERMSIG(status));
 	}
 	if (WIFEXITED(status))

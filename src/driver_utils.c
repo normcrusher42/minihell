@@ -6,7 +6,7 @@
 /*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 18:47:58 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/25 00:41:39 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/26 15:20:33 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ void	update_exit_status(t_shell *sh, int status)
 	{
 		if (WTERMSIG(status) == SIGQUIT)
 			ft_putendl_fd("Quit (core dumped)", 2);
+		else if (WTERMSIG(status) == SIGSEGV)
+			ft_putendl_fd(RED "I'm just a man." RESET, 2);
 		sh->ex_st = 128 + WTERMSIG(status);
 	}
 	else if (WIFEXITED(status))
