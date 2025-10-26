@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   driver_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nanasser <nanasser@student.42abudhabi.ae>  +#+  +:+       +#+        */
+/*   By: nanasser <nanasser@student.42adbudhabi.ae> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 18:47:58 by nanasser          #+#    #+#             */
-/*   Updated: 2025/10/26 15:20:33 by nanasser         ###   ########.fr       */
+/*   Updated: 2025/10/26 17:17:11 by nanasser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ char	*resolve_path(char *cmd, char **envp)
 		return (ft_strdup(cmd));
 	path_env = get_env_value(envp, "PATH");
 	if (!path_env)
-		return (NULL);
+		path_env = ".";
 	paths = ft_split(path_env, ':');
 	i = -1;
 	while (paths[++i])
