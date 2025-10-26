@@ -76,7 +76,7 @@ re: fclean $(NAME)
 runngun: all
 	./minishell
 
-# Only recompiles the src files and the program without waiting on libft
+# Only recompiles the src files and the program, ignoring libft as its always the same.
 remake:
 	@rm -f $(NAME)
 	@rm -rf $(OBJ_PATH) $(OBJ_PATH2)
@@ -94,6 +94,6 @@ leak: all
     --track-fds=yes --trace-children=yes --gen-suppressions=no \
     --error-limit=no --undef-value-errors=yes --expensive-definedness-checks=yes \
     --read-var-info=yes --keep-debuginfo=yes \
-    --suppressions=bin.supp --suppressions=readline.supp ./minishell
+    --suppressions=supp_leaks/bin.supp --suppressions=supp_leaks/readline.supp ./minishell
 
 .PHONY: all clean fclean re runngun remake norm leak
