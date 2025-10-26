@@ -44,20 +44,25 @@ It's fairly simple. And there's 2 ways to do it:
 
 ### Automatically Compile and Run at once
 
-1. run `Make runngun`, wait a bit, and voila ✨ project compiled and running
+1. run `make runngun`, wait a bit, and voila ✨ project compiled and running
+> ```make runngun```
 
 ### Compile and Run once at a time
 
 1. run `Make` in the root directory of the project and wait for the compilation to complete with two ✅.
-2. run or bash `./minishell` 
-
+2. run or bash `./minishell`
+```
+make
+./minishell
+```
 and there you have it :)))
 
 ## How to run with valgrind
 
 This is even simpler than the first as I've already included suppression files for readline and /bin/ functions:
 
-1. run `Make leak` and it will compile and auto run the program with valgrind and its flags
+1. run `make leak` and it will compile and auto run the program with valgrind and its flags
+> ```make leak```
 
 (you may copy the flags manually from the makefile if you need to)
 
@@ -98,5 +103,6 @@ imma go to sleep now. Our minishell better have passed by the time you're readin
 
 
 p.s. dessert is still on me and you're NOT doing anything about it! my turn >:3
+
 
 
