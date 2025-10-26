@@ -74,7 +74,7 @@ some records of our journey is available in the "txt junk" folder. Constantly ch
 
 and of course before I forget,
 
-# An honorable thank you message to my project partner, Beans (aka @leensal)
+# An honorable thank you message to my project partner and 42 sister, Beans (aka @leensal)
 
 I know how tough its been for you to deal with work-life and minishell and I tried doing everything in my power
 to make things easier for you, even if it means stalling minishell for 3 months... 💀 we better not get blackholed for this.
@@ -92,5 +92,6 @@ Stay diligent Beanie, don't let anything ever make you feel doubtful about your 
 we may not work together next rank (idk about rank 5) but I look forward to forming our transcendance team with you again :D
 
 imma go to sleep now. Our minishell better have passed by the time you're reading this LMAO
+
 
 p.s. dessert is still on me and you're NOT doing anything about it! my turn >:3
