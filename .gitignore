@@ -4,6 +4,7 @@ minishell
 minishell.dSYM/
 test.c
 ./a.out
+a.out
 minihell
 .DS_Store
 obj
