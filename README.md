@@ -31,6 +31,11 @@ if I forget anyone please forgive me as this project had me calling Qtips "ear w
 
 saving one more special person at the end so KEEP READING
 
+# The story of our minishell
+if I had the energy I'd fill this bit but instead I wanna go home and sleep TvT
+tldr for now, we started smooth, then had problems, then smooth, then problms, then a one piece plot, then a speedrun, and now we cooked 🔥
+and no body tested with valgrind after the hundreds of hours I've poured into it behind the scenes 😭😭😭
+
 ## How it works
 
 Too lazii to explain. Parsing was done by @leensal and all I know is we're using the ASL parser (Absolutely - Sane - Leen)
@@ -76,7 +81,7 @@ Yes! Those exist! Although not much of it just to be safe... but if you're an EP
 I'll list how to find them here under a spoilers flag (there is no spoiler flag... READ AWAY):
 
 try expanding "$$"
-crash any program (try executing code that dereferences a null pointer ;3)
+crash any program (try executing code that dereferences a null pointer ;3) (This is also a @Pastifier reference haha)
 huh.. I thought I included more easter eggs.. oh well.
 
 some records of our journey is available in the "txt junk" folder. Constantly changing roadmaps, a checklist, etc.. its worth the look lool
@@ -107,6 +112,7 @@ imma go to sleep now. Our minishell better have passed by the time you're readin
 
 
 p.s. dessert is still on me and you're NOT doing anything about it! my turn >:3
+
 
 
 
